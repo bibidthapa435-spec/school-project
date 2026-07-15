@@ -1,0 +1,1084 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>School Website</title>
+
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
+
+    <link rel="stylesheet" href="style.css">
+    <script src="script.js"></script>
+    <script>
+        // Apply dark mode immediately to avoid white flash on load/refresh
+        if (localStorage.getItem("darkMode") === "enabled") {
+            document.documentElement.classList.add("dark-mode");
+        }
+    </script>
+
+</head>
+<body>
+
+    <!-- Preloader Splash Screen -->
+    <div id="school-preloader" class="school-preloader">
+        <div class="preloader-content">
+            <div class="preloader-emblem">
+                <i class="fa-solid fa-graduation-cap"></i>
+            </div>
+            <h1 class="preloader-title">Jaljala Secondary School</h1>
+            <p class="preloader-subtitle">Affiliated by Government of Nepal</p>
+            <div class="preloader-spinner-container">
+                <div class="preloader-spinner"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Top Header -->
+    <div class="top-bar">
+
+        <!-- Left Side -->
+        <div class="left">
+
+            <div class="social-links">
+                <a href="https://www.facebook.com/jaljala2045" target="_blank">
+                    <i class="fa-brands fa-facebook-f"></i>
+                </a>
+
+                <a href="https://instagram.com" target="_blank">
+                    <i class="fa-brands fa-instagram"></i>
+                </a>
+
+                <a href="https://youtube.com" target="_blank">
+                    <i class="fa-brands fa-youtube"></i>
+                </a>
+            </div>
+
+            <span><i class="fa-solid fa-location-dot"></i> Panchkhapan Municipality-7, Bihibare, Sankhuwasabha, Nepal</span>
+
+            <span><i class="fa-solid fa-phone"></i> 01-1234567</span>
+
+            <span><i class="fa-solid fa-envelope"></i> info@school.edu.np</span>
+
+        </div>
+
+        <!-- Right Side -->
+        <div class="right">
+            <select id="login">
+                <option selected disabled>LOGIN</option>
+                <option value="admin">Admin Login</option>
+                <option value="teacher">Teacher Login</option>
+                <option value="student">Student/Parent Login</option>
+            </select>
+        </div>
+
+    </div>
+
+    <!-- College Header -->
+    <div class="college-header">
+        <img class="logo" src="logo.png" alt="College Logo">
+    </div>
+
+
+
+<div id="navbar-container">
+
+    <nav class="navbar">
+
+        <!-- Dark Mode Toggle -->
+        <button id="dark-mode-toggle" class="dark-mode-toggle" aria-label="Toggle Dark Mode">
+            <i class="fa-solid fa-moon"></i>
+        </button>
+
+        <!-- Hamburger Menu Toggle -->
+        <div class="nav-toggle" id="nav-toggle">
+            <i class="fa-solid fa-bars"></i>
+        </div>
+
+        <ul class="nav-menu" id="nav-menu">
+
+            <li><a href="#" id="home-link">HOME</a></li>
+
+            <li class="dropdown">
+                <a href="#" class="about-us-parent-link">ABOUT US <i class="fa-solid fa-caret-down"></i></a>
+
+                <ul class="dropdown-menu">
+                    <li><a href="#about-section" data-target-tab="introduction">Introduction</a></li>
+                    <li><a href="#about-section" data-target-tab="information">Information</a></li>
+                    <li><a href="#about-section" data-target-tab="academic-program">Academic Program</a></li>
+                </ul>
+            </li>
+
+            <li class="dropdown">
+                <a href="#gallery-section" class="gallery-parent-link">GALLERY <i class="fa-solid fa-caret-down"></i></a>
+
+                <ul class="dropdown-menu">
+                    <li><a href="#gallery-section" id="nav-image-gallery">Image Gallery</a></li>
+                    <li><a href="#gallery-section" id="nav-video-gallery">Video Gallery</a></li>
+                </ul>
+            </li>
+
+            <li><a href="#facility-section">FACILITY</a></li>
+            <li><a href="#notice-section">NOTICES</a></li>
+            <li><a href="#contact-section">CONTACT</a></li>
+
+        </ul>
+
+    </nav>
+
+</div>
+    <div class="slider">
+
+    <div class="slides">
+
+        <img src="firstphoto.jpg" class="slide active" alt="Photo 1">
+        <img src="secondphoto.jpg" class="slide" alt="Photo 2">
+        <img src="thirdphoto.jpg" class="slide" alt="Photo 3">
+        <img src="fourthphoto.jpg" class="slide" alt="Photo 4">
+        <img src="fifthphoto.jpg" class="slide" alt="Photo 5">
+        <img src="sixphoto.jpg" class="slide" alt="Photo 6">
+        <img src="sevenphoto.jpg" class="slide" alt="Photo 7">
+        <img src="eightphoto.jpg" class="slide" alt="Photo 8">
+        <img src="ninephoto.jpg" class="slide" alt="Photo 9">
+    </div>
+
+</div>
+<!-- Notice Section -->
+<div class="notice-bar">
+
+    <div class="notice-title">
+        <i class="fa-solid fa-bullhorn"></i> Notices
+    </div>
+
+    <marquee behavior="scroll" direction="left" scrollamount="6">
+
+        📢 Admission Open for IV / IX 2083 |
+        📢 First  Examination starts from Shrawan 20 |
+        📢 Scholarship Form Submission Deadline: Shrawan 15 |
+        📢 school remains closed on Saturday |
+        📢 Welcome to shree jaljala secondary school Panchkhapan 7 , Bihibare Official Website ..
+
+    </marquee>
+
+</div>
+
+
+<!-- About Us Section (Modal Pop-up) -->
+<section id="about-section" class="about-section">
+    <div class="about-section-card">
+        <button class="about-modal-close" id="about-modal-close" aria-label="Close About Us">
+            <i class="fa-solid fa-xmark"></i>
+        </button>
+        <div class="about-section-scroll">
+            <div class="section-title">
+                <h2>About Shree Jaljala Secondary School</h2>
+                <p>Learn more about our vision, history, and academic landscape.</p>
+            </div>
+
+            <div class="about-container">
+                <!-- Tabs Sidebar -->
+                <div class="about-tabs">
+                    <button class="about-tab-btn active" data-tab="introduction">
+                        <i class="fa-solid fa-graduation-cap"></i> Introduction
+                    </button>
+                    <button class="about-tab-btn" data-tab="information">
+                        <i class="fa-solid fa-circle-info"></i> School Information
+                    </button>
+                    <button class="about-tab-btn" data-tab="academic-program">
+                        <i class="fa-solid fa-book-open"></i> Academic Programs
+                    </button>
+                </div>
+
+                <!-- Content Area -->
+                <div class="about-content-wrapper">
+                    <!-- Introduction Tab -->
+                    <div id="introduction" class="about-tab-content active">
+                        <h3>Welcome to Jaljala Secondary School</h3>
+                        <p>Welcome to Jaljala Secondary School, a center of academic excellence and character development. Established with the vision of providing quality education, our school is dedicated to nurturing responsible, confident, and skilled students.</p>
+                        <p>We offer a supportive learning environment where students are encouraged to achieve their full potential through academics, extracurricular activities, and community engagement. With experienced teachers, modern teaching methods, and strong values, we strive to prepare our students for future success and lifelong learning.</p>
+                        <p>At Jaljala Secondary School, we believe that education is the foundation of a brighter future, and we are committed to helping every student grow intellectually, socially, and morally.</p>
+                    </div>
+
+                    <!-- Information Tab -->
+                    <div id="information" class="about-tab-content">
+                        <h3>General Information</h3>
+                        <p>Shree Jaljala Secondary School is a trusted, government-recognized community school located in the beautiful region of Sankhuwasabha, Nepal. We are dedicated to providing a transformative learning experience that goes beyond classroom instruction.</p>
+                        
+                        <div class="info-grid">
+                            <div class="info-item">
+                                <span class="info-label"><i class="fa-solid fa-calendar-days"></i> Established</span>
+                                <span class="info-value">2045 B.S. (1988 A.D.)</span>
+                            </div>
+                            <div class="info-item">
+                                <span class="info-label"><i class="fa-solid fa-building-columns"></i> School Type</span>
+                                <span class="info-value">Community / Government</span>
+                            </div>
+                            <div class="info-item">
+                                <span class="info-label"><i class="fa-solid fa-map-location-dot"></i> Location</span>
+                                <span class="info-value">Panchkhapan Municipality-7, Bihibare, Sankhuwasabha, Nepal</span>
+                            </div>
+                            <div class="info-item">
+                                <span class="info-label"><i class="fa-solid fa-envelope"></i> Email Contact</span>
+                                <span class="info-value">info@school.edu.np</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Academic Program Tab -->
+                    <div id="academic-program" class="about-tab-content">
+                        <h3>Academic Programs</h3>
+                        <p>We provide standard educational pathways under national curriculum guidelines, designed to foster academic excellence, personal growth, and practical capability.</p>
+                        
+                        <div class="programs-grid">
+                            <div class="program-box">
+                                <div class="program-header">
+                                    <i class="fa-solid fa-child"></i>
+                                    <h4>Primary Level</h4>
+                                </div>
+                                <p>Grade 1 to 5. Cultivating reading, writing, mathematical foundation, and creative development in supportive surroundings.</p>
+                            </div>
+                            <div class="program-box">
+                                <div class="program-header">
+                                    <i class="fa-solid fa-users"></i>
+                                    <h4>Lower Secondary</h4>
+                                </div>
+                                <p>Grade 6 to 8. Developing critical logic, language proficiency, computing concepts, basic sciences, and social responsibility.</p>
+                            </div>
+                            <div class="program-box">
+                                <div class="program-header">
+                                    <i class="fa-solid fa-user-graduate"></i>
+                                    <h4>Secondary Level</h4>
+                                </div>
+                                <p>Grade 9 to 10 (SEE) & +2 Programs. Directing advanced studies, mock-examinations, scientific experiments, and professional guidance.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+
+<!-- Principal Section -->
+<section class="principal-section">
+
+    <div class="principal-container">
+
+        <!-- Left Side -->
+        <div class="left-side">
+
+            <h2 class="section-title">Principal</h2>
+
+            <div class="principal-image">
+                <img src="kamal adhikari.jpg" alt="Mr. Kamal Bahadur Adhikari">
+
+                <div class="overlay" style="background: rgba(0, 51, 102, 0.85);">
+                    <h3>Mr. Kamal Bahadur Adhikari</h3>
+                    <p>Principal</p>
+                </div>
+            </div>
+
+            <h3 class="principal-name">Mr. Kamal Bahadur Adhikari</h3>
+            <p class="designation">Principal</p>
+
+        </div>
+
+        <!-- Right Side -->
+        <div class="right-side">
+
+            <h2 class="message-title">
+                Principal's Message
+            </h2>
+
+            <p style="margin-bottom: 15px;">
+                Dear Students, Parents, Guardians, and Visitors,
+            </p>
+
+            <p style="margin-bottom: 15px;">
+                Welcome to <strong>Shree Jaljala Secondary School</strong>. Our school is committed to providing quality, inclusive, and affordable education that empowers students to achieve academic excellence, build strong moral values, and become responsible citizens.
+            </p>
+
+            <p style="margin-bottom: 15px;">
+                We work tirelessly to create a safe, supportive, and inspiring environment where every student has the opportunity to learn, grow, and succeed. With the active cooperation of parents, guardians, and our community, we nurture compassionate learners prepared to build a brighter tomorrow.
+            </p>
+
+            <p style="margin-bottom: 15px;">
+                Thank you for your continued trust and support. We warmly welcome you to the Shree Jaljala family.
+            </p>
+
+            <p style="margin-top: 30px; line-height: 1.6;">
+                <strong>With warm regards,</strong><br><br>
+                <strong>Mr. Kamal Bahadur Adhikari</strong><br>
+                <span class="designation">Principal</span><br>
+                <span class="designation" style="font-weight: normal; font-size: 15px;">Shree Jaljala Secondary School</span>
+            </p>
+
+        </div>
+
+    </div>
+
+</section>
+
+
+<!--fomer principal section-->
+
+
+<section class="former-principal-section">
+
+    <div class="former-principal-container">
+
+        <!-- Left Side -->
+        <div class="left-side">
+
+            <h2 class="section-title">Former Principal</h2>
+
+            <div class="former-principal-image">
+                <img src="formerprinciple.jpg" alt="Former Principal">
+
+                <div class="overlay">
+                    <h3>Mr. Hasta Bhadur Tamang</h3>
+                    <p>Former Principal</p>
+                </div>
+            </div>
+
+            <h3 class="principal-name">Mr. HASTA BHADUR TAMANG</h3>
+            <p class="designation">Former Principal</p>
+
+        </div>
+
+        <!-- Right Side -->
+        <div class="right-side">
+
+            <h2 class="message-title">
+                Message from the Former Principal
+            </h2>
+
+            <p>
+                 I had the honor of serving as the Principal
+             of SHREE JALJALA SECONDARY SCHOOL from 2070 to 2083.
+           During my tenure, I worked closely with teachers,
+            students, parents, and the community to promote academic
+           excellence, discipline, and holistic student development. 
+           I believe that education is the foundation of a successful
+        and responsible society. It was my privilege to contribute to the 
+        growth of the school by supporting quality teaching, encouraging innovation,
+         and fostering a positive learning environment. I remain grateful for the opportunity
+         to have been part of this institution's journey and wish the school continued success 
+        in shaping future generations. <br> I wish the institution continued success and a bright future.
+            </p>
+
+          
+        </div>
+
+    </div>
+
+</section>
+
+
+
+
+
+<!-- Head of Management Section -->
+<section class="management-section">
+
+    <div class="management-container">
+
+        <!-- Left Side - Photo -->
+        <div class="management-image">
+            <img src="head management.jpg" alt="Head of Management">
+        </div>
+
+        <!-- Right Side - Content -->
+        <div class="management-content">
+
+            <h2>Message from the Head of Management</h2>
+
+            <h3>Mr. Santosh Basnet</h3>
+
+            
+
+            <p>
+        
+
+Welcome to our school's official website.
+
+As the Head of Management, I am committed to
+
+supporting quality education, strong values, and the overall 
+development of every student. We strive to provide a safe, inclusive,
+ and inspiring learning environment where students can achieve academic 
+ excellence and build good character.
+
+I sincerely thank our teachers, parents, students, 
+and well-wishers for their continued trust and support. Together,
+ we will continue to build a brighter future for our school and our community.<br>
+  &nbsp; &nbsp; &nbsp; &nbsp;  &nbsp; &nbsp;  &nbsp; &nbsp; <b>Thank you for your trust and support.</b>   <br><br>
+
+
+
+
+            </p>
+
+        </div>
+
+    </div>
+
+</section>
+
+
+<!-- =========================
+      School Facilities Section
+========================= -->
+<section id="facility-section" class="facility-section">
+
+    <div class="section-title">
+        <h2>Our School Facilities</h2>
+        <p>Providing high-standard amenities to support excellent learning, physical health, and personal development.</p>
+    </div>
+
+    <div class="facility-container">
+
+        <!-- Card 1: Academic Facility -->
+        <div class="facility-card">
+            <div class="facility-bg" style="background-image: url('firstphoto.jpg');"></div>
+            <div class="facility-overlay"></div>
+            <div class="facility-content">
+                <div class="facility-icon">
+                    <i class="fa-solid fa-graduation-cap"></i>
+                </div>
+                <h3>Academic Facility</h3>
+                <p>
+                    Equipped with modern, well-furnished classrooms, a rich library stocked with diverse resources, and standard laboratories to encourage practical and interactive scientific learning.
+                </p>
+                <ul class="facility-features">
+                    <li><i class="fa-solid fa-check"></i> Modern Classrooms</li>
+                    <li><i class="fa-solid fa-check"></i> Well-Stocked Library</li>
+                    <li><i class="fa-solid fa-check"></i> Practical Science Labs</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Card 2: Sport and Physical Development -->
+        <div class="facility-card">
+            <div class="facility-bg" style="background-image: url('thirdphoto.jpg');"></div>
+            <div class="facility-overlay"></div>
+            <div class="facility-content">
+                <div class="facility-icon">
+                    <i class="fa-solid fa-volleyball"></i>
+                </div>
+                <h3>Sport & Physical Development</h3>
+                <p>
+                    Fostering team spirit and health through sports. Our students actively engage in games like Kabaddi, volleyball, football, and athletics on our spacious playground under guidance.
+                </p>
+                <ul class="facility-features">
+                    <li><i class="fa-solid fa-check"></i> Large Playground</li>
+                    <li><i class="fa-solid fa-check"></i> Sports Guidance</li>
+                    <li><i class="fa-solid fa-check"></i> Traditional & Team Sports</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Card 3: Health and Safety Support Student -->
+        <div class="facility-card">
+            <div class="facility-bg" style="background-image: url('fifthphoto.jpg');"></div>
+            <div class="facility-overlay"></div>
+            <div class="facility-content">
+                <div class="facility-icon">
+                    <i class="fa-solid fa-hand-holding-heart"></i>
+                </div>
+                <h3>Health & Safety Support</h3>
+                <p>
+                    Ensuring a safe environment for all. We provide continuous first-aid medical support, dedicated student guidance, regular health checkups, and clean, purified drinking water.
+                </p>
+                <ul class="facility-features">
+                    <li><i class="fa-solid fa-check"></i> First-Aid Support</li>
+                    <li><i class="fa-solid fa-check"></i> Purified Drinking Water</li>
+                    <li><i class="fa-solid fa-check"></i> Secure Premises</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Card 4: Environment -->
+        <div class="facility-card">
+            <div class="facility-bg" style="background-image: url('sixphoto.jpg');"></div>
+            <div class="facility-overlay"></div>
+            <div class="facility-content">
+                <div class="facility-icon">
+                    <i class="fa-solid fa-seedling"></i>
+                </div>
+                <h3>Environment</h3>
+                <p>
+                    Surrounded by the natural beauty of Sankhuwasabha, we offer a peaceful, clean, and eco-friendly green atmosphere with student gardens that inspires daily academic focus.
+                </p>
+                <ul class="facility-features">
+                    <li><i class="fa-solid fa-check"></i> Clean & Green Campus</li>
+                    <li><i class="fa-solid fa-check"></i> Peaceful Surroundings</li>
+                    <li><i class="fa-solid fa-check"></i> Beautiful Student Gardens</li>
+                </ul>
+            </div>
+        </div>
+
+    </div>
+
+</section>
+
+
+<!-- =========================
+      School Media Gallery Section
+========================= -->
+<section id="gallery-section" class="gallery-section">
+
+    <!-- Close Gallery Modal Button -->
+    <button id="gallery-modal-close" class="gallery-modal-close" aria-label="Close Gallery">
+        <i class="fa-solid fa-xmark"></i>
+    </button>
+
+    <div class="section-title">
+        <h2>School Media Gallery</h2>
+        <p>Explore highlights of our academic environment, facilities, management team, and dedicated teachers.</p>
+    </div>
+
+    <!-- Media Type Toggle (Photos vs Videos) -->
+    <div class="media-type-toggle">
+        <button id="media-photos-btn" class="media-toggle-btn active">
+            <i class="fa-solid fa-images"></i> Photo Gallery
+        </button>
+        <button id="media-videos-btn" class="media-toggle-btn">
+            <i class="fa-solid fa-circle-play"></i> Video Gallery
+        </button>
+    </div>
+
+    <!-- PHOTO GALLERY PANEL -->
+    <div id="photo-gallery-panel" class="gallery-panel active">
+        
+        <!-- Category Filter Buttons -->
+        <div class="gallery-filters">
+            <button class="filter-btn active" data-filter="all">All Photos</button>
+            <button class="filter-btn" data-filter="administration">Administration & Head</button>
+            <button class="filter-btn" data-filter="campus">Campus & Activities</button>
+        </div>
+
+        <!-- Gallery Grid -->
+        <div class="gallery-grid" id="gallery-grid">
+
+            <!-- Administration 1: Head of Management -->
+            <div class="gallery-item" data-category="administration">
+                <div class="gallery-card-inner" data-src="head management.jpg" data-caption="Mr. Santosh Basnet - Head of Management">
+                    <img src="head management.jpg" alt="Mr. Santosh Basnet" loading="lazy">
+                    <div class="gallery-item-overlay">
+                        <div class="gallery-item-info">
+                            <span class="gallery-item-tag">Administration</span>
+                            <h3>Mr. Santosh Basnet</h3>
+                            <p>Head of Management</p>
+                            <span class="gallery-zoom-icon"><i class="fa-solid fa-magnifying-glass-plus"></i> View Full Photo</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Administration 2: Principal -->
+            <div class="gallery-item" data-category="administration">
+                <div class="gallery-card-inner" data-src="kamal adhikari.jpg" data-caption="Mr. Kamal Bahadur Adhikari - Principal">
+                    <img src="kamal adhikari.jpg" alt="Mr. Kamal Bahadur Adhikari" loading="lazy">
+                    <div class="gallery-item-overlay">
+                        <div class="gallery-item-info">
+                            <span class="gallery-item-tag">Administration</span>
+                            <h3>Mr. Kamal Bahadur Adhikari</h3>
+                            <p>Principal</p>
+                            <span class="gallery-zoom-icon"><i class="fa-solid fa-magnifying-glass-plus"></i> View Full Photo</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Administration 2: Former Principal -->
+            <div class="gallery-item" data-category="administration">
+                <div class="gallery-card-inner" data-src="formerprinciple.jpg" data-caption="Mr. Hasta Bhadur Tamang - Former Principal">
+                    <img src="formerprinciple.jpg" alt="Mr. Hasta Bhadur Tamang" loading="lazy">
+                    <div class="gallery-item-overlay">
+                        <div class="gallery-item-info">
+                            <span class="gallery-item-tag">Administration</span>
+                            <h3>Mr. Hasta Bhadur Tamang</h3>
+                            <p>Former Principal</p>
+                            <span class="gallery-zoom-icon"><i class="fa-solid fa-magnifying-glass-plus"></i> View Full Photo</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Administration 3: Mr. Rajesh Basnet (Teacher) -->
+            <div class="gallery-item" data-category="administration">
+                <div class="gallery-card-inner" data-src="rajesh basent.jpg" data-caption="Mr. Rajesh Basnet">
+                    <img src="rajesh basent.jpg" alt="Mr. Rajesh Basnet" loading="lazy">
+                    <div class="gallery-item-overlay">
+                        <div class="gallery-item-info">
+                            <span class="gallery-item-tag">Teacher</span>
+                            <h3>Mr. Rajesh Basnet</h3>
+                            <p>Teacher</p>
+                            <span class="gallery-zoom-icon"><i class="fa-solid fa-magnifying-glass-plus"></i> View Full Photo</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Administration 4: Mr. Govinda Shrestha (Teacher) -->
+            <div class="gallery-item" data-category="administration">
+                <div class="gallery-card-inner" data-src="govinda shrestha.jpg" data-caption="Mr. Govinda Shrestha">
+                    <img src="govinda shrestha.jpg" alt="Mr. Govinda Shrestha" loading="lazy">
+                    <div class="gallery-item-overlay">
+                        <div class="gallery-item-info">
+                            <span class="gallery-item-tag">Teacher</span>
+                            <h3>Mr. Govinda Shrestha</h3>
+                            <p>Teacher</p>
+                            <span class="gallery-zoom-icon"><i class="fa-solid fa-magnifying-glass-plus"></i> View Full Photo</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Administration 5: Mr. Indra Shrestha (Teacher) -->
+            <div class="gallery-item" data-category="administration">
+                <div class="gallery-card-inner" data-src="indra shrestha.jpg" data-caption="Mr. Indra Shrestha">
+                    <img src="indra shrestha.jpg" alt="Mr. Indra Shrestha" loading="lazy">
+                    <div class="gallery-item-overlay">
+                        <div class="gallery-item-info">
+                            <span class="gallery-item-tag">Teacher</span>
+                            <h3>Mr. Indra Shrestha</h3>
+                            <p>Teacher</p>
+                            <span class="gallery-zoom-icon"><i class="fa-solid fa-magnifying-glass-plus"></i> View Full Photo</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Administration 6: Mr. Bhubhan Pandey (Teacher) -->
+            <div class="gallery-item" data-category="administration">
+                <div class="gallery-card-inner" data-src="bhubhan pandey.jpg" data-caption="Mr. Bhubhan Pandey">
+                    <img src="bhubhan pandey.jpg" alt="Mr. Bhubhan Pandey" loading="lazy">
+                    <div class="gallery-item-overlay">
+                        <div class="gallery-item-info">
+                            <span class="gallery-item-tag">Teacher</span>
+                            <h3>Mr. Bhubhan Pandey</h3>
+                            <p>Teacher</p>
+                            <span class="gallery-zoom-icon"><i class="fa-solid fa-magnifying-glass-plus"></i> View Full Photo</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Campus 1 -->
+            <div class="gallery-item" data-category="campus">
+                <div class="gallery-card-inner" data-src="firstphoto.jpg" data-caption="Shree Jaljala Secondary School - Front Campus and Main Building">
+                    <img src="firstphoto.jpg" alt="Main School Campus" loading="lazy">
+                    <div class="gallery-item-overlay">
+                        <div class="gallery-item-info">
+                            <span class="gallery-item-tag">Campus & Activities</span>
+                            <h3>Main Academic Block</h3>
+                            <p>Front campus views and administrative entrance.</p>
+                            <span class="gallery-zoom-icon"><i class="fa-solid fa-magnifying-glass-plus"></i> View Full Photo</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Campus 2 -->
+            <div class="gallery-item" data-category="campus">
+                <div class="gallery-card-inner" data-src="secondphoto.jpg" data-caption="Secondary School Assembly and Class Ground Activity">
+                    <img src="secondphoto.jpg" alt="School Assembly Ground" loading="lazy">
+                    <div class="gallery-item-overlay">
+                        <div class="gallery-item-info">
+                            <span class="gallery-item-tag">Campus & Activities</span>
+                            <h3>School Assembly Area</h3>
+                            <p>Daily morning assemblies, announcements, and events.</p>
+                            <span class="gallery-zoom-icon"><i class="fa-solid fa-magnifying-glass-plus"></i> View Full Photo</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Campus 3 -->
+            <div class="gallery-item" data-category="campus">
+                <div class="gallery-card-inner" data-src="thirdphoto.jpg" data-caption="School Playground supporting Volleyball and athletic development">
+                    <img src="thirdphoto.jpg" alt="Sports & Physical Playground" loading="lazy">
+                    <div class="gallery-item-overlay">
+                        <div class="gallery-item-info">
+                            <span class="gallery-item-tag">Campus & Activities</span>
+                            <h3>Volleyball & Sports Court</h3>
+                            <p>Active physical education, outdoor games, and athletic coaching.</p>
+                            <span class="gallery-zoom-icon"><i class="fa-solid fa-magnifying-glass-plus"></i> View Full Photo</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Campus 4 -->
+            <div class="gallery-item" data-category="campus">
+                <div class="gallery-card-inner" data-src="fourthphoto.jpg" data-caption="Interactive science experimentation classroom laboratory">
+                    <img src="fourthphoto.jpg" alt="Science Laboratory" loading="lazy">
+                    <div class="gallery-item-overlay">
+                        <div class="gallery-item-info">
+                            <span class="gallery-item-tag">Campus & Activities</span>
+                            <h3>Science Laboratory</h3>
+                            <p>Equipped for scientific research, biology, chemistry, and physics labs.</p>
+                            <span class="gallery-zoom-icon"><i class="fa-solid fa-magnifying-glass-plus"></i> View Full Photo</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Campus 5 -->
+            <div class="gallery-item" data-category="campus">
+                <div class="gallery-card-inner" data-src="fifthphoto.jpg" data-caption="Water Purification system supporting continuous clean drinking water">
+                    <img src="fifthphoto.jpg" alt="Purified Water Station" loading="lazy">
+                    <div class="gallery-item-overlay">
+                        <div class="gallery-item-info">
+                            <span class="gallery-item-tag">Campus & Activities</span>
+                            <h3>Safe Drinking Water Station</h3>
+                            <p>Purified, reverse-osmosis filtered water supply for all students.</p>
+                            <span class="gallery-zoom-icon"><i class="fa-solid fa-magnifying-glass-plus"></i> View Full Photo</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Campus 6 -->
+            <div class="gallery-item" data-category="campus">
+                <div class="gallery-card-inner" data-src="sixphoto.jpg" data-caption="Eco-friendly environment with beautiful green student gardens and plants">
+                    <img src="sixphoto.jpg" alt="Lush Green Environment" loading="lazy">
+                    <div class="gallery-item-overlay">
+                        <div class="gallery-item-info">
+                            <span class="gallery-item-tag">Campus & Activities</span>
+                            <h3>Eco-Friendly Surroundings</h3>
+                            <p>Lush green student gardens, clean walkways, and beautiful flora.</p>
+                            <span class="gallery-zoom-icon"><i class="fa-solid fa-magnifying-glass-plus"></i> View Full Photo</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Campus 7 -->
+            <div class="gallery-item" data-category="campus">
+                <div class="gallery-card-inner" data-src="sevenphoto.jpg" data-caption="Lively Primary Wing with modern learning resources">
+                    <img src="sevenphoto.jpg" alt="Primary School Block" loading="lazy">
+                    <div class="gallery-item-overlay">
+                        <div class="gallery-item-info">
+                            <span class="gallery-item-tag">Campus & Activities</span>
+                            <h3>Primary Education Wing</h3>
+                            <p>Bright classrooms dedicated to early childhood care and learning.</p>
+                            <span class="gallery-zoom-icon"><i class="fa-solid fa-magnifying-glass-plus"></i> View Full Photo</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Campus 8 -->
+            <div class="gallery-item" data-category="campus">
+                <div class="gallery-card-inner" data-src="eightphoto.jpg" data-caption="Secondary and Higher Secondary learning rooms">
+                    <img src="eightphoto.jpg" alt="Secondary School Block" loading="lazy">
+                    <div class="gallery-item-overlay">
+                        <div class="gallery-item-info">
+                            <span class="gallery-item-tag">Campus & Activities</span>
+                            <h3>Secondary Class Block</h3>
+                            <p>Spacious, airy classrooms promoting focus and academic growth.</p>
+                            <span class="gallery-zoom-icon"><i class="fa-solid fa-magnifying-glass-plus"></i> View Full Photo</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Campus 9 -->
+            <div class="gallery-item" data-category="campus">
+                <div class="gallery-card-inner" data-src="ninephoto.jpg" data-caption="Well-furnished school library supporting student research and reading">
+                    <img src="ninephoto.jpg" alt="School Library" loading="lazy">
+                    <div class="gallery-item-overlay">
+                        <div class="gallery-item-info">
+                            <span class="gallery-item-tag">Campus & Activities</span>
+                            <h3>Resource-Rich Library</h3>
+                            <p>Stocked with references, national textbooks, novels, and study desks.</p>
+                            <span class="gallery-zoom-icon"><i class="fa-solid fa-magnifying-glass-plus"></i> View Full Photo</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- VIDEO GALLERY PANEL (Hidden by default) -->
+    <div id="video-gallery-panel" class="gallery-panel">
+        
+        <div class="video-grid">
+
+            <!-- Video 1 -->
+            <div class="video-card" data-video-id="L_LUpndg4DA" data-title="Jaljala School Annual Day Celebration Highlights">
+                <div class="video-thumbnail-wrapper">
+                    <img src="firstphoto.jpg" alt="Annual Day Video Thumbnail" class="video-thumb">
+                    <div class="video-play-overlay">
+                        <div class="play-circle">
+                            <i class="fa-solid fa-play"></i>
+                        </div>
+                    </div>
+                    <span class="video-duration">3:45</span>
+                </div>
+                <div class="video-info">
+                    <h3>Annual Day & Cultural Function</h3>
+                    <p>Highlights of student performances, traditional dances, and outstanding award distribution.</p>
+                    <button class="watch-video-btn"><i class="fa-solid fa-circle-play"></i> Watch Video</button>
+                </div>
+            </div>
+
+            <!-- Video 2 -->
+            <div class="video-card" data-video-id="gY4eEorY0nU" data-title="Sports Meet & Athletic Competitions at Shree Jaljala">
+                <div class="video-thumbnail-wrapper">
+                    <img src="thirdphoto.jpg" alt="Sports Video Thumbnail" class="video-thumb">
+                    <div class="video-play-overlay">
+                        <div class="play-circle">
+                            <i class="fa-solid fa-play"></i>
+                        </div>
+                    </div>
+                    <span class="video-duration">5:12</span>
+                </div>
+                <div class="video-info">
+                    <h3>Sports Meet & Athletic Games</h3>
+                    <p>Students exhibiting teamwork and determination in traditional matches, volleyball and football.</p>
+                    <button class="watch-video-btn"><i class="fa-solid fa-circle-play"></i> Watch Video</button>
+                </div>
+            </div>
+
+            <!-- Video 3 -->
+            <div class="video-card" data-video-id="ScMzIvxBSi4" data-title="Guided School Tour & Academic Environment Presentation">
+                <div class="video-thumbnail-wrapper">
+                    <img src="sixphoto.jpg" alt="School Tour Video Thumbnail" class="video-thumb">
+                    <div class="video-play-overlay">
+                        <div class="play-circle">
+                            <i class="fa-solid fa-play"></i>
+                        </div>
+                    </div>
+                    <span class="video-duration">4:30</span>
+                </div>
+                <div class="video-info">
+                    <h3>Campus & Classrooms Tour</h3>
+                    <p>Take a virtual walk through our classrooms, labs, library, and beautiful eco-friendly green gardens.</p>
+                    <button class="watch-video-btn"><i class="fa-solid fa-circle-play"></i> Watch Video</button>
+                </div>
+            </div>
+
+        </div>
+
+    </div>
+
+</section>
+
+
+<!-- =========================
+      Latest Notices Section
+========================= -->
+
+<section id="notice-section" class="notice-section">
+
+    <div class="section-title">
+        <h2>Latest Notices</h2>
+        <p>Stay updated with the latest announcements and important information.</p>
+    </div>
+
+    <div class="notice-container">
+
+        <div class="notice-card">
+            <span class="notice-date">12 Jul 2026</span>
+            <span class="new-tag">NEW</span>
+
+            <h3>Admission Open for Grade XI</h3>
+
+            <p>
+                Admissions are now open for the academic session 2026.
+                Interested students are requested to visit the school office.
+            </p>
+
+         
+        </div>
+
+        <div class="notice-card">
+            <span class="notice-date">10 Jul 2026</span>
+
+            <h3>First Terminal Examination Routine</h3>
+
+            <p>
+                The examination routine has been published.
+                Students can download the schedule from here.
+            </p>
+
+          
+        </div>
+
+        <div class="notice-card">
+            <span class="notice-date">08 Jul 2026</span>
+
+            <h3>Parents–Teachers Meeting</h3>
+
+            <p>
+                All parents are requested to attend the meeting
+                on Friday at 11:00 AM in the school hall.
+            </p>
+
+         
+        </div>
+
+    </div>
+
+    
+       
+
+
+</section>
+
+
+
+
+
+
+
+
+<!--==================== FOOTER ====================-->
+
+<footer id="contact-section" class="footer">
+
+    <div class="footer-container">
+
+        <!-- School Information -->
+        <div class="footer-box">
+
+            <img src="logo.png" class="footer-logo" alt="School Logo">
+
+            <h2>Shree Jaljala Secondary School</h2>
+
+            <p >
+                "Together we learn,  grow and together we succeed."
+            </p>
+
+            <div class="social-icons">
+
+                <a href="#https://www.facebook.com/jaljala2045"><i class="fa-brands fa-facebook-f"></i></a>
+
+                <a href="#"><i class="fa-brands fa-youtube"></i></a>
+
+                <a href="#"><i class="fa-brands fa-instagram"></i></a>
+
+                <a href="#"><i class="fa-brands fa-linkedin-in"></i></a>
+
+            </div>
+
+        </div>
+
+
+        <!-- Quick Links -->
+
+        <div class="footer-box">
+
+            <h3>Quick Links</h3>
+
+            <ul>
+
+                <li><a href="#">Home</a></li>
+
+                <li><a href="#">About Us</a></li>
+
+                <li><a href="#">Notices</a></li>
+
+                <li><a href="#" id="footer-gallery-link">Gallery</a></li>
+
+                <li><a href="#">Contact Us</a></li>
+
+            </ul>
+
+        </div>
+
+
+        <!-- Contact -->
+
+        <div class="footer-box">
+
+            <h3>Contact Information</h3>
+
+            <p><i class="fa-solid fa-phone"></i> +977-016610872</p>
+
+            <p><i class="fa-solid fa-envelope"></i> info@bsjss.edu.np</p>
+
+            <p><i class="fa-solid fa-location-dot"></i> Bihibare, Sankhuwasabha, Nepal</p>
+
+            <p><i class="fa-solid fa-clock"></i> Sun - Fri : 10:00 AM - 4:00 PM</p>
+
+        </div>
+
+    </div>
+
+
+    <hr>
+
+
+    <div class="footer-bottom">
+
+        <p>
+            © 2026 Shree Jaljala Secondary School. All Rights Reserved.
+        </p>
+
+        <p>
+            Designed & Developed by <span>Bibid Thapa</span>
+        </p>
+
+    </div>
+
+</footer>
+
+<!-- Back To Top -->
+
+<a href="#" class="top-btn">
+
+    <i class="fa-solid fa-arrow-up"></i>
+
+</a>
+
+
+<!-- =========================
+      Gallery Lightbox & Video Player Modals
+========================= -->
+<!-- Image Lightbox -->
+<div id="gallery-lightbox" class="gallery-lightbox" aria-hidden="true">
+    <button class="lightbox-close" id="lightbox-close" aria-label="Close Lightbox">
+        <i class="fa-solid fa-xmark"></i>
+    </button>
+    <button class="lightbox-prev" id="lightbox-prev" aria-label="Previous Image">
+        <i class="fa-solid fa-chevron-left"></i>
+    </button>
+    <div class="lightbox-content">
+        <img id="lightbox-img" src="" alt="Gallery Image Preview">
+        <div id="lightbox-caption" class="lightbox-caption"></div>
+    </div>
+    <button class="lightbox-next" id="lightbox-next" aria-label="Next Image">
+        <i class="fa-solid fa-chevron-right"></i>
+    </button>
+</div>
+
+<!-- Video Player Modal -->
+<div id="video-modal" class="video-modal" aria-hidden="true">
+    <button class="video-modal-close" id="video-modal-close" aria-label="Close Video">
+        <i class="fa-solid fa-xmark"></i>
+    </button>
+    <div class="video-modal-content">
+        <div class="video-iframe-container">
+            <iframe id="video-player-iframe" src="" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+        </div>
+        <div id="video-modal-title" class="video-modal-title"></div>
+    </div>
+</div>
+
+
+
+    
+
+<script src="script.js"></script>
+
+</body>
+</html>

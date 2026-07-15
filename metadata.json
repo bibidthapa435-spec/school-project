@@ -1,0 +1,6 @@
+{
+  "name": "Shree Jaljala Secondary School Website",
+  "description": "Official website for Shree Jaljala Secondary School in Panchkhapan Municipality-7, Bihibare, Sankhuwasabha, Nepal",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
