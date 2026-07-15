@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 document.addEventListener("DOMContentLoaded", function () {
 
     // Preloader / Splash Screen Logic
@@ -544,7 +543,7 @@ window.addEventListener("scroll", function () {
 /* login portal */
 
 
-=======
+
 document.addEventListener("DOMContentLoaded", function () {
 
     const slides = document.querySelectorAll(".slide");
@@ -578,5 +577,3 @@ window.addEventListener("scroll", function () {
 
 /* login portal */
 
-
->>>>>>> 4a705bc29ccd72aceaf33431c46ade71cb282ab3
