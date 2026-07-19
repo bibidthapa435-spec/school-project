@@ -1,4 +1,5 @@
 document.addEventListener("DOMContentLoaded", function () {
+    
 
     // Preloader / Splash Screen Logic
     const preloader = document.getElementById("school-preloader");
@@ -539,7 +540,27 @@ window.addEventListener("scroll", function () {
 });
 
 
+document.addEventListener("DOMContentLoaded", () => {
+  const modal = document.getElementById("noticeModal");
+  const closeBtn = document.getElementById("closeNotice");
 
-/* login portal */
+  // Show the modal slightly after the page loads for a smoother transition
+  setTimeout(() => {
+    modal.classList.add("active");
+  }, 500);
+
+  // Close modal when clicking the 'X' button
+  closeBtn.addEventListener("click", () => {
+    modal.classList.remove("active");
+  });
+
+  // Close modal when clicking anywhere outside the white modal box
+  modal.addEventListener("click", (e) => {
+    if (e.target === modal) {
+      modal.classList.remove("active");
+    }
+  });
+});
+
 
 
