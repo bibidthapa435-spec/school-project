@@ -22,23 +22,24 @@
 <body>
 <!-- The Modal Overlay -->
 <div id="noticeModal" class="modal-overlay">
-  <!-- The Modal Content Container -->
   <div class="modal-content">
-    
-    <!-- Modal Header -->
+
     <div class="modal-header">
-      <h2 >  भर्ना सम्बन्धी सूचना</h2>
+      <h2 id="noticeTitle"></h2>
       <button id="closeNotice" class="close-btn">&times;</button>
     </div>
-    
-    <!-- Modal Body -->
+
     <div class="modal-body">
-      <p class="notice-subtitle">शैक्षिक सत्र २०८३ का लागि नयाँ विद्यार्थी भर्ना तथा प्रवेश परीक्षाको आवेदन खुला गरिएको छ।</p>
-      
-      <!-- Notice Image -->
-      <img src="schoolnotices.png" alt="Notice Board" class="notice-img">
+      <p id="noticeText"></p>
+      <img id="noticeImage" src="" class="notice-img">
     </div>
-    
+
+    <div class="modal-footer">
+      <button id="prevBtn" class="nav-arrow-btn">◀ Previous</button>
+      <span id="noticeCount"></span>
+      <button id="nextBtn" class="nav-arrow-btn">Next ▶</button>
+    </div>
+
   </div>
 </div>
     <!-- Preloader Splash Screen -->

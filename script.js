@@ -581,22 +581,76 @@ document.addEventListener("DOMContentLoaded", () => {
   const modal = document.getElementById("noticeModal");
   const closeBtn = document.getElementById("closeNotice");
 
+  const notices = [
+    {
+      title: "भर्ना सम्बन्धी सूचना",
+      text: "शैक्षिक सत्र २०८३ का लागि नयाँ विद्यार्थी भर्ना तथा प्रवेश परीक्षाको आवेदन खुला गरिएको छ।",
+      image: "schoolnotices.png"
+    },
+    {
+      title: "परीक्षा सम्बन्धी सूचना",
+      text: "कक्षा ११ को प्रथम त्रैमासिक परीक्षा साउन २५ गतेदेखि सञ्चालन हुनेछ।",
+      image: "examnotice.png"
+    }
+  ];
+
+  let current = 0;
+
+  const title = document.getElementById("noticeTitle");
+  const text = document.getElementById("noticeText");
+  const image = document.getElementById("noticeImage");
+  const count = document.getElementById("noticeCount");
+
+  function showNotice(index) {
+    if (title) title.innerHTML = notices[index].title;
+    if (text) text.innerHTML = notices[index].text;
+    if (image) image.src = notices[index].image;
+    if (count) count.innerHTML = `${index + 1} / ${notices.length}`;
+  }
+
+  if (title && text && image && count) {
+    showNotice(current);
+  }
+
+  const nextBtn = document.getElementById("nextBtn");
+  const prevBtn = document.getElementById("prevBtn");
+
+  if (nextBtn) {
+    nextBtn.onclick = () => {
+      current++;
+      if (current >= notices.length) current = 0;
+      showNotice(current);
+    };
+  }
+
+  if (prevBtn) {
+    prevBtn.onclick = () => {
+      current--;
+      if (current < 0) current = notices.length - 1;
+      showNotice(current);
+    };
+  }
+
   // Show the modal slightly after the page loads for a smoother transition
   setTimeout(() => {
-    modal.classList.add("active");
+    if (modal) modal.classList.add("active");
   }, 500);
 
   // Close modal when clicking the 'X' button
-  closeBtn.addEventListener("click", () => {
-    modal.classList.remove("active");
-  });
+  if (closeBtn) {
+    closeBtn.addEventListener("click", () => {
+      if (modal) modal.classList.remove("active");
+    });
+  }
 
   // Close modal when clicking anywhere outside the white modal box
-  modal.addEventListener("click", (e) => {
-    if (e.target === modal) {
-      modal.classList.remove("active");
-    }
-  });
+  if (modal) {
+    modal.addEventListener("click", (e) => {
+      if (e.target === modal) {
+        modal.classList.remove("active");
+      }
+    });
+  }
 });
 
 
