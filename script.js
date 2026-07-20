@@ -526,6 +526,43 @@ document.addEventListener("DOMContentLoaded", function () {
     });
 
 
+    // ==========================================================
+    // SCROLL REVEAL ANIMATIONS (INTERSECTION OBSERVER)
+    // ==========================================================
+    // Dynamically assign reveal classes and responsive staggered delays to gallery items
+    const allGalleryItems = document.querySelectorAll(".gallery-item");
+    allGalleryItems.forEach((item, index) => {
+        item.classList.add("reveal-fade-in");
+        // Stagger in groups of 4 columns
+        const delayClass = `stagger-delay-${(index % 4) + 1}`;
+        item.classList.add(delayClass);
+    });
+
+    const revealElements = document.querySelectorAll(
+        ".reveal-fade-in, .reveal-fade-up, .reveal-slide-left, .reveal-slide-right"
+    );
+
+    if ("IntersectionObserver" in window) {
+        const revealObserver = new IntersectionObserver((entries, observer) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add("active-reveal");
+                    // Once animated, unobserve to freeze it in active state
+                    observer.unobserve(entry.target);
+                }
+            });
+        }, {
+            threshold: 0.01, // highly responsive trigger threshold
+            rootMargin: "0px 0px -60px 0px" // triggers when element is 60px above the viewport bottom for maximum visibility
+        });
+
+        revealElements.forEach(el => revealObserver.observe(el));
+    } else {
+        // Fallback for browsers that do not support IntersectionObserver
+        revealElements.forEach(el => el.classList.add("active-reveal"));
+    }
+
+
 });
 window.addEventListener("scroll", function () {
 
