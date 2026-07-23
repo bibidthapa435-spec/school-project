@@ -13,42 +13,38 @@ document.addEventListener("DOMContentLoaded", function () {
         }, 1800);
     }
 
-    // Dark Mode Functionality
-    const darkModeToggle = document.getElementById("dark-mode-toggle");
-    const isDarkMode = localStorage.getItem("darkMode") === "enabled";
+    // ==========================================================
+    // DARK MODE TOGGLE MANAGER
+    // ==========================================================
+    const darkModeToggleBtn = document.getElementById("dark-mode-toggle");
 
-    function enableDarkMode() {
-        document.body.classList.add("dark-mode");
-        document.documentElement.classList.add("dark-mode");
-        localStorage.setItem("darkMode", "enabled");
-        if (darkModeToggle) {
-            darkModeToggle.innerHTML = '<i class="fa-solid fa-sun"></i>';
+    function applyDarkMode(isDark) {
+        if (isDark) {
+            document.body.classList.add("dark-mode");
+            document.documentElement.classList.add("dark-mode");
+            if (darkModeToggleBtn) darkModeToggleBtn.innerHTML = '<i class="fa-solid fa-sun"></i>';
+            localStorage.setItem("userDarkMode", "dark");
+        } else {
+            document.body.classList.remove("dark-mode");
+            document.documentElement.classList.remove("dark-mode");
+            if (darkModeToggleBtn) darkModeToggleBtn.innerHTML = '<i class="fa-solid fa-moon"></i>';
+            localStorage.setItem("userDarkMode", "light");
         }
     }
 
-    function disableDarkMode() {
-        document.body.classList.remove("dark-mode");
-        document.documentElement.classList.remove("dark-mode");
-        localStorage.setItem("darkMode", "disabled");
-        if (darkModeToggle) {
-            darkModeToggle.innerHTML = '<i class="fa-solid fa-moon"></i>';
-        }
-    }
-
-    if (isDarkMode) {
-        enableDarkMode();
-    } else {
-        disableDarkMode();
-    }
-
-    if (darkModeToggle) {
-        darkModeToggle.addEventListener("click", function () {
-            if (document.body.classList.contains("dark-mode")) {
-                disableDarkMode();
-            } else {
-                enableDarkMode();
-            }
+    if (darkModeToggleBtn) {
+        darkModeToggleBtn.addEventListener("click", function () {
+            const isDark = document.body.classList.contains("dark-mode");
+            applyDarkMode(!isDark);
         });
+    }
+
+    // Restore saved dark mode preference
+    const savedDarkMode = localStorage.getItem("userDarkMode");
+    if (savedDarkMode === "dark") {
+        applyDarkMode(true);
+    } else {
+        applyDarkMode(false);
     }
 
     // Home link refresh logic
@@ -527,19 +523,152 @@ document.addEventListener("DOMContentLoaded", function () {
 
 
     // ==========================================================
+    // SCHOOL NOTICE BOARD MODAL OVERLAY LOGIC
+    // ==========================================================
+    const noticeSection = document.getElementById("notice-section");
+    const noticeModalClose = document.getElementById("notice-modal-close");
+    const navNoticeBtn = document.getElementById("nav-notice-link");
+    const marqueeNoticeBtn = document.getElementById("marquee-notice-btn");
+    const footerNoticeBtn = document.getElementById("footer-notice-link");
+
+    function openNoticeModal() {
+        if (noticeSection) {
+            noticeSection.classList.add("show");
+            document.body.style.overflow = "hidden"; // Lock page scroll
+        }
+        // Close mobile nav menu if open
+        if (window.innerWidth <= 768 && navMenu) {
+            navMenu.classList.remove("active");
+            const icon = navToggle?.querySelector("i");
+            if (icon) {
+                icon.classList.remove("fa-xmark");
+                icon.classList.add("fa-bars");
+            }
+        }
+    }
+
+    function closeNoticeModal() {
+        if (noticeSection) {
+            noticeSection.classList.remove("show");
+            document.body.style.overflow = ""; // Restore page scroll
+        }
+    }
+
+    // Attach click triggers to all Notice links
+    navNoticeBtn?.addEventListener("click", function (e) {
+        e.preventDefault();
+        openNoticeModal();
+    });
+
+    marqueeNoticeBtn?.addEventListener("click", function () {
+        openNoticeModal();
+    });
+
+    footerNoticeBtn?.addEventListener("click", function (e) {
+        e.preventDefault();
+        openNoticeModal();
+    });
+
+    // Intercept any link pointing to #notice-section
+    document.querySelectorAll('a[href="#notice-section"]').forEach(link => {
+        link.addEventListener("click", function (e) {
+            e.preventDefault();
+            openNoticeModal();
+        });
+    });
+
+    noticeModalClose?.addEventListener("click", closeNoticeModal);
+
+    // Close on clicking backdrop outside notice wrapper
+    noticeSection?.addEventListener("click", function (e) {
+        if (e.target === noticeSection) {
+            closeNoticeModal();
+        }
+    });
+
+    // ESC key to close Notice Modal
+    document.addEventListener("keydown", function (e) {
+        if (e.key === "Escape" && noticeSection && noticeSection.classList.contains("show")) {
+            closeNoticeModal();
+        }
+    });
+
+    // Notice Filtering Logic
+    const noticeFilterBtns = document.querySelectorAll(".notice-filter-btn");
+    const noticeCards = document.querySelectorAll("#notice-section .notice-card");
+
+    noticeFilterBtns.forEach(btn => {
+        btn.addEventListener("click", function () {
+            noticeFilterBtns.forEach(b => b.classList.remove("active"));
+            this.classList.add("active");
+
+            const selectedCat = this.getAttribute("data-notice-cat");
+
+            noticeCards.forEach((card, idx) => {
+                const cardCat = card.getAttribute("data-notice-cat");
+                if (selectedCat === "all" || cardCat === selectedCat) {
+                    card.classList.remove("hidden");
+                    // Re-trigger clean float up animation on filtering
+                    card.classList.remove("active-reveal");
+                    setTimeout(() => {
+                        card.classList.add("active-reveal");
+                    }, 40 * (idx % 3));
+                } else {
+                    card.classList.add("hidden");
+                }
+            });
+        });
+    });
+
+    // URL hash check without auto-popup
+
+
+    // ==========================================================
     // SCROLL REVEAL ANIMATIONS (INTERSECTION OBSERVER)
     // ==========================================================
+    // Automatically apply reveal classes to key content elements if not already present
+    document.querySelectorAll(".section-title").forEach(el => {
+        if (!el.className.includes("reveal-")) el.classList.add("reveal-fade-up");
+    });
+
+    document.querySelectorAll(".notice-card").forEach((card, idx) => {
+        if (!card.className.includes("reveal-")) {
+            card.classList.add("reveal-fade-up", `stagger-delay-${(idx % 3) + 1}`);
+        }
+    });
+
+    document.querySelectorAll(".video-card").forEach((card, idx) => {
+        if (!card.className.includes("reveal-")) {
+            card.classList.add("reveal-fade-up", `stagger-delay-${(idx % 4) + 1}`);
+        }
+    });
+
+    document.querySelectorAll(".info-item, .program-box").forEach((box, idx) => {
+        if (!box.className.includes("reveal-")) {
+            box.classList.add("reveal-fade-up", `stagger-delay-${(idx % 3) + 1}`);
+        }
+    });
+
+    document.querySelectorAll(".footer-section").forEach((sec, idx) => {
+        if (!sec.className.includes("reveal-")) {
+            sec.classList.add("reveal-fade-up", `stagger-delay-${(idx % 4) + 1}`);
+        }
+    });
+
     // Dynamically assign reveal classes and responsive staggered delays to gallery items
     const allGalleryItems = document.querySelectorAll(".gallery-item");
     allGalleryItems.forEach((item, index) => {
-        item.classList.add("reveal-fade-in");
-        // Stagger in groups of 4 columns
+        if (!item.className.includes("reveal-")) {
+            item.classList.add("reveal-fade-in");
+        }
         const delayClass = `stagger-delay-${(index % 4) + 1}`;
-        item.classList.add(delayClass);
+        if (!item.className.includes("stagger-delay-")) {
+            item.classList.add(delayClass);
+        }
     });
 
     const revealElements = document.querySelectorAll(
-        ".reveal-fade-in, .reveal-fade-up, .reveal-slide-left, .reveal-slide-right"
+        ".reveal-fade-in, .reveal-fade-up, .reveal-slide-left, .reveal-slide-right, .reveal-zoom-in"
     );
 
     if ("IntersectionObserver" in window) {
@@ -547,20 +676,40 @@ document.addEventListener("DOMContentLoaded", function () {
             entries.forEach(entry => {
                 if (entry.isIntersecting) {
                     entry.target.classList.add("active-reveal");
-                    // Once animated, unobserve to freeze it in active state
                     observer.unobserve(entry.target);
                 }
             });
         }, {
-            threshold: 0.01, // highly responsive trigger threshold
-            rootMargin: "0px 0px -60px 0px" // triggers when element is 60px above the viewport bottom for maximum visibility
+            threshold: 0.05,
+            rootMargin: "0px 0px -40px 0px"
         });
 
         revealElements.forEach(el => revealObserver.observe(el));
     } else {
-        // Fallback for browsers that do not support IntersectionObserver
+        // Fallback for older browsers
         revealElements.forEach(el => el.classList.add("active-reveal"));
     }
+
+    // Smooth anchor scrolling offset support for sticky navbar
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+        anchor.addEventListener('click', function (e) {
+            const targetId = this.getAttribute('href');
+            if (targetId && targetId !== '#') {
+                const targetElem = document.querySelector(targetId);
+                if (targetElem) {
+                    e.preventDefault();
+                    const navbarOffset = 70;
+                    const elementPosition = targetElem.getBoundingClientRect().top + window.pageYOffset;
+                    const offsetPosition = elementPosition - navbarOffset;
+
+                    window.scrollTo({
+                        top: offsetPosition,
+                        behavior: 'smooth'
+                    });
+                }
+            }
+        });
+    });
 
 
 });
@@ -604,7 +753,12 @@ document.addEventListener("DOMContentLoaded", () => {
   function showNotice(index) {
     if (title) title.innerHTML = notices[index].title;
     if (text) text.innerHTML = notices[index].text;
-    if (image) image.src = notices[index].image;
+    if (image) {
+      image.src = notices[index].image;
+      image.onerror = function() {
+        this.src = "schoolnotices.png";
+      };
+    }
     if (count) count.innerHTML = `${index + 1} / ${notices.length}`;
   }
 
@@ -631,10 +785,10 @@ document.addEventListener("DOMContentLoaded", () => {
     };
   }
 
-  // Show the modal slightly after the page loads for a smoother transition
+  // Show the modal on page load
   setTimeout(() => {
     if (modal) modal.classList.add("active");
-  }, 500);
+  }, 600);
 
   // Close modal when clicking the 'X' button
   if (closeBtn) {
@@ -643,7 +797,7 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   }
 
-  // Close modal when clicking anywhere outside the white modal box
+  // Close modal when clicking anywhere outside the modal box
   if (modal) {
     modal.addEventListener("click", (e) => {
       if (e.target === modal) {

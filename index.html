@@ -25,13 +25,13 @@
   <div class="modal-content">
 
     <div class="modal-header">
-      <h2 id="noticeTitle"></h2>
+      <h2 id="noticeTitle">भर्ना सम्बन्धी सूचना</h2>
       <button id="closeNotice" class="close-btn">&times;</button>
     </div>
 
     <div class="modal-body">
       <p id="noticeText"></p>
-      <img id="noticeImage" src="" class="notice-img">
+      <img id="noticeImage" src="schoolnotices.png" class="notice-img" alt="School Notice">
     </div>
 
     <div class="modal-footer">
@@ -98,7 +98,7 @@
 
     <!-- College Header -->
     <div class="college-header">
-        <img class="logo" src="logo.png" alt="College Logo">
+        <img class="logo" src="logo.png" alt="Shree Jaljala Secondary School Logo">
     </div>
 
 
@@ -141,7 +141,7 @@
             </li>
 
             <li><a href="#facility-section">FACILITY</a></li>
-            <li><a href="#notice-section">NOTICES</a></li>
+            <li><a href="#notice-section" id="nav-notice-link">NOTICES</a></li>
             <li><a href="#contact-section">CONTACT</a></li>
 
         </ul>
@@ -176,7 +176,7 @@
 <!-- Notice Section -->
 <div class="notice-bar reveal-fade-in">
 
-    <div class="notice-title">
+    <div class="notice-title" id="marquee-notice-btn" style="cursor: pointer;" title="Click to view all notices">
         <i class="fa-solid fa-bullhorn"></i> Notices
     </div>
 
@@ -1510,52 +1510,154 @@ and well-wishers for their continued trust and support. Together,
 
 <section id="notice-section" class="notice-section">
 
-    <div class="section-title">
-        <h2>Latest Notices</h2>
-        <p>Stay updated with the latest announcements and important information.</p>
+    <!-- Close Notice Modal Button -->
+    <button id="notice-modal-close" class="notice-modal-close" aria-label="Close Notice Board">
+        <i class="fa-solid fa-xmark"></i>
+    </button>
+
+    <div class="notice-section-wrapper">
+
+        <div class="section-title notice-header">
+            <span class="notice-top-badge"><i class="fa-solid fa-bullhorn"></i> Official Notice Board</span>
+            <h2>Shree Jaljala School Notices</h2>
+            <p>Stay informed with official announcements, examination schedules, admissions, and event notifications.</p>
+        </div>
+
+        <!-- Filter Categories for Notices -->
+        <div class="notice-filter-bar reveal-fade-up">
+            <button class="notice-filter-btn active" data-notice-cat="all">
+                <i class="fa-solid fa-layer-group"></i> All Notices
+            </button>
+            <button class="notice-filter-btn" data-notice-cat="admission">
+                <i class="fa-solid fa-user-graduate"></i> Admissions
+            </button>
+            <button class="notice-filter-btn" data-notice-cat="examination">
+                <i class="fa-solid fa-file-pen"></i> Examinations
+            </button>
+            <button class="notice-filter-btn" data-notice-cat="event">
+                <i class="fa-solid fa-calendar-days"></i> Events & Meetings
+            </button>
+        </div>
+
+        <div class="notice-container">
+
+            <!-- Notice Card 1 -->
+            <div class="notice-card reveal-fade-up stagger-delay-1" data-notice-cat="admission">
+                <div class="notice-card-header">
+                    <span class="notice-date"><i class="fa-regular fa-calendar"></i> 12 Jul 2026</span>
+                    <span class="new-tag">NEW</span>
+                </div>
+
+                <h3>Admission Open for Grade XI (Science & Management)</h3>
+
+                <p>
+                    Admissions are officially open for the academic session 2083/2084.
+                    Interested SEE graduates are requested to collect and submit application forms from the school administrative office.
+                </p>
+
+                <div class="notice-footer">
+                    <span class="notice-dept"><i class="fa-solid fa-building-columns"></i> Administration</span>
+                    <span class="notice-badge"><i class="fa-solid fa-circle-check"></i> Form Open</span>
+                </div>
+            </div>
+
+            <!-- Notice Card 2 -->
+            <div class="notice-card reveal-fade-up stagger-delay-2" data-notice-cat="examination">
+                <div class="notice-card-header">
+                    <span class="notice-date"><i class="fa-regular fa-calendar"></i> 10 Jul 2026</span>
+                    <span class="new-tag urgent">URGENT</span>
+                </div>
+
+                <h3>First Terminal Examination Schedule Published</h3>
+
+                <p>
+                    The First Terminal Examination routine for Grades 1 to 12 has been published.
+                    Exams will commence from Shrawan 20, 2083. Students must collect admit cards prior to Shrawan 18.
+                </p>
+
+                <div class="notice-footer">
+                    <span class="notice-dept"><i class="fa-solid fa-pen-to-square"></i> Examination Dept</span>
+                    <span class="notice-badge"><i class="fa-solid fa-clock"></i> Routine Out</span>
+                </div>
+            </div>
+
+            <!-- Notice Card 3 -->
+            <div class="notice-card reveal-fade-up stagger-delay-3" data-notice-cat="event">
+                <div class="notice-card-header">
+                    <span class="notice-date"><i class="fa-regular fa-calendar"></i> 08 Jul 2026</span>
+                </div>
+
+                <h3>Parents–Teachers Association (PTA) Meeting</h3>
+
+                <p>
+                    All parents, guardians, and stakeholders are cordially invited to attend the quarterly PTA progress assembly
+                    on Friday at 11:00 AM in the school main hall.
+                </p>
+
+                <div class="notice-footer">
+                    <span class="notice-dept"><i class="fa-solid fa-users"></i> PTA Committee</span>
+                    <span class="notice-badge"><i class="fa-solid fa-location-dot"></i> School Hall</span>
+                </div>
+            </div>
+
+            <!-- Notice Card 4 -->
+            <div class="notice-card reveal-fade-up stagger-delay-1" data-notice-cat="admission">
+                <div class="notice-card-header">
+                    <span class="notice-date"><i class="fa-regular fa-calendar"></i> 05 Jul 2026</span>
+                </div>
+
+                <h3>Merit & Need-Based Scholarship Applications</h3>
+
+                <p>
+                    Government and institutional scholarship distribution forms for deserving and underprivileged students are now available.
+                    The final deadline for form submission is Shrawan 15.
+                </p>
+
+                <div class="notice-footer">
+                    <span class="notice-dept"><i class="fa-solid fa-award"></i> Scholarship Desk</span>
+                    <span class="notice-badge"><i class="fa-solid fa-hourglass-half"></i> Shrawan 15</span>
+                </div>
+            </div>
+
+            <!-- Notice Card 5 -->
+            <div class="notice-card reveal-fade-up stagger-delay-2" data-notice-cat="examination">
+                <div class="notice-card-header">
+                    <span class="notice-date"><i class="fa-regular fa-calendar"></i> 01 Jul 2026</span>
+                </div>
+
+                <h3>Class 12 Board Examination Result Update</h3>
+
+                <p>
+                    Students applying for re-totalling or grade improvement in the Class 12 board examinations are instructed to verify details at the school exam department notice board.
+                </p>
+
+                <div class="notice-footer">
+                    <span class="notice-dept"><i class="fa-solid fa-graduation-cap"></i> Examination Wing</span>
+                    <span class="notice-badge"><i class="fa-solid fa-clipboard-list"></i> Verification</span>
+                </div>
+            </div>
+
+            <!-- Notice Card 6 -->
+            <div class="notice-card reveal-fade-up stagger-delay-3" data-notice-cat="event">
+                <div class="notice-card-header">
+                    <span class="notice-date"><i class="fa-regular fa-calendar"></i> 25 Jun 2026</span>
+                </div>
+
+                <h3>Saraswati Puja & Co-Curricular Cultural Review</h3>
+
+                <p>
+                    Management extends sincere gratitude to teachers, staff, students, and community members for making our recent Saraswati Puja and co-curricular cultural celebrations a grand success.
+                </p>
+
+                <div class="notice-footer">
+                    <span class="notice-dept"><i class="fa-solid fa-heart"></i> School Management</span>
+                    <span class="notice-badge"><i class="fa-solid fa-star"></i> Appreciation</span>
+                </div>
+            </div>
+
+        </div>
+
     </div>
-
-    <div class="notice-container">
-
-        <div class="notice-card reveal-slide-right">
-            <span class="notice-date">12 Jul 2026</span>
-            <span class="new-tag">NEW</span>
-
-            <h3>Admission Open for Grade XI</h3>
-
-            <p>
-                Admissions are now open for the academic session 2026.
-                Interested students are requested to visit the school office.
-            </p>
-
-         
-        </div>
-
-        <div class="notice-card reveal-fade-up">
-            <span class="notice-date">10 Jul 2026</span>
-
-            <h3>First Terminal Examination Routine</h3>
-
-            <p>
-                The examination routine has been published.
-                Students can download the schedule from here.
-            </p>
-
-          
-        </div>
-
-        <div class="notice-card reveal-slide-left">
-            <span class="notice-date">08 Jul 2026</span>
-
-            <h3>Parents–Teachers Meeting</h3>
-
-            <p>
-                All parents are requested to attend the meeting
-                on Friday at 11:00 AM in the school hall.
-            </p>
-
-         
-        </div>
 
     </div>
 
@@ -1616,7 +1718,7 @@ and well-wishers for their continued trust and support. Together,
 
                 <li><a href="#">About Us</a></li>
 
-                <li><a href="#">Notices</a></li>
+                <li><a href="#notice-section" id="footer-notice-link">Notices</a></li>
 
                 <li><a href="#" id="footer-gallery-link">Gallery</a></li>
 
@@ -1640,6 +1742,21 @@ and well-wishers for their continued trust and support. Together,
             <p><i class="fa-solid fa-location-dot"></i> Bihibare, Sankhuwasabha, Nepal</p>
 
             <p><i class="fa-solid fa-clock"></i> Sun - Fri : 10:00 AM - 4:00 PM</p>
+
+        </div>
+
+
+        <!-- Location Map -->
+
+        <div class="footer-box footer-map-box">
+
+            <h3>Our Location</h3>
+
+            <div class="map-container">
+
+                <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d712.0739875575051!2d87.30970032042703!3d27.33224543911229!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x39e8b0a8fabfbb31%3A0x325a7a601464b3ce!2sJaljala%20Secondary%20School%20Bihibare!5e1!3m2!1sen!2snp!4v1784800073222!5m2!1sen!2snp" width="100%" height="200" style="border:0;" allowfullscreen="" loading="lazy" referrerpolicy="strict-origin-when-cross-origin"></iframe>
+
+            </div>
 
         </div>
 
