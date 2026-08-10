@@ -1,0 +1,81 @@
+<footer>
+  <div class="container">
+    <div class="row g-4">
+      <!-- Col 1: School Overview -->
+      <div class="col-lg-4 col-md-6">
+        <h5>Shree Jaljala Secondary School</h5>
+        <p class="small text-muted mb-3" style="color: #cbd5e1 !important;">
+          Affiliated with the Government of Nepal (Ministry of Education). Providing quality public secondary education from Class Nursery up to Class 10 (SEE level) in Panchkhapan Municipality-7, Bihibare, Sankhuwasabha.
+        </p>
+        <div class="d-flex gap-3 social-icons fs-5">
+          <a href="{{ settings.facebook_url|default:'https://facebook.com' }}" target="_blank" class="text-white"><i class="fa-brands fa-facebook-f"></i></a>
+          <a href="{{ settings.instagram_url|default:'https://instagram.com' }}" target="_blank" class="text-white"><i class="fa-brands fa-instagram"></i></a>
+          <a href="{{ settings.youtube_url|default:'https://youtube.com' }}" target="_blank" class="text-white"><i class="fa-brands fa-youtube"></i></a>
+        </div>
+      </div>
+
+      <!-- Col 2: Quick Links -->
+      <div class="col-lg-2 col-md-6">
+        <h5>Quick Links</h5>
+        <ul class="list-unstyled d-flex flex-column gap-2 small">
+          <li><a href="/"><i class="fa-solid fa-angle-right me-1 text-warning"></i> Home</a></li>
+          <li><a href="/about"><i class="fa-solid fa-angle-right me-1 text-warning"></i> About School</a></li>
+          <li><a href="/programs"><i class="fa-solid fa-angle-right me-1 text-warning"></i> Programs (Class 1-10)</a></li>
+          <li><a href="/teachers"><i class="fa-solid fa-angle-right me-1 text-warning"></i> Faculty & Staff</a></li>
+          <li><a href="/gallery"><i class="fa-solid fa-angle-right me-1 text-warning"></i> Photo Gallery</a></li>
+        </ul>
+      </div>
+
+      <!-- Col 3: Student & Parent Corner -->
+      <div class="col-lg-3 col-md-6">
+        <h5>Student Corner</h5>
+        <ul class="list-unstyled d-flex flex-column gap-2 small">
+          <li><a href="/notices"><i class="fa-solid fa-angle-right me-1 text-warning"></i> Latest Notices & Exams</a></li>
+          <li><a href="/admission"><i class="fa-solid fa-angle-right me-1 text-warning"></i> Online Admission Form</a></li>
+          <li><a href="/downloads"><i class="fa-solid fa-angle-right me-1 text-warning"></i> Syllabus & Routines</a></li>
+          <li><a href="/facilities"><i class="fa-solid fa-angle-right me-1 text-warning"></i> Science & Tech Labs</a></li>
+          <li><a href="/admin"><i class="fa-solid fa-angle-right me-1 text-warning"></i> Admin Portal Login</a></li>
+        </ul>
+      </div>
+
+      <!-- Col 4: Contact Info -->
+      <div class="col-lg-3 col-md-6">
+        <h5>Contact Us</h5>
+        <ul class="list-unstyled d-flex flex-column gap-2 small text-muted" style="color: #cbd5e1 !important;">
+          <li><i class="fa-solid fa-location-dot me-2 text-warning"></i> {{ settings.address|default:"Panchkhapan Municipality-7, Bihibare, Sankhuwasabha, Nepal" }}</li>
+          <li><i class="fa-solid fa-phone me-2 text-warning"></i> {{ settings.phone|default:"+977-9842000000 / +977-9800000000" }}</li>
+          <li><i class="fa-solid fa-envelope me-2 text-warning"></i> {{ settings.email|default:"info@shreejaljala.edu.np" }}</li>
+          <li><i class="fa-solid fa-clock me-2 text-warning"></i> Sun - Fri: 10:00 AM - 4:00 PM</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="footer-bottom d-flex flex-wrap justify-content-between align-items-center text-center text-md-start">
+      <p class="mb-0">&copy; 2026 Shree Jaljala Secondary School. All Rights Reserved.</p>
+      <p class="mb-0 text-muted small" style="color: #cbd5e1 !important;">
+        Design & Developed by <a href="https://bibid-thapa.com.np" target="_blank" rel="noopener noreferrer" class="text-warning fw-bold text-decoration-none hover-underline">Bibid Thapa</a>
+      </p>
+    </div>
+  </div>
+</footer>
+
+
+<!-- Back to Top Button -->
+<button id="back-to-top" title="Back to top">
+  <i class="fa-solid fa-arrow-up"></i>
+</button>
+
+<!-- Lightbox Modal -->
+<div class="modal fade lightbox-modal" id="lightboxModal" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered modal-lg">
+    <div class="modal-content text-center">
+      <div class="modal-header border-0 pb-0">
+        <h5 class="modal-title text-white" id="lightboxTitle">Image Preview</h5>
+        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <img id="lightboxImage" src="" alt="Gallery Preview" class="img-fluid shadow-lg">
+      </div>
+    </div>
+  </div>
+</div>

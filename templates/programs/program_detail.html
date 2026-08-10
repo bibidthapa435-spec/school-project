@@ -1,0 +1,81 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}{{ program.name }} | Shree Jaljala Secondary School{% endblock %}
+
+{% block content %}
+<div class="bg-primary text-white py-4 mb-4" style="background-color: var(--primary-navy) !important;">
+  <div class="container">
+    <nav aria-label="breadcrumb">
+      <ol class="breadcrumb mb-2 text-white opacity-75 small">
+        <li class="breadcrumb-item"><a href="/" class="text-white">Home</a></li>
+        <li class="breadcrumb-item"><a href="/programs" class="text-white">Programs</a></li>
+        <li class="breadcrumb-item active text-warning" aria-current="page">{{ program.name }}</li>
+      </ol>
+    </nav>
+    <h1 class="fw-bold fs-3 mb-1">{{ program.name }}</h1>
+    <p class="mb-0 text-light opacity-75">Offered by Shree Jaljala Secondary School, Panchkhapan-7</p>
+  </div>
+</div>
+
+<div class="container py-4">
+  <div class="row g-4">
+    <div class="col-lg-8">
+      <div class="card custom-card p-4 mb-4">
+        <img src="{{ program.image.url|default:'/media/programs/image 1.jpg' }}" alt="{{ program.name }}" class="img-fluid rounded-3 mb-4 w-100" style="max-height: 400px; object-fit: cover;">
+        
+        <h4 class="fw-bold text-navy mb-3" style="color: #0b2545;">Program Overview</h4>
+        <div class="fs-6 text-secondary lh-lg mb-4" style="white-space: pre-line;">
+          {{ program.description }}
+        </div>
+
+        <div class="row g-3 bg-light p-3 rounded-3 mb-4">
+          <div class="col-sm-6">
+            <h6 class="fw-bold text-navy mb-1"><i class="fa-solid fa-graduation-cap text-warning me-1"></i> Eligibility Prerequisites</h6>
+            <p class="small text-secondary mb-0">{{ program.eligibility }}</p>
+          </div>
+          <div class="col-sm-6">
+            <h6 class="fw-bold text-navy mb-1"><i class="fa-solid fa-hand-holding-dollar text-warning me-1"></i> Fee & Scholarship Status</h6>
+            <p class="small text-secondary mb-0">{{ program.fee }}</p>
+          </div>
+          <div class="col-sm-6">
+            <h6 class="fw-bold text-navy mb-1"><i class="fa-solid fa-clock text-warning me-1"></i> Academic Duration</h6>
+            <p class="small text-secondary mb-0">{{ program.duration }}</p>
+          </div>
+          <div class="col-sm-6">
+            <h6 class="fw-bold text-navy mb-1"><i class="fa-solid fa-certificate text-warning me-1"></i> Examination Board</h6>
+            <p class="small text-secondary mb-0">Government of Nepal / National Examination Board (Class 8 & SEE)</p>
+          </div>
+        </div>
+
+        <div class="d-flex gap-3">
+          <a href="/admission" class="btn btn-gold">
+            Apply for Admission Online <i class="fa-solid fa-arrow-right ms-1"></i>
+          </a>
+          <a href="/programs" class="btn btn-outline-secondary">
+            Back to All Programs
+          </a>
+        </div>
+      </div>
+    </div>
+
+    <!-- Sidebar: Other Programs -->
+    <div class="col-lg-4">
+      <div class="card custom-card p-4">
+        <h5 class="fw-bold text-navy mb-3" style="color: #0b2545;">Other Academic Offerings</h5>
+        <div class="d-flex flex-column gap-3">
+          {% if other_programs %}
+            {% for op in other_programs %}
+              <div class="pb-3 border-bottom">
+                <h6 class="fw-bold text-dark mb-1 small">{{ op.name }}</h6>
+                <p class="text-muted small mb-1">{{ op.duration }}</p>
+                <a href="/programs/{{ op.slug }}" class="small text-primary font-weight-bold">View Program &raquo;</a>
+              </div>
+            {% endfor %}
+          {% endif %}
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

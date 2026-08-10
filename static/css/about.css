@@ -1,0 +1,28 @@
+/* About Page Styling */
+.about-hero-header {
+  background: linear-gradient(135deg, #0b2545 0%, #133c55 100%);
+  color: #ffffff;
+  padding: 60px 0;
+  text-align: center;
+}
+
+.about-card {
+  border: 1px solid #e2e8f0;
+  border-radius: 12px;
+  padding: 24px;
+  background-color: #ffffff;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.03);
+}
+
+.about-card .icon-box {
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  background-color: rgba(245, 158, 11, 0.15);
+  color: #d97706;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.5rem;
+  margin-bottom: 16px;
+}

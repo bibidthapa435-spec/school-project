@@ -1,0 +1,113 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Infrastructure & Facilities | Shree Jaljala Secondary School{% endblock %}
+
+{% block content %}
+<div class="bg-primary text-white py-4 mb-4" style="background-color: var(--primary-navy) !important;">
+  <div class="container">
+    <h1 class="fw-bold mb-1">Infrastructure & Facilities</h1>
+    <p class="mb-0 text-light opacity-75">Supporting student growth with science labs, computer rooms, library, sports ground, and nutritious meals.</p>
+  </div>
+</div>
+
+<div class="container py-4">
+  <div class="row g-4">
+    <!-- Facility 1: Computer Lab -->
+    <div class="col-md-6">
+      <div class="card custom-card h-100 p-4">
+        <div class="d-flex align-items-center gap-3 mb-3">
+          <div class="bg-primary text-white p-3 rounded-3 fs-3" style="background-color: var(--primary-navy) !important;"><i class="fa-solid fa-laptop-code"></i></div>
+          <div>
+            <h4 class="fw-bold text-navy mb-0" style="color: #0b2545;">Computer Workstation Lab</h4>
+            <span class="badge bg-info text-dark">Digital Literacy</span>
+          </div>
+        </div>
+        <p class="text-secondary small lh-lg">
+          Equipped with desktop computers and basic digital learning resources. Students from Class 4 to Class 10 receive hands-on computer training in typing, document editing, spreadsheets, and safe internet browsing.
+        </p>
+      </div>
+    </div>
+
+    <!-- Facility 2: Science Laboratory -->
+    <div class="col-md-6">
+      <div class="card custom-card h-100 p-4">
+        <div class="d-flex align-items-center gap-3 mb-3">
+          <div class="bg-primary text-white p-3 rounded-3 fs-3" style="background-color: var(--primary-navy) !important;"><i class="fa-solid fa-flask-vial"></i></div>
+          <div>
+            <h4 class="fw-bold text-navy mb-0" style="color: #0b2545;">Practical Science Laboratory</h4>
+            <span class="badge bg-success">Physics, Chem & Biology</span>
+          </div>
+        </div>
+        <p class="text-secondary small lh-lg">
+          Features microscopes, chemical apparatus, physics test instruments, and biological specimen models to help Class 9 and 10 students conduct practical experiments for SEE board preparations.
+        </p>
+      </div>
+    </div>
+
+    <!-- Facility 3: Library & Reading Corner -->
+    <div class="col-md-6">
+      <div class="card custom-card h-100 p-4">
+        <div class="d-flex align-items-center gap-3 mb-3">
+          <div class="bg-primary text-white p-3 rounded-3 fs-3" style="background-color: var(--primary-navy) !important;"><i class="fa-solid fa-book-open"></i></div>
+          <div>
+            <h4 class="fw-bold text-navy mb-0" style="color: #0b2545;">School Library & Reading Room</h4>
+            <span class="badge bg-warning text-dark">Books & Reference</span>
+          </div>
+        </div>
+        <p class="text-secondary small lh-lg">
+          Houses over 2,500 books including Nepalese literature, reference encyclopedias, SEE question banks, storybooks for primary children, and daily newspapers.
+        </p>
+      </div>
+    </div>
+
+    <!-- Facility 4: Sports Ground & Physical Fitness -->
+    <div class="col-md-6">
+      <div class="card custom-card h-100 p-4">
+        <div class="d-flex align-items-center gap-3 mb-3">
+          <div class="bg-primary text-white p-3 rounded-3 fs-3" style="background-color: var(--primary-navy) !important;"><i class="fa-solid fa-volleyball"></i></div>
+          <div>
+            <h4 class="fw-bold text-navy mb-0" style="color: #0b2545;">Playground & Sports Grounds</h4>
+            <span class="badge bg-danger">Football, Volleyball & Track</span>
+          </div>
+        </div>
+        <p class="text-secondary small lh-lg">
+          Spacious playground facilities for volleyball court, football practice, athletics sprints, badminton, and physical fitness assemblies under qualified sports instructors.
+        </p>
+      </div>
+    </div>
+
+    <!-- Facility 5: Primary Midday Meal Program -->
+    <div class="col-md-6">
+      <div class="card custom-card h-100 p-4">
+        <div class="d-flex align-items-center gap-3 mb-3">
+          <div class="bg-primary text-white p-3 rounded-3 fs-3" style="background-color: var(--primary-navy) !important;"><i class="fa-solid fa-bowl-food"></i></div>
+          <div>
+            <h4 class="fw-bold text-navy mb-0" style="color: #0b2545;">Primary Midday Meal Program</h4>
+            <span class="badge bg-primary">Government Subsidized</span>
+          </div>
+        </div>
+        <p class="text-secondary small lh-lg">
+          Freshly prepared hygienic midday meals (Diba Khaja) served daily to students in Class Nursery to Class 5 to support childhood nutrition and active learning.
+        </p>
+      </div>
+    </div>
+
+    <!-- Facility 6: Safe Environment & Purified Water -->
+    <div class="col-md-6">
+      <div class="card custom-card h-100 p-4">
+        <div class="d-flex align-items-center gap-3 mb-3">
+          <div class="bg-primary text-white p-3 rounded-3 fs-3" style="background-color: var(--primary-navy) !important;"><i class="fa-solid fa-faucet-drip"></i></div>
+          <div>
+            <h4 class="fw-bold text-navy mb-0" style="color: #0b2545;">Clean Drinking Water & Sanitation</h4>
+            <span class="badge bg-secondary">Hygienic Restrooms</span>
+          </div>
+        </div>
+        <p class="text-secondary small lh-lg">
+          Filtered drinking water stations across campus and clean, separate gender-wise restrooms with first-aid emergency medical care kit.
+        </p>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

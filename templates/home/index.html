@@ -1,0 +1,358 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Shree Jaljala Secondary School | Panchkhapan, Sankhuwasabha{% endblock %}
+
+{% block content %}
+{% if activePopup and activePopup.is_active %}
+<!-- Homepage Notice Popup Modal -->
+<div class="modal fade" id="noticePopupModal" tabindex="-1" aria-labelledby="noticePopupModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered modal-lg">
+    <div class="modal-content border-0 shadow-lg overflow-hidden" style="border-radius: 16px;">
+      <div class="modal-header text-white py-3 px-4" style="background-color: #0b2545;">
+        <div class="d-flex align-items-center gap-2">
+          <i class="fa-solid fa-bullhorn text-warning fs-4 me-1"></i>
+          <div>
+            <h5 class="modal-title fw-bold text-white mb-0" id="noticePopupModalLabel">{{ activePopup.title }}</h5>
+            <small class="text-light opacity-75">{{ activePopup.subtitle|default:"Shree Jaljala Secondary School Notice" }}</small>
+          </div>
+        </div>
+        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body p-4">
+        {% if activePopup.image and activePopup.image.url %}
+          <div class="text-center mb-3">
+            <img src="{{ activePopup.image.url }}" alt="{{ activePopup.title }}" class="img-fluid rounded-3 shadow-sm" style="max-height: 340px; object-fit: contain; width: 100%;" onerror="this.style.display='none'">
+          </div>
+        {% endif %}
+        <p class="fs-6 text-dark leading-relaxed mb-0">
+          {{ activePopup.message }}
+        </p>
+      </div>
+      <div class="modal-footer bg-light px-4 py-3 justify-content-between">
+        <button type="button" class="btn btn-outline-secondary px-4 fw-semibold" data-bs-dismiss="modal">Close Notice</button>
+        {% if activePopup.button_text %}
+          <a href="{{ activePopup.button_url|default:'/admission' }}" class="btn btn-warning text-dark font-weight-bold px-4 shadow-sm">
+            {{ activePopup.button_text }} <i class="fa-solid fa-arrow-right ms-1"></i>
+          </a>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+</div>
+{% endif %}
+
+<!-- Hero Slider Section -->
+{% if sliders %}
+<div id="heroCarousel" class="carousel slide hero-carousel carousel-fade" data-bs-ride="carousel" data-bs-interval="5000">
+  <div class="carousel-indicators">
+    {% for slider in sliders %}
+      <button type="button" data-bs-target="#heroCarousel" data-bs-slide-to="{{ forloop.counter0 }}" class="{% if forloop.first %}active{% endif %}" aria-current="{% if forloop.first %}true{% else %}false{% endif %}"></button>
+    {% endfor %}
+  </div>
+
+  <div class="carousel-inner">
+    {% for slider in sliders %}
+      <div class="carousel-item {% if forloop.first %}active{% endif %}">
+        <img src="{{ slider.image.url|default:'/static/images/slider1.jpg' }}" alt="{{ slider.title }}" class="d-block w-100" onerror="this.onerror=null; this.src='/static/images/slider1.jpg';">
+        <div class="hero-overlay" style="background-color: {{ slider.overlay_color|default:'#0b1b2b' }}; opacity: {{ slider.overlay_opacity|default:0.5 }};"></div>
+        <div class="container hero-caption-wrapper">
+          <div class="hero-overlay d-flex align-items-center">
+            <div class="container">
+              <div class="hero-caption">
+                <span class="badge bg-warning text-dark px-3 py-2 fs-6 mb-3 font-weight-bold">
+                  {{ slider.subtitle|default:"Affiliated by Government of Nepal" }}
+                </span>
+                <h1>{{ slider.title }}</h1>
+                <p>{{ slider.description }}</p>
+                {% if slider.button_text %}
+                  <a href="{{ slider.button_url }}" class="btn btn-gold btn-lg shadow-sm">
+                    {{ slider.button_text }} <i class="fa-solid fa-arrow-right me-1"></i>
+                  </a>
+                {% endif %}
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    {% endfor %}
+  </div>
+
+  <button class="carousel-control-prev" type="button" data-bs-target="#heroCarousel" data-bs-slide="prev">
+    <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+    <span class="visually-hidden">Previous</span>
+  </button>
+  <button class="carousel-control-next" type="button" data-bs-target="#heroCarousel" data-bs-slide="next">
+    <span class="carousel-control-next-icon" aria-hidden="true"></span>
+    <span class="visually-hidden">Next</span>
+  </button>
+</div>
+{% endif %}
+
+<!-- Welcome & Overview Section -->
+<section class="py-5" id="about-section">
+  <div class="container">
+    <div class="row align-items-center g-5">
+      <div class="col-lg-6" data-aos="fade-right">
+        <span class="text-warning fw-bold text-uppercase tracking-wide" style="color: #d4af37 !important;">
+          <i class="fa-solid fa-graduation-cap me-1"></i> Welcome to Jaljala Secondary School
+        </span>
+        <h2 class="display-6 fw-bold mt-2 text-navy" style="color: #0b2545;">
+          Empowering Young Minds from Nursery to Class 10 (SEE)
+        </h2>
+        <p class="lead text-muted mt-3">
+          Established in 2045 B.S. (1988 A.D.), Shree Jaljala Secondary School is a leading public educational institution located in Panchkhapan Municipality-7, Bihibare, Sankhuwasabha, Nepal.
+        </p>
+        <p class="text-secondary">
+          Our school provides holistic basic and secondary education (Classes Nursery to 10), combining academic excellence, practical science laboratories, computer digital literacy, and traditional cultural values. We aim to prepare students to succeed in the Secondary Education Examination (SEE) and beyond.
+        </p>
+        <div class="d-flex gap-3 mt-4">
+          <a href="/about" class="btn btn-navy">
+            Read Full History <i class="fa-solid fa-circle-chevron-right ms-1"></i>
+          </a>
+          <a href="/admission" class="btn btn-gold">
+            Enroll Your Child <i class="fa-solid fa-pen-to-square ms-1"></i>
+          </a>
+        </div>
+      </div>
+
+      <div class="col-lg-6" data-aos="fade-left">
+        <div class="position-relative">
+          <img src="/static/images/image/firstphoto.jpg" alt="Jaljala School Campus" class="img-fluid rounded-4 shadow-lg w-100" onerror="this.src='/media/slider/slide_1.jpg'">
+          <div class="position-absolute bottom-0 start-0 bg-warning text-dark p-3 m-3 rounded-3 shadow font-weight-bold">
+            <i class="fa-solid fa-award fa-2x me-2 align-middle"></i>
+            <span class="align-middle">38+ Years of Educational Legacy (Estd. 2045 B.S.)</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Principal Message Card Section -->
+{% if principal %}
+<section class="py-5 bg-light" data-aos="fade-up">
+  <div class="container">
+    <div class="custom-card p-4 p-md-5">
+      <div class="row align-items-center g-4">
+        <div class="col-md-4 text-center" data-aos="fade-right">
+          <img src="{{ principal.photo.url|default:'/media/teachers/govinda shrestha.jpg' }}" alt="{{ principal.name }}" class="img-fluid rounded-circle shadow" style="width: 200px; height: 200px; object-fit: cover; border: 5px solid var(--accent-gold);">
+          <h5 class="fw-bold mt-3 text-navy mb-1" style="color: #0b2545;">{{ principal.name }}</h5>
+          <p class="text-muted small mb-0">{{ principal.position }}</p>
+          <span class="badge bg-secondary mt-1">{{ principal.qualification }}</span>
+        </div>
+        <div class="col-md-8" data-aos="fade-left">
+          <div class="badge bg-primary mb-2 px-3 py-2">Message from the Principal</div>
+          <h3 class="fw-bold text-navy mb-3" style="color: #0b2545;">"Building Character, Curiosity & Academic Excellence"</h3>
+          <blockquote class="blockquote fs-6 text-secondary italic">
+            "Dear Parents, Students, and Well-Wishers, Welcome to Shree Jaljala Secondary School. Education is not merely acquiring knowledge, but molding character, nurturing critical thinking, and instilling strong moral values. At Jaljala, our dedicated teachers foster a safe, inclusive, and inspiring environment for every child from Nursery to Class 10."
+          </blockquote>
+          <a href="/principal-message" class="btn btn-outline-dark btn-sm mt-2">
+            Read Full Principal Message <i class="fa-solid fa-arrow-right ms-1"></i>
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+{% endif %}
+
+<!-- School Statistics Section -->
+<section class="py-5" style="background-color: var(--primary-navy);" data-aos="zoom-in">
+  <div class="container">
+    <div class="row g-4 text-center">
+      <div class="col-md-3 col-6" data-aos="zoom-in" data-aos-delay="100">
+        <div class="stat-box">
+          <i class="fa-solid fa-user-graduate fa-2x mb-2 text-warning"></i>
+          <div class="stat-number" data-count="550" data-suffix="+">550+</div>
+          <div class="stat-label">Enrolled Students</div>
+        </div>
+      </div>
+      <div class="col-md-3 col-6" data-aos="zoom-in" data-aos-delay="200">
+        <div class="stat-box">
+          <i class="fa-solid fa-chalkboard-user fa-2x mb-2 text-warning"></i>
+          <div class="stat-number" data-count="16" data-suffix="+">16+</div>
+          <div class="stat-label">Qualified Teachers</div>
+        </div>
+      </div>
+      <div class="col-md-3 col-6" data-aos="zoom-in" data-aos-delay="300">
+        <div class="stat-box">
+          <i class="fa-solid fa-award fa-2x mb-2 text-warning"></i>
+          <div class="stat-number" data-count="100" data-suffix="%">100%</div>
+          <div class="stat-label">SEE Pass Rate</div>
+        </div>
+      </div>
+      <div class="col-md-3 col-6" data-aos="zoom-in" data-aos-delay="400">
+        <div class="stat-box">
+          <i class="fa-solid fa-landmark fa-2x mb-2 text-warning"></i>
+          <div class="stat-number" data-count="38" data-suffix=" Yrs">38 Yrs</div>
+          <div class="stat-label">Estd. 2045 B.S.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- School Programs (Class Nursery to Class 10) -->
+<section class="py-5">
+  <div class="container">
+    <div class="section-title" data-aos="fade-up">
+      <h2>Academic Programs (Class Nursery - 10)</h2>
+      <p class="text-muted">Structured education tailored for early childhood, primary, basic, and secondary SEE levels.</p>
+      <div class="divider"></div>
+    </div>
+
+    <div class="row g-4">
+      {% if programs %}
+        {% for program in programs %}
+        <div class="col-lg-4 col-md-6" data-aos="flip-left" data-aos-delay="100">
+          <div class="card custom-card h-100">
+            <div class="card-img-wrapper">
+              <img src="{{ program.image.url|default:'/media/programs/image 1.jpg' }}" alt="{{ program.name }}" class="card-img-top">
+            </div>
+            <div class="card-body d-flex flex-column">
+              <h5 class="card-title fw-bold text-navy" style="color: #0b2545;">{{ program.name }}</h5>
+              <div class="d-flex justify-content-between text-muted small mb-2">
+                <span><i class="fa-regular fa-clock text-warning me-1"></i> {{ program.duration }}</span>
+                <span class="badge bg-success">{{ program.fee }}</span>
+              </div>
+              <p class="card-text text-secondary small flex-grow-1">
+                {{ program.description }}
+              </p>
+              <div class="mt-3">
+                <a href="/programs/{{ program.slug }}" class="btn btn-outline-primary btn-sm w-100">
+                  Program Details <i class="fa-solid fa-arrow-right ms-1"></i>
+                </a>
+              </div>
+            </div>
+          </div>
+        </div>
+        {% endfor %}
+      {% endif %}
+    </div>
+  </div>
+</section>
+
+<!-- Latest Notices Section -->
+<section class="py-5 bg-light">
+  <div class="container">
+    <div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-2" data-aos="fade-up">
+      <div>
+        <h2 class="fw-bold text-navy mb-0" style="color: #0b2545;"><i class="fa-solid fa-bullhorn text-warning me-2"></i> Notice Board & Announcements</h2>
+        <p class="text-muted mb-0">Stay updated with admissions, examination routines, and school events.</p>
+      </div>
+      <a href="/notices" class="btn btn-navy">
+        View All Notices <i class="fa-solid fa-arrow-right ms-1"></i>
+      </a>
+    </div>
+
+    <div class="row g-4">
+      {% if notices %}
+        {% for notice in notices %}
+        <div class="col-md-6 col-lg-4" data-aos="fade-up" data-aos-delay="100">
+          <div class="notice-item h-100 d-flex flex-column justify-content-between">
+            <div>
+              <div class="d-flex justify-content-between align-items-center mb-2">
+                <span class="badge bg-primary text-capitalize">{{ notice.category_display|default:notice.category }}</span>
+              </div>
+              <h5 class="fw-bold text-dark fs-6">{{ notice.title }}</h5>
+              <p class="text-secondary small mb-3">
+                {{ notice.description }}
+              </p>
+            </div>
+            <div>
+              <a href="/notices/{{ notice.slug }}" class="btn btn-link p-0 text-navy font-weight-bold text-decoration-none">
+                Read Notice <i class="fa-solid fa-chevron-right ms-1" style="font-size: 0.8rem;"></i>
+              </a>
+            </div>
+          </div>
+        </div>
+        {% endfor %}
+      {% endif %}
+    </div>
+  </div>
+</section>
+
+<!-- Teachers / Faculty Section -->
+<section class="py-5">
+  <div class="container">
+    <div class="section-title" data-aos="fade-up">
+      <h2>Our Experienced Teachers & Staff</h2>
+      <p class="text-muted">Dedicated educators empowering students in Panchkhapan Municipality.</p>
+      <div class="divider"></div>
+    </div>
+
+    <div class="row g-4">
+      {% if teachers %}
+        {% for teacher in teachers %}
+        <div class="col-lg-3 col-md-4 col-sm-6" data-aos="flip-left" data-aos-delay="100">
+          <div class="card custom-card teacher-card h-100">
+            <img src="{{ teacher.photo.url|default:'/media/teachers/govinda shrestha.jpg' }}" alt="{{ teacher.name }}" class="teacher-photo">
+            <h6 class="fw-bold mb-1 text-navy" style="color: #0b2545;">{{ teacher.name }}</h6>
+            <p class="text-primary small mb-1 fw-semibold">{{ teacher.position }}</p>
+            <p class="text-muted small mb-2">{{ teacher.qualification }}</p>
+            <a href="/teachers/{{ teacher.slug }}" class="btn btn-sm btn-outline-secondary mt-auto">
+              View Profile
+            </a>
+          </div>
+        </div>
+        {% endfor %}
+      {% endif %}
+    </div>
+    <div class="text-center mt-4" data-aos="fade-up">
+      <a href="/teachers" class="btn btn-navy px-4">
+        View All Faculty Members <i class="fa-solid fa-arrow-right ms-1"></i>
+      </a>
+    </div>
+  </div>
+</section>
+
+<!-- Photo Gallery Preview Section -->
+<section class="py-5 bg-light">
+  <div class="container">
+    <div class="section-title" data-aos="fade-up">
+      <h2>School Gallery</h2>
+      <p class="text-muted">Moments from academic activities, Saraswati Puja, and sports events.</p>
+      <div class="divider"></div>
+    </div>
+
+    <div class="row g-3">
+      {% if gallery_items %}
+        {% for item in gallery_items %}
+        <div class="col-lg-3 col-md-4 col-6" data-aos="zoom-in" data-aos-delay="100">
+          <a href="#" class="gallery-lightbox-trigger" data-img="{{ item.image.url }}" data-title="{{ item.title }}">
+            <div class="card custom-card overflow-hidden">
+              <div class="card-img-wrapper" style="height: 180px;">
+                <img src="{{ item.image.url }}" alt="{{ item.title }}" class="img-fluid w-100 h-100 object-fit-cover">
+              </div>
+              <div class="card-body p-2 text-center bg-white">
+                <small class="fw-bold text-dark d-block text-truncate">{{ item.title }}</small>
+              </div>
+            </div>
+          </a>
+        </div>
+        {% endfor %}
+      {% endif %}
+    </div>
+    <div class="text-center mt-4" data-aos="fade-up">
+      <a href="/gallery" class="btn btn-gold px-4">
+        Browse Full Photo Gallery <i class="fa-solid fa-images ms-1"></i>
+      </a>
+    </div>
+  </div>
+</section>
+
+<!-- Google Map Location Section -->
+<section class="py-5 bg-light" data-aos="zoom-in">
+  <div class="container">
+    <div class="section-title">
+      <h2>School Location</h2>
+      <p class="text-muted">Panchkhapan Municipality-7, Bihibare, Sankhuwasabha, Nepal</p>
+      <div class="divider"></div>
+    </div>
+    <div class="rounded-4 overflow-hidden shadow">
+      <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d113500.0000000000!2d87.2000000000000!3d27.5000000000000!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x39e8000000000001%3A0x0!2sPanchkhapan%20Municipality!5e0!3m2!1sen!2snp!4v1700000000000!5m2!1sen!2snp" width="100%" height="380" style="border:0;" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
+    </div>
+  </div>
+</section>
+{% endblock %}

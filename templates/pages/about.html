@@ -1,0 +1,111 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}About Us | Shree Jaljala Secondary School{% endblock %}
+
+{% block content %}
+<div class="bg-primary text-white py-4 mb-4" style="background-color: var(--primary-navy) !important;">
+  <div class="container">
+    <h1 class="fw-bold mb-1">About Shree Jaljala Secondary School</h1>
+    <p class="mb-0 text-light opacity-75">History, Mission, Vision, and Educational Core Values</p>
+  </div>
+</div>
+
+<div class="container py-4">
+  <!-- History & Overview -->
+  <div class="row align-items-center g-5 mb-5">
+    <div class="col-lg-6" data-aos="fade-right">
+      <span class="badge bg-warning text-dark px-3 py-2 mb-2 font-weight-bold">Established 2045 B.S. (1988 A.D.)</span>
+      <h2 class="fw-bold text-navy" style="color: #0b2545;">A Legacy of Educational Service in Panchkhapan</h2>
+      <p class="text-secondary lh-lg">
+        Shree Jaljala Secondary School was founded in 2045 B.S. with the vision of providing accessible, affordable, and high-quality education to children in Panchkhapan Municipality-7, Bihibare, Sankhuwasabha district.
+      </p>
+      <p class="text-secondary lh-lg">
+        Over 38 years, our institution has grown from a local primary school into a comprehensive secondary school offering education from Nursery to Class 10 (SEE level). Our alumni have gone on to pursue successful careers in medicine, engineering, public service, teaching, and entrepreneurship.
+      </p>
+    </div>
+    <div class="col-lg-6" data-aos="fade-left">
+      <img src="/static/images/image/firstphoto.jpg" alt="School History" class="img-fluid rounded-4 shadow w-100" onerror="this.src='/media/slider/slide_1.jpg'">
+    </div>
+  </div>
+
+  <!-- Mission, Vision & Objectives -->
+  <div class="row g-4 mb-5">
+    <div class="col-md-4" data-aos="zoom-in" data-aos-delay="100">
+      <div class="card custom-card p-4 h-100 text-center">
+        <div class="fs-1 text-warning mb-3"><i class="fa-solid fa-bullseye"></i></div>
+        <h4 class="fw-bold text-navy mb-2" style="color: #0b2545;">Our Mission</h4>
+        <p class="text-secondary small">
+          To nurture curious, disciplined, and morally sound individuals by providing engaging classroom instruction, practical science education, computer literacy, and inclusive co-curricular activities.
+        </p>
+      </div>
+    </div>
+
+    <div class="col-md-4" data-aos="zoom-in" data-aos-delay="200">
+      <div class="card custom-card p-4 h-100 text-center">
+        <div class="fs-1 text-warning mb-3"><i class="fa-solid fa-eye"></i></div>
+        <h4 class="fw-bold text-navy mb-2" style="color: #0b2545;">Our Vision</h4>
+        <p class="text-secondary small">
+          To be a benchmark public secondary school in Sankhuwasabha district, empowering every student with knowledge, technology, and leadership skills required to excel in national SEE examinations and life.
+        </p>
+      </div>
+    </div>
+
+    <div class="col-md-4" data-aos="zoom-in" data-aos-delay="300">
+      <div class="card custom-card p-4 h-100 text-center">
+        <div class="fs-1 text-warning mb-3"><i class="fa-solid fa-gem"></i></div>
+        <h4 class="fw-bold text-navy mb-2" style="color: #0b2545;">Core Objectives</h4>
+        <p class="text-secondary small">
+          100% academic SEE success, practical scientific experimentation, digital computer training, sportsmanship, environmental awareness, and preservation of Nepalese cultural traditions.
+        </p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Achievements -->
+  <div class="card custom-card p-4 p-md-5 mb-5 bg-light" data-aos="fade-up">
+    <h3 class="fw-bold text-navy text-center mb-4" style="color: #0b2545;"><i class="fa-solid fa-trophy text-warning me-2"></i> Key School Achievements</h3>
+    <div class="row g-4">
+      <div class="col-md-6" data-aos="flip-left" data-aos-delay="100">
+        <div class="d-flex align-items-start gap-3">
+          <i class="fa-solid fa-circle-check text-success fa-2x mt-1"></i>
+          <div>
+            <h6 class="fw-bold text-dark">Consistently High SEE Pass Rate</h6>
+            <p class="small text-muted">Outperforming regional averages with top GPA scores in Science and Mathematics in Sankhuwasabha district.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="col-md-6" data-aos="flip-left" data-aos-delay="200">
+        <div class="d-flex align-items-start gap-3">
+          <i class="fa-solid fa-circle-check text-success fa-2x mt-1"></i>
+          <div>
+            <h6 class="fw-bold text-dark">Modern Computer Workstation Lab</h6>
+            <p class="small text-muted">Equipped with desktop computers providing basic digital literacy and keyboard skills for Class 4 to 10.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="col-md-6" data-aos="flip-left" data-aos-delay="300">
+        <div class="d-flex align-items-start gap-3">
+          <i class="fa-solid fa-circle-check text-success fa-2x mt-1"></i>
+          <div>
+            <h6 class="fw-bold text-dark">Annual Inter-House Sports Champions</h6>
+            <p class="small text-muted">Active participation in municipal football, volleyball, athletics, and traditional martial arts competitions.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="col-md-6" data-aos="flip-left" data-aos-delay="400">
+        <div class="d-flex align-items-start gap-3">
+          <i class="fa-solid fa-circle-check text-success fa-2x mt-1"></i>
+          <div>
+            <h6 class="fw-bold text-dark">Rich Cultural & Religious Traditions</h6>
+            <p class="small text-muted">Grand annual Saraswati Puja celebrations fostering community harmony and artistic talents among students.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

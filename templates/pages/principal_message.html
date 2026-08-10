@@ -1,0 +1,56 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Principal's Message | Shree Jaljala Secondary School{% endblock %}
+
+{% block content %}
+<div class="bg-primary text-white py-4 mb-4" style="background-color: var(--primary-navy) !important;">
+  <div class="container">
+    <h1 class="fw-bold mb-1">Message from the Principal</h1>
+    <p class="mb-0 text-light opacity-75">Shree Jaljala Secondary School, Panchkhapan Municipality-7</p>
+  </div>
+</div>
+
+<div class="container py-4">
+  <div class="card custom-card p-4 p-md-5">
+    <div class="row g-4 align-items-center mb-4">
+      <div class="col-md-3 text-center">
+        {% if principal %}
+          <img src="{{ principal.photo.url|default:'/media/teachers/govinda shrestha.jpg' }}" alt="{{ principal.name }}" class="img-fluid rounded-circle shadow mb-2" style="width: 180px; height: 180px; object-fit: cover; border: 4px solid var(--accent-gold);">
+          <h5 class="fw-bold text-navy mb-0" style="color: #0b2545;">{{ principal.name }}</h5>
+          <small class="text-muted d-block">{{ principal.position }}</small>
+          <span class="badge bg-secondary mt-1">{{ principal.qualification }}</span>
+        {% else %}
+          <img src="/static/images/image/firstphoto.jpg" alt="Principal" class="img-fluid rounded-circle shadow mb-2" style="width: 180px; height: 180px; object-fit: cover; border: 4px solid var(--accent-gold);">
+          <h5 class="fw-bold text-navy mb-0" style="color: #0b2545;">Govinda Shrestha</h5>
+          <small class="text-muted d-block">Principal</small>
+        {% endif %}
+      </div>
+      <div class="col-md-9">
+        <h3 class="fw-bold text-navy" style="color: #0b2545;">"Educating Hearts and Minds for a Brighter Tomorrow"</h3>
+        <p class="text-muted">Greetings to all parents, guardians, students, and community members.</p>
+        <hr>
+        <div class="fs-6 text-secondary lh-lg">
+          <p>
+            Welcome to Shree Jaljala Secondary School! It gives me immense pride and joy to welcome you to our official school portal. Since our inception in 2045 B.S. (1988 A.D.), our constant endeavor has been to create an educational ecosystem where academic rigor coexists with moral integrity, creative thinking, and sportsmanship.
+          </p>
+          <p>
+            At Jaljala, we cater specifically to students from Class Nursery up to Class 10 (SEE level). Our curriculum adheres strictly to the National Curriculum Framework of Nepal while integrating modern learning tools like computer lab practicals, science experiment demonstrations, and co-curricular house competitions.
+          </p>
+          <p>
+            We strongly believe that every child possesses unique talents. Our team of qualified and passionate teachers is committed to recognizing and nurturing those talents in a safe, disciplined, and supportive atmosphere.
+          </p>
+          <p>
+            I extend my heartfelt gratitude to the management committee, parents, municipal authorities, and alumni for their unwavering trust and support. Together, we shall continue to elevate the standards of education in Panchkhapan Municipality.
+          </p>
+          <p class="fw-bold text-navy mt-4 mb-0" style="color: #0b2545;">
+            Warm Regards,<br>
+            Principal,<br>
+            Shree Jaljala Secondary School
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

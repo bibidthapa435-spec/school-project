@@ -1,0 +1,122 @@
+<!-- Top Contact Bar -->
+<div class="top-bar">
+  <div class="container d-flex flex-wrap justify-content-between align-items-center">
+    <div class="d-flex align-items-center flex-wrap gap-3">
+<span><i class="fa-solid fa-location-dot me-1 text-warning"></i> {{ settings.address|default:"Panchkhapan Municipality-7, Bihibare, Sankhuwasabha, Nepal" }}</span>
+
+<span><i class="fa-solid fa-phone me-1 text-warning"></i> {{ settings.phone|default:"+977-9842000000 / +977-9800000000" }}</span>
+
+<span><i class="fa-solid fa-envelope me-1 text-warning"></i> {{ settings.email|default:"info@shreejaljala.edu.np" }}</span>
+    </div>
+    <div class="d-flex align-items-center gap-3 mt-2 mt-md-0">
+      <div class="social-icons">
+<a href="{{ settings.facebook_url|default:'https://facebook.com' }}" target="_blank" title="Facebook"><i class="fa-brands fa-facebook-f"></i></a>
+<a href="{{ settings.instagram_url|default:'https://instagram.com' }}" target="_blank" title="Instagram"><i class="fa-brands fa-instagram"></i></a>
+<a href="{{ settings.youtube_url|default:'https://youtube.com' }}" target="_blank" title="YouTube"><i class="fa-brands fa-youtube"></i></a>
+      <div class="d-flex align-items-center gap-2 border-start border-secondary ps-3">
+        {% if user.is_authenticated or user %}
+          <span class="text-white small fw-bold"><i class="fa-solid fa-circle-user text-warning me-1 fs-6"></i> {{ user.first_name|default:user.username }}</span>
+          <a href="/logout" class="btn btn-sm btn-outline-light font-weight-bold py-1 px-2" style="font-size: 0.78rem;">
+            <i class="fa-solid fa-right-from-bracket me-1"></i> Logout
+          </a>
+        {% else %}
+          <button class="btn btn-sm btn-gold text-dark font-weight-bold py-1 px-2.5 shadow-sm" style="font-size: 0.78rem;" data-bs-toggle="modal" data-bs-target="#authModal">
+            <i class="fa-solid fa-right-to-bracket me-1"></i> LOGIN / REGISTER
+          </button>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- College / School Main Header -->
+<div class="brand-header">
+  <div class="container d-flex justify-content-between align-items-center flex-wrap gap-3">
+    <div class="d-flex align-items-center gap-3">
+      <img src="{{ settings.logo_url|default:'/static/images/logo.png' }}" alt="{{ settings.school_name|default:'Shree Jaljala Secondary School' }} Logo" class="school-logo" onerror="this.onerror=null; this.src='/static/images/logo.png';">
+      <div>
+        <h1 class="school-title mb-0">श्री जलजला माध्यमिक विद्यालय</h1>
+        <div class="school-subtitle">SHREE JALJALA SECONDARY SCHOOL</div>
+<small class="text-muted fw-bold">Estd. {{ settings.estd|default:"2045 B.S." }} | Panchkhapan-7, Sankhuwasabha</small>
+      </div>
+    </div>
+    <div class="d-none d-lg-flex align-items-center gap-2">
+      <a href="/admission" class="btn btn-gold shadow-sm">
+        <i class="fa-solid fa-file-pen me-2"></i> ONLINE ADMISSION
+      </a>
+    </div>
+  </div>
+</div>
+
+<!-- Navigation Bar -->
+<nav class="navbar navbar-expand-lg navbar-dark navbar-custom sticky-top">
+  <div class="container">
+    <a class="navbar-brand d-lg-none font-weight-bold text-white" href="/">
+      Jaljala Secondary School
+    </a>
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#mainNavbar" aria-controls="mainNavbar" aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+
+    <div class="collapse navbar-collapse" id="mainNavbar">
+      <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+        <li class="nav-item">
+          <a class="nav-link {% if request.path == '/' or path == '/' %}active{% endif %}" href="/">
+            <i class="fa-solid fa-house me-1"></i> HOME
+          </a>
+        </li>
+        <li class="nav-item dropdown">
+          <a class="nav-link dropdown-toggle {% if 'about' in request.path or 'principal' in request.path or 'facilities' in request.path or 'about' in path %}active{% endif %}" href="#" id="aboutDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+            ABOUT US
+          </a>
+          <ul class="dropdown-menu" aria-labelledby="aboutDropdown">
+            <li><a class="dropdown-item" href="/about">School History & Mission</a></li>
+            <li><a class="dropdown-item" href="/principal-message">Principal's Message</a></li>
+            <li><a class="dropdown-item" href="/facilities">Infrastructure & Facilities</a></li>
+          </ul>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link {% if 'program' in request.path or 'program' in path %}active{% endif %}" href="/programs">
+            PROGRAMS (NURSERY - CLASS 10)
+          </a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link {% if 'teacher' in request.path or 'teacher' in path %}active{% endif %}" href="/teachers">
+            TEACHERS
+          </a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link {% if 'gallery' in request.path or 'gallery' in path %}active{% endif %}" href="/gallery">
+            GALLERY
+          </a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link {% if 'notice' in request.path or 'notice' in path %}active{% endif %}" href="/notices">
+            NOTICES
+          </a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link {% if 'admission' in request.path or 'admission' in path %}active{% endif %}" href="/admission">
+            ADMISSION
+          </a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link {% if 'download' in request.path or 'download' in path %}active{% endif %}" href="/downloads">
+            DOWNLOADS
+          </a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link {% if 'contact' in request.path or 'contact' in path %}active{% endif %}" href="/contact">
+            CONTACT
+          </a>
+        </li>
+      </ul>
+      <div class="d-flex align-items-center">
+        <a href="/admin" class="btn btn-sm btn-gold text-dark font-weight-bold ms-2">
+          <i class="fa-solid fa-lock me-1"></i> Admin Dashboard
+        </a>
+      </div>
+    </div>
+  </div>
+</nav>
+ 

@@ -1,0 +1,79 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Notices & Announcements | Shree Jaljala Secondary School{% endblock %}
+
+{% block content %}
+<div class="bg-primary text-white py-4 mb-4" style="background-color: var(--primary-navy) !important;">
+  <div class="container">
+    <h1 class="fw-bold mb-1">Notice Board & Announcements</h1>
+    <p class="mb-0 text-light opacity-75">Stay updated with academic notices, exam routines, admissions, and event schedules.</p>
+  </div>
+</div>
+
+<div class="container py-4">
+  <!-- Search & Category Filter Form -->
+  <div class="card custom-card p-3 mb-4">
+    <form method="GET" action="/notices" class="row g-3 align-items-center">
+      <div class="col-md-5">
+        <div class="input-group">
+          <span class="input-group-text bg-white"><i class="fa-solid fa-magnifying-glass text-muted"></i></span>
+          <input type="text" name="q" class="form-control" placeholder="Search notices by keyword..." value="{{ query }}">
+        </div>
+      </div>
+      <div class="col-md-4">
+        <select name="category" class="form-select">
+          <option value="">All Notice Categories</option>
+          {% if categories %}
+            {% for cat in categories %}
+              <option value="{{ cat.0 }}" {% if selected_category == cat.0 %}selected{% endif %}>{{ cat.1 }}</option>
+            {% endfor %}
+          {% endif %}
+        </select>
+      </div>
+      <div class="col-md-3 d-flex gap-2">
+        <button type="submit" class="btn btn-navy flex-grow-1"><i class="fa-solid fa-filter me-1"></i> Filter</button>
+        {% if query or selected_category %}
+          <a href="/notices" class="btn btn-outline-secondary"><i class="fa-solid fa-rotate-left"></i> Reset</a>
+        {% endif %}
+      </div>
+    </form>
+  </div>
+
+  <p class="text-muted mb-4">Showing {{ page_obj|length|default:notices|length }} notice(s)</p>
+
+  <div class="row g-4">
+    {% if page_obj or notices %}
+      {% for notice in page_obj|default:notices %}
+      <div class="col-md-6 col-lg-4">
+        <div class="notice-item h-100 d-flex flex-column justify-content-between">
+          <div>
+            {% if notice.image %}
+              <img src="{{ notice.image.url }}" alt="{{ notice.title }}" class="img-fluid rounded mb-3 w-100" style="height: 160px; object-fit: cover;">
+            {% endif %}
+            <div class="d-flex justify-content-between align-items-center mb-2">
+              <span class="badge bg-primary text-capitalize">{{ notice.category_display|default:notice.category }}</span>
+            </div>
+            <h5 class="fw-bold text-dark fs-6">{{ notice.title }}</h5>
+            <p class="text-secondary small mb-3">
+              {{ notice.description }}
+            </p>
+          </div>
+          <div>
+            <a href="/notices/{{ notice.slug }}" class="btn btn-navy btn-sm w-100">
+              Read Full Notice <i class="fa-solid fa-arrow-right ms-1"></i>
+            </a>
+          </div>
+        </div>
+      </div>
+      {% endfor %}
+    {% else %}
+      <div class="col-12 text-center py-5">
+        <i class="fa-solid fa-folder-open fa-3x text-muted mb-3"></i>
+        <h5 class="text-secondary">No notices found matching your search criteria.</h5>
+        <a href="/notices" class="btn btn-outline-primary mt-2">View All Notices</a>
+      </div>
+    {% endif %}
+  </div>
+</div>
+{% endblock %}

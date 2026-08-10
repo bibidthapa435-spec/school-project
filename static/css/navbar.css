@@ -1,0 +1,92 @@
+/* Navbar styling for Shree Jaljala Secondary School */
+.top-bar {
+  background-color: #081a2e;
+  color: #d1d5db;
+  font-size: 0.85rem;
+  padding: 8px 0;
+}
+
+.top-bar a {
+  color: #e5e7eb;
+  text-decoration: none;
+  transition: color 0.2s;
+}
+
+.top-bar a:hover {
+  color: #f59e0b;
+}
+
+.main-navbar {
+  background-color: #0b2545;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+  padding: 14px 0;
+  transition: padding 0.4s cubic-bezier(0.16, 1, 0.3, 1), background-color 0.4s ease, box-shadow 0.4s ease, transform 0.3s ease;
+  z-index: 1030;
+}
+
+.main-navbar.navbar-scrolled {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  background-color: rgba(11, 37, 69, 0.95) !important;
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  padding: 8px 0 !important;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.25);
+  animation: navbarSlideDown 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+.main-navbar .navbar-brand img {
+  height: 52px;
+  width: auto;
+  object-fit: contain;
+  transition: height 0.3s ease;
+}
+
+.main-navbar.navbar-scrolled .navbar-brand img {
+  height: 42px;
+}
+
+@keyframes navbarSlideDown {
+  0% {
+    transform: translateY(-100%);
+    opacity: 0;
+  }
+  100% {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+.main-navbar .nav-link {
+  color: #ffffff;
+  font-weight: 500;
+  padding: 8px 16px !important;
+  border-radius: 6px;
+  transition: all 0.2s ease;
+}
+
+.main-navbar .nav-link:hover,
+.main-navbar .nav-link.active {
+  background-color: rgba(245, 158, 11, 0.15);
+  color: #f59e0b !important;
+}
+
+.main-navbar .dropdown-menu {
+  border: none;
+  border-radius: 8px;
+  box-shadow: 0 10px 25px rgba(0,0,0,0.15);
+  background-color: #0b2545;
+}
+
+.main-navbar .dropdown-item {
+  color: #e2e8f0;
+  padding: 10px 20px;
+  font-weight: 500;
+}
+
+.main-navbar .dropdown-item:hover {
+  background-color: #f59e0b;
+  color: #0b2545;
+}

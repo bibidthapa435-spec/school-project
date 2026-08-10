@@ -1,0 +1,17 @@
+{% if notices or MARQUEE_NOTICES %}
+<div class="notice-marquee-bar">
+  <div class="container d-flex align-items-center">
+    <span class="notice-badge me-3">
+      <i class="fa-solid fa-bullhorn me-1"></i> LATEST NOTICES
+    </span>
+    <marquee behavior="scroll" direction="left" scrollamount="6" onmouseover="this.stop();" onmouseout="this.start();">
+      {% for notice in notices|default:MARQUEE_NOTICES %}
+        <a href="/notices/{{ notice.slug }}" class="text-dark me-5 text-decoration-none">
+          📢 <strong>{{ notice.title }}</strong>
+        </a>
+      {% endfor %}
+    </marquee>
+  </div>
+</div>
+{% endif %}
+

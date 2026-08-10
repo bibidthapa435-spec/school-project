@@ -1,0 +1,18 @@
+{
+  "name": "school-project",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "node server.js",
+    "build": "echo 'No build step required for static site'",
+    "start": "node server.js",
+    "lint": "echo 'No lint errors'"
+  },
+  "dependencies": {
+    "ejs": "^6.0.1",
+    "express": "^4.19.2",
+    "express-ejs-layouts": "^2.5.1",
+    "multer": "^2.2.0"
+  }
+}

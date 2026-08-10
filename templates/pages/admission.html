@@ -1,0 +1,133 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Online Admission Application | Shree Jaljala Secondary School{% endblock %}
+
+{% block content %}
+<div class="bg-primary text-white py-4 mb-4" style="background-color: var(--primary-navy) !important;">
+  <div class="container">
+    <h1 class="fw-bold mb-1">Online Admission Application Form</h1>
+    <p class="mb-0 text-light opacity-75">Academic Session 2083 B.S. | Class Nursery to Class 10 (SEE)</p>
+  </div>
+</div>
+
+<div class="container py-4">
+  <div class="row justify-content-center">
+    <div class="col-lg-10">
+      <div class="card custom-card p-4 p-md-5">
+        <div class="alert alert-warning border-0 d-flex align-items-center gap-3 mb-4">
+          <i class="fa-solid fa-circle-info fa-2x text-dark"></i>
+          <div class="small">
+            <strong>Notice for Admission Applicants:</strong> Please complete all required fields accurately. Upload student portrait photo and previous grade sheet/birth certificate (PDF or Image). School administration will contact you after reviewing your application.
+          </div>
+        </div>
+
+        <form method="POST" action="/admission" enctype="multipart/form-data">
+          {% csrf_token %}
+          
+          <h5 class="fw-bold text-navy border-bottom pb-2 mb-3" style="color: #0b2545;">
+            <i class="fa-solid fa-user-graduate me-2 text-warning"></i> 1. Student Personal Information
+          </h5>
+          <div class="row g-3 mb-4">
+            <div class="col-md-6">
+              <label class="form-label font-weight-bold">Student Full Name *</label>
+              <input type="text" name="student_name" class="form-control" placeholder="Full Name" required>
+            </div>
+
+            <div class="col-md-3">
+              <label class="form-label font-weight-bold">Date of Birth *</label>
+              <input type="date" name="dob" class="form-control" required>
+            </div>
+
+            <div class="col-md-3">
+              <label class="form-label font-weight-bold">Gender *</label>
+              <select name="gender" class="form-select" required>
+                <option value="male">Male</option>
+                <option value="female">Female</option>
+                <option value="other">Other</option>
+              </select>
+            </div>
+          </div>
+
+          <h5 class="fw-bold text-navy border-bottom pb-2 mb-3" style="color: #0b2545;">
+            <i class="fa-solid fa-users me-2 text-warning"></i> 2. Parent & Contact Details
+          </h5>
+          <div class="row g-3 mb-4">
+            <div class="col-md-6">
+              <label class="form-label font-weight-bold">Father's Full Name *</label>
+              <input type="text" name="father_name" class="form-control" placeholder="Father's Full Name" required>
+            </div>
+
+            <div class="col-md-6">
+              <label class="form-label font-weight-bold">Mother's Full Name *</label>
+              <input type="text" name="mother_name" class="form-control" placeholder="Mother's Full Name" required>
+            </div>
+
+            <div class="col-md-6">
+              <label class="form-label font-weight-bold">Permanent / Current Address *</label>
+              <input type="text" name="address" class="form-control" placeholder="Panchkhapan-7, Bihibare" required>
+            </div>
+
+            <div class="col-md-3">
+              <label class="form-label font-weight-bold">Mobile Phone *</label>
+              <input type="text" name="phone" class="form-control" placeholder="98XXXXXXXX" required>
+            </div>
+
+            <div class="col-md-3">
+              <label class="form-label font-weight-bold">Email Address</label>
+              <input type="email" name="email" class="form-control" placeholder="Email (optional)">
+            </div>
+          </div>
+
+          <h5 class="fw-bold text-navy border-bottom pb-2 mb-3" style="color: #0b2545;">
+            <i class="fa-solid fa-school me-2 text-warning"></i> 3. Academic Details & Document Upload
+          </h5>
+          <div class="row g-3 mb-4">
+            <div class="col-md-6">
+              <label class="form-label font-weight-bold">Class Applying For *</label>
+              <select name="class_applying" class="form-select" required>
+                <option value="Nursery">Class Nursery</option>
+                <option value="LKG">Class LKG</option>
+                <option value="UKG">Class UKG</option>
+                <option value="Class 1">Class 1</option>
+                <option value="Class 2">Class 2</option>
+                <option value="Class 3">Class 3</option>
+                <option value="Class 4">Class 4</option>
+                <option value="Class 5">Class 5</option>
+                <option value="Class 6">Class 6</option>
+                <option value="Class 7">Class 7</option>
+                <option value="Class 8">Class 8</option>
+                <option value="Class 9">Class 9</option>
+                <option value="Class 10">Class 10 (SEE)</option>
+              </select>
+            </div>
+
+            <div class="col-md-6">
+              <label class="form-label font-weight-bold">Previous School Name (if applicable)</label>
+              <input type="text" name="previous_school" class="form-control" placeholder="Previous School Name">
+            </div>
+
+            <div class="col-md-6">
+              <label class="form-label font-weight-bold">Student Passport Photo</label>
+              <input type="file" name="photo" class="form-control" accept="image/*">
+              <small class="text-muted d-block">Upload passport size photo (JPG/PNG)</small>
+            </div>
+
+            <div class="col-md-6">
+              <label class="form-label font-weight-bold">Supporting Document / Grade Sheet</label>
+              <input type="file" name="documents" class="form-control" accept="image/*,.pdf">
+              <small class="text-muted d-block">Upload Birth Certificate or Marksheet (PDF/JPG)</small>
+            </div>
+          </div>
+
+          <div class="mt-4 text-center">
+            <button type="submit" class="btn btn-gold btn-lg px-5 font-weight-bold">
+              <i class="fa-solid fa-paper-plane me-2"></i> Submit Admission Application
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
