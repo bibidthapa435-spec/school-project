@@ -15,9 +15,50 @@
 body {
   font-family: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
   color: var(--dark-text);
-  background-color: #ffffff;
+  background: linear-gradient(180deg, #fcfdff 0%, #f6f9fc 100%);
   overflow-x: hidden;
   line-height: 1.6;
+  scroll-behavior: smooth;
+}
+
+::selection {
+  background: var(--accent-gold);
+  color: var(--primary-navy);
+}
+
+a {
+  transition: color var(--transition-speed), transform var(--transition-speed);
+}
+
+/* Accessibility / contrast fixes */
+.text-muted,
+.text-secondary,
+.card-text.text-secondary,
+.small.text-muted,
+blockquote {
+  color: #374151 !important;
+}
+
+.alert {
+  color: #1f2937 !important;
+}
+
+.alert-success {
+  background-color: #e8f5e9;
+  border-color: #a5d6a7;
+  color: #1b5e20 !important;
+}
+
+.alert-danger {
+  background-color: #ffebee;
+  border-color: #ef9a9a;
+  color: #b71c1c !important;
+}
+
+.alert-info {
+  background-color: #e3f2fd;
+  border-color: #90caf9;
+  color: #0d47a1 !important;
 }
 
 /* Top Bar */
@@ -180,7 +221,56 @@ body {
   margin-bottom: 25px;
 }
 
-/* Feature & Section Headings */
+/* Page Hero / Section Headers */
+.page-hero {
+  position: relative;
+  overflow: hidden;
+  background: linear-gradient(135deg, var(--primary-navy) 0%, var(--secondary-navy) 100%);
+  color: #ffffff;
+  padding: 4.2rem 0;
+  border-bottom: 4px solid var(--accent-gold);
+}
+
+.page-hero::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(circle at top right, rgba(212, 175, 55, 0.24), transparent 28%);
+  pointer-events: none;
+}
+
+.page-hero .container {
+  position: relative;
+  z-index: 1;
+}
+
+.page-hero .eyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  background: rgba(212, 175, 55, 0.16);
+  color: #fef3c7;
+  padding: 0.45rem 0.8rem;
+  border-radius: 999px;
+  font-size: 0.8rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  font-weight: 700;
+  margin-bottom: 1rem;
+}
+
+.page-hero h1 {
+  font-size: clamp(1.8rem, 3.2vw, 2.8rem);
+  font-weight: 800;
+  margin-bottom: 0.7rem;
+}
+
+.page-hero .lead {
+  max-width: 760px;
+  color: rgba(255,255,255,0.9);
+  font-size: 1.02rem;
+}
+
 .section-title {
   text-align: center;
   margin-bottom: 45px;
@@ -195,12 +285,47 @@ body {
   letter-spacing: -0.5px;
 }
 
+.section-title p {
+  color: var(--muted-text);
+  max-width: 700px;
+  margin: 0.35rem auto 0;
+}
+
 .section-title .divider {
   width: 80px;
   height: 4px;
   background-color: var(--accent-gold);
   margin: 12px auto 0;
   border-radius: 2px;
+}
+
+.feature-card {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.9rem;
+  border-radius: 14px;
+  background: #ffffff;
+  padding: 1rem 1rem;
+  box-shadow: var(--card-shadow);
+  border: 1px solid rgba(11, 37, 69, 0.06);
+}
+
+.feature-card i {
+  color: var(--accent-gold);
+  font-size: 1.1rem;
+  margin-top: 0.2rem;
+}
+
+.feature-card h6 {
+  margin-bottom: 0.2rem;
+  color: var(--primary-navy);
+  font-weight: 700;
+}
+
+.feature-card p {
+  margin-bottom: 0;
+  color: var(--muted-text);
+  font-size: 0.95rem;
 }
 
 /* Cards & Hover Effects */
@@ -403,7 +528,16 @@ footer a:hover {
   justify-content: center;
   text-align: center;
   padding: 20px;
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
   transition: opacity 0.6s cubic-bezier(0.16, 1, 0.3, 1), visibility 0.6s ease;
+}
+
+#school-preloader.preloader-overlay.visible {
+  opacity: 1;
+  visibility: visible;
+  pointer-events: auto;
 }
 
 #school-preloader.fade-out {
@@ -415,6 +549,7 @@ footer a:hover {
 .preloader-content {
   max-width: 600px;
   width: 100%;
+  animation: preloaderPopIn 0.9s cubic-bezier(0.22, 1, 0.36, 1) both;
 }
 
 .preloader-school-logo {
@@ -422,6 +557,37 @@ footer a:hover {
   width: auto;
   object-fit: contain;
   filter: drop-shadow(0 2px 6px rgba(0,0,0,0.1));
+  animation: logoPulse 1.6s ease-in-out infinite alternate;
+}
+
+.affiliation-title,
+.english-school-title {
+  opacity: 0;
+  animation: preloaderTextFade 1s ease forwards;
+}
+
+.affiliation-title {
+  animation-delay: 0.35s;
+}
+
+.english-school-title {
+  animation-delay: 0.5s;
+}
+
+@keyframes logoPulse {
+  from { transform: translateY(0); }
+  to { transform: translateY(-8px); }
+}
+
+@keyframes preloaderTextFade {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes preloaderPopIn {
+  0% { transform: translateY(10px) scale(0.96); opacity: 0; }
+  60% { transform: translateY(-4px) scale(1.01); opacity: 1; }
+  100% { transform: translateY(0) scale(1); opacity: 1; }
 }
 
 

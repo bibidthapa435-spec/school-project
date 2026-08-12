@@ -4,10 +4,11 @@
 {% block title %}Principal's Message | Shree Jaljala Secondary School{% endblock %}
 
 {% block content %}
-<div class="bg-primary text-white py-4 mb-4" style="background-color: var(--primary-navy) !important;">
+<div class="page-hero mb-4">
   <div class="container">
+    <div class="eyebrow"><i class="fa-solid fa-chalkboard-user"></i> Leadership Message</div>
     <h1 class="fw-bold mb-1">Message from the Principal</h1>
-    <p class="mb-0 text-light opacity-75">Shree Jaljala Secondary School, Panchkhapan Municipality-7</p>
+    <p class="lead mb-0">A warm message of guidance, values, and commitment to every learner at our school.</p>
   </div>
 </div>
 
@@ -21,8 +22,8 @@
           <small class="text-muted d-block">{{ principal.position }}</small>
           <span class="badge bg-secondary mt-1">{{ principal.qualification }}</span>
         {% else %}
-          <img src="/static/images/image/firstphoto.jpg" alt="Principal" class="img-fluid rounded-circle shadow mb-2" style="width: 180px; height: 180px; object-fit: cover; border: 4px solid var(--accent-gold);">
-          <h5 class="fw-bold text-navy mb-0" style="color: #0b2545;">Govinda Shrestha</h5>
+          <img src="/static/images/image/kamal adhikari.jpg" alt="Principal" class="img-fluid rounded-circle shadow mb-2" style="width: 180px; height: 180px; object-fit: cover; border: 4px solid var(--accent-gold);">
+          <h5 class="fw-bold text-navy mb-0" style="color: #0b2545;">Mr. Kamal Bahadur Adhikari</h5>
           <small class="text-muted d-block">Principal</small>
         {% endif %}
       </div>

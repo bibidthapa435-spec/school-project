@@ -37,11 +37,31 @@ document.addEventListener('DOMContentLoaded', function () {
     }
   };
 
-  // Preloader splash hide
+  // Preloader splash: show on first load and when the Home link is clicked
   const preloader = document.getElementById('school-preloader');
   if (preloader) {
-    setTimeout(window.dismissPreloader, 1500);
+    const shouldShowPreloader = sessionStorage.getItem('show-preloader') === '1' || !sessionStorage.getItem('preloader-seen');
+    if (shouldShowPreloader) {
+      preloader.style.display = 'flex';
+      preloader.classList.add('visible');
+      preloader.classList.remove('fade-out');
+      sessionStorage.setItem('preloader-seen', '1');
+      sessionStorage.removeItem('show-preloader');
+      setTimeout(() => {
+        preloader.classList.add('fade-out');
+        preloader.classList.remove('visible');
+        setTimeout(() => { preloader.style.display = 'none'; }, 650);
+      }, 1850);
+    } else {
+      preloader.style.display = 'none';
+    }
   }
+
+  document.querySelectorAll('a[href="/"]').forEach(link => {
+    link.addEventListener('click', function () {
+      sessionStorage.setItem('show-preloader', '1');
+    });
+  });
 
   // Gallery Lightbox Modal
   const galleryLinks = document.querySelectorAll('.gallery-lightbox-trigger');

@@ -1,0 +1,78 @@
+{% extends "admin/base_site.html" %}
+{% load i18n %}
+
+{% block content %}
+<div class="container-fluid py-4">
+  <div class="row mb-4 align-items-center">
+    <div class="col-md-8 col-12">
+      <h1 class="h3">School Administration Dashboard</h1>
+      <p class="text-muted">Quick access to school content management (Teachers, Notices, Gallery, Programs, Sliders, Downloads).</p>
+    </div>
+    <div class="col-md-4 col-12">
+      <div class="card p-3 d-flex align-items-center" style="gap: 1rem;">
+        <div class="d-flex align-items-center" style="gap: 1rem;">
+          <img src="{{ site_settings.logo_url|default:'/static/images/logo.jpg' }}" alt="{{ site_settings.school_name|default:'School Logo' }}" style="width:64px; height:64px; object-fit:cover; border-radius:16px; border:1px solid rgba(0,0,0,0.08);">
+          <div>
+            <strong>{{ site_settings.school_name|default:'Shree Jaljala Secondary School' }}</strong>
+            <div class="text-muted small">{{ site_settings.tagline|default:'Manage your school site branding here.' }}</div>
+          </div>
+        </div>
+        <a class="btn btn-primary btn-sm" href="{% url 'admin:school_app_sitesettings_change' site_settings.pk %}">Edit School Settings</a>
+      </div>
+    </div>
+  </div>
+
+  <div class="row g-3">
+    <div class="col-md-4">
+      <div class="card p-3">
+        <h5 class="mb-2">Faculty</h5>
+        <p class="text-muted small">Manage teachers and staff profiles.</p>
+        <a class="btn btn-primary btn-sm" href="{% url 'admin:school_app_teacher_changelist' %}">Open Teachers</a>
+      </div>
+    </div>
+
+    <div class="col-md-4">
+      <div class="card p-3">
+        <h5 class="mb-2">Notices</h5>
+        <p class="text-muted small">Publish and manage school notices and attachments.</p>
+        <a class="btn btn-warning btn-sm" href="{% url 'admin:school_app_notice_changelist' %}">Open Notices</a>
+      </div>
+    </div>
+
+    <div class="col-md-4">
+      <div class="card p-3">
+        <h5 class="mb-2">Gallery</h5>
+        <p class="text-muted small">Add or remove gallery photos.</p>
+        <a class="btn btn-info btn-sm" href="{% url 'admin:school_app_galleryphoto_changelist' %}">Open Gallery</a>
+      </div>
+    </div>
+
+    <div class="col-md-4">
+      <div class="card p-3">
+        <h5 class="mb-2">Programs</h5>
+        <p class="text-muted small">Manage academic programs and details.</p>
+        <a class="btn btn-secondary btn-sm" href="{% url 'admin:school_app_program_changelist' %}">Open Programs</a>
+      </div>
+    </div>
+
+    <div class="col-md-4">
+      <div class="card p-3">
+        <h5 class="mb-2">Sliders & Popups</h5>
+        <p class="text-muted small">Configure homepage sliders and popup notices.</p>
+        <a class="btn btn-outline-primary btn-sm me-2" href="{% url 'admin:school_app_slider_changelist' %}">Sliders</a>
+        <a class="btn btn-outline-danger btn-sm" href="{% url 'admin:school_app_popupnotice_changelist' %}">Popups</a>
+      </div>
+    </div>
+
+    <div class="col-md-4">
+      <div class="card p-3">
+        <h5 class="mb-2">Downloads & Requests</h5>
+        <p class="text-muted small">Manage downloadable resources and incoming requests.</p>
+        <a class="btn btn-success btn-sm me-2" href="{% url 'admin:school_app_downloadresource_changelist' %}">Downloads</a>
+        <a class="btn btn-dark btn-sm" href="{% url 'admin:school_app_admissionapplication_changelist' %}">Admissions</a>
+      </div>
+    </div>
+  </div>
+
+</div>
+{% endblock %}

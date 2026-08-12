@@ -100,13 +100,51 @@
         <h2 class="display-6 fw-bold mt-2 text-navy" style="color: #0b2545;">
           Empowering Young Minds from Nursery to Class 10 (SEE)
         </h2>
-        <p class="lead text-muted mt-3">
+        <p class="lead text-secondary mt-3">
           Established in 2045 B.S. (1988 A.D.), Shree Jaljala Secondary School is a leading public educational institution located in Panchkhapan Municipality-7, Bihibare, Sankhuwasabha, Nepal.
         </p>
         <p class="text-secondary">
           Our school provides holistic basic and secondary education (Classes Nursery to 10), combining academic excellence, practical science laboratories, computer digital literacy, and traditional cultural values. We aim to prepare students to succeed in the Secondary Education Examination (SEE) and beyond.
         </p>
-        <div class="d-flex gap-3 mt-4">
+        <div class="row g-3 mt-2">
+          <div class="col-sm-6">
+            <div class="feature-card">
+              <i class="fa-solid fa-book-open"></i>
+              <div>
+                <h6>Holistic Learning</h6>
+                <p>Balanced academics, discipline, and values.</p>
+              </div>
+            </div>
+          </div>
+          <div class="col-sm-6">
+            <div class="feature-card">
+              <i class="fa-solid fa-laptop"></i>
+              <div>
+                <h6>Modern Facilities</h6>
+                <p>Computer, science, library and sports support.</p>
+              </div>
+            </div>
+          </div>
+          <div class="col-sm-6">
+            <div class="feature-card">
+              <i class="fa-solid fa-shield-heart"></i>
+              <div>
+                <h6>Safe Campus</h6>
+                <p>Comfortable environment for every child.</p>
+              </div>
+            </div>
+          </div>
+          <div class="col-sm-6">
+            <div class="feature-card">
+              <i class="fa-solid fa-people-group"></i>
+              <div>
+                <h6>Community Trust</h6>
+                <p>Strong links with parents, guardians, and local leaders.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="d-flex gap-3 mt-4 flex-wrap">
           <a href="/about" class="btn btn-navy">
             Read Full History <i class="fa-solid fa-circle-chevron-right ms-1"></i>
           </a>
@@ -133,7 +171,7 @@
 {% if principal %}
 <section class="py-5 bg-light" data-aos="fade-up">
   <div class="container">
-    <div class="custom-card p-4 p-md-5">
+    <div class="custom-card p-4 p-md-5 rounded-4">
       <div class="row align-items-center g-4">
         <div class="col-md-4 text-center" data-aos="fade-right">
           <img src="{{ principal.photo.url|default:'/media/teachers/govinda shrestha.jpg' }}" alt="{{ principal.name }}" class="img-fluid rounded-circle shadow" style="width: 200px; height: 200px; object-fit: cover; border: 5px solid var(--accent-gold);">
@@ -186,7 +224,7 @@
         <div class="stat-box">
           <i class="fa-solid fa-landmark fa-2x mb-2 text-warning"></i>
           <div class="stat-number" data-count="38" data-suffix=" Yrs">38 Yrs</div>
-          <div class="stat-label">Estd. 2045 B.S.</div>
+          <div class="stat-label text-light">Estd. 2045 B.S.</div>
         </div>
       </div>
     </div>

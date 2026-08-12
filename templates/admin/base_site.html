@@ -1,0 +1,28 @@
+{% extends "admin/base.html" %}
+{% load i18n static %}
+
+{% block title %}{{ site_title|default:_("Django site admin") }}{% endblock %}
+
+{% block extrahead %}
+{{ block.super }}
+<link rel="stylesheet" type="text/css" href="{% static 'admin/custom_admin.css' %}">
+{% endblock %}
+
+{% block branding %}
+<div id="branding">
+  <a href="/admin/" class="admin-brand-link" title="Go to admin dashboard">
+    <img src="{{ site_settings.logo_url|default:'/static/images/logo.jpg' }}" alt="{{ site_settings.school_name|default:'Shree Jaljala Secondary School' }} logo" class="admin-brand-logo" onerror="this.onerror=null; this.src='/static/images/logo.jpg';">
+    <div class="admin-brand-text">
+      <span class="admin-brand-title">{{ site_settings.school_name|default:'Shree Jaljala Secondary School' }}</span>
+      <span class="admin-brand-subtitle">Administration</span>
+    </div>
+  </a>
+</div>
+{% endblock %}
+
+{% block nav-global %}
+<div class="nav-global-extra">
+  <a href="/" class="view-site" target="_blank">View Public Site</a>
+</div>
+{{ block.super }}
+{% endblock %}
