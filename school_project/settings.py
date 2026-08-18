@@ -7,7 +7,7 @@ SECRET_KEY = 'django-insecure-jaljala-school-secret-key-change-in-production'
 
 DEBUG = True
 
-ALLOWED_HOSTS = ['*']
+ALLOWED_HOSTS = ['*', 'bibid-thapa.com.np']
 
 INSTALLED_APPS = [
     'django.contrib.admin',
@@ -51,9 +51,13 @@ TEMPLATES = [
 WSGI_APPLICATION = 'school_project.wsgi.application'
 
 DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+    "default": {
+        "ENGINE": "django.db.backends.postgresql",
+        "NAME": "school_db",
+        "USER": "postgres",
+        "PASSWORD": "xiaomi",
+        "HOST": "localhost",
+        "PORT": "5432",
     }
 }
 
