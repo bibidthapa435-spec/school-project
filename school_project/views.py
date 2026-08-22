@@ -178,7 +178,7 @@ def teacher_detail(request, slug):
         teacher = {
             'name': 'Teacher not found',
             'position': 'N/A',
-            'photo': {'url': '/static/images/logo.png'},
+            'photo': {'url': '/static/images/logo.jpg'},
             'slug': slug,
             'biography': 'No biography is available for this teacher.',
         }
@@ -211,7 +211,7 @@ def program_detail(request, slug):
             'slug': slug,
             'duration': 'N/A',
             'fee': 'N/A',
-            'image': {'url': '/static/images/logo.png'},
+            'image': {'url': '/static/images/image/firstphoto.jpg'},
             'eligibility': 'N/A',
         }
         other_programs = list(Program.objects.filter(status=True).order_by('display_order')[:4])

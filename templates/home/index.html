@@ -54,7 +54,7 @@
   <div class="carousel-inner">
     {% for slider in sliders %}
       <div class="carousel-item {% if forloop.first %}active{% endif %}">
-        <img src="{{ slider.image.url|default:'/static/images/slider1.jpg' }}" alt="{{ slider.title }}" class="d-block w-100" onerror="this.onerror=null; this.src='/static/images/slider1.jpg';">
+        <img src="{{ slider.image.url|default:'/media/slider/slide_2.jpg' }}" alt="{{ slider.title }}" class="d-block w-100" onerror="this.onerror=null; this.src='/media/slider/slide_2.jpg';">
         <div class="hero-overlay" style="background-color: {{ slider.overlay_color|default:'#0b1b2b' }}; opacity: {{ slider.overlay_opacity|default:0.5 }};"></div>
         <div class="container hero-caption-wrapper">
           <div class="hero-overlay d-flex align-items-center">
@@ -156,7 +156,7 @@
 
       <div class="col-lg-6" data-aos="fade-left">
         <div class="position-relative">
-          <img src="/static/images/image/firstphoto.jpg" alt="Jaljala School Campus" class="img-fluid rounded-4 shadow-lg w-100" onerror="this.src='/media/slider/slide_1.jpg'">
+          <img src="/static/images/image/firstphoto.jpg" alt="Jaljala School Campus" class="img-fluid rounded-4 shadow-lg w-100" onerror="this.src='/media/slider/slide_2.jpg'">
           <div class="position-absolute bottom-0 start-0 bg-warning text-dark p-3 m-3 rounded-3 shadow font-weight-bold">
             <i class="fa-solid fa-award fa-2x me-2 align-middle"></i>
             <span class="align-middle">38+ Years of Educational Legacy (Estd. 2045 B.S.)</span>

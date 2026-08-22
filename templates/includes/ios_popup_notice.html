@@ -1,0 +1,36 @@
+{% if activePopup and activePopup.is_active %}
+<div class="modal fade ios-alert-modal" id="noticePopupModal" tabindex="-1" aria-labelledby="iosAlertTitle" aria-hidden="true" data-bs-backdrop="static" data-bs-keyboard="true">
+  <div class="modal-dialog modal-dialog-centered ios-alert-dialog">
+    <div class="modal-content ios-alert" role="alertdialog" aria-modal="true" aria-labelledby="iosAlertTitle" aria-describedby="iosAlertMessage">
+      <div class="ios-alert-body">
+        {% if activePopup.image and activePopup.image.url %}
+          <div class="ios-alert-image-wrap">
+            <img src="{{ activePopup.image.url }}" alt="{{ activePopup.title }}" class="ios-alert-image" onerror="this.parentElement.style.display='none'">
+          </div>
+        {% endif %}
+
+        <h2 class="ios-alert-title" id="iosAlertTitle">{{ activePopup.title }}</h2>
+
+        {% if activePopup.subtitle %}
+          <p class="ios-alert-subtitle">{{ activePopup.subtitle }}</p>
+        {% endif %}
+
+        {% if activePopup.message %}
+          <p class="ios-alert-message" id="iosAlertMessage">{{ activePopup.message }}</p>
+        {% endif %}
+      </div>
+
+      <div class="ios-alert-actions{% if not activePopup.button_text %} ios-alert-actions--single{% endif %}">
+        <button type="button" class="ios-alert-btn ios-alert-btn-cancel" data-bs-dismiss="modal">
+          बन्द गर्नुहोस्
+        </button>
+        {% if activePopup.button_text %}
+          <a href="{{ activePopup.button_url|default:'/admission/' }}" class="ios-alert-btn ios-alert-btn-primary">
+            {{ activePopup.button_text }}
+          </a>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+</div>
+{% endif %}

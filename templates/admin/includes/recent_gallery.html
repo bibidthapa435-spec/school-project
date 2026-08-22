@@ -1,0 +1,30 @@
+<section class="dashboard-card dashboard-gallery">
+  <div class="dashboard-card-header">
+    <div>
+      <h2>Recent Gallery Images</h2>
+      <p>Latest photos uploaded to the school gallery</p>
+    </div>
+    <a class="card-link" href="{{ view_all_url }}">View all gallery →</a>
+  </div>
+
+  <div class="gallery-grid">
+    {% for photo in photos %}
+      <article class="gallery-item">
+        {% if photo.pk %}
+          <a href="{% url 'admin:school_app_galleryphoto_change' photo.pk %}" class="gallery-link">
+        {% else %}
+          <div class="gallery-link">
+        {% endif %}
+          <img src="{{ photo.image.url }}" alt="{{ photo.title }}" loading="lazy">
+          <div class="gallery-caption">{{ photo.title }}</div>
+        {% if photo.pk %}
+          </a>
+        {% else %}
+          </div>
+        {% endif %}
+      </article>
+    {% empty %}
+      <p class="empty-state">No gallery images uploaded yet.</p>
+    {% endfor %}
+  </div>
+</section>

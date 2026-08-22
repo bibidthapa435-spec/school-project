@@ -14,7 +14,7 @@ def slugify(text: str) -> str:
 school_settings = {
     'school_name': 'Shree Jaljala Secondary School',
     'tagline': 'Quality Education for a Brighter Future from Nursery to Class 10 (SEE)',
-    'logo_url': '/static/images/logo.png',
+    'logo_url': '/static/images/logo.jpg',
     'phone': '+977-9842000000 / +977-9800000000',
     'email': 'info@shreejaljala.edu.np',
     'address': 'Panchkhapan Municipality-7, Bihibare, Sankhuwasabha, Nepal',

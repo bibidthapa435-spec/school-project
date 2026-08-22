@@ -53,7 +53,7 @@ class SiteSettings(models.Model):
     def favicon_url(self):
         if self.favicon and hasattr(self.favicon, 'url'):
             return self.favicon.url
-        return '/static/images/logo.jpg'
+        return '/static/images/image/tilogo.png'
 
 
 class Notice(BaseSlugModel):

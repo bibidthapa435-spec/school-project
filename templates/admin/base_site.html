@@ -1,206 +1,121 @@
 {% extends "admin/base.html" %}
 {% load i18n static admin_dashboard %}
 
-{% block title %}{{ site_title|default:_('SJSS Administration') }}{% endblock %}
+{% block title %}{{ site_title|default:_('Admin Panel') }}{% endblock %}
+
+{% block bodyclass %}{{ block.super }}{% if user.is_authenticated %} sjss-admin-authenticated{% endif %}{% endblock %}
 
 {% block extrahead %}
 {{ block.super }}
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css" integrity="sha512-+eQ+KYUOmKPQvj5ABKqS7WVDK3W7sdDIW7GtM0M8wJY7a7FsT3wHUVxjFdgGBbQiPq2HJ1L6EpE0ZLZ6JQ5wKw==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css" crossorigin="anonymous" referrerpolicy="no-referrer" />
 <link rel="stylesheet" href="{% static 'admin/css/custom_admin.css' %}">
+{% if user.is_authenticated %}
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.7/dist/chart.umd.min.js" defer></script>
+{% endif %}
 <script src="{% static 'admin/js/custom_admin.js' %}" defer></script>
 {% endblock %}
 
-{% block branding %}
-<a href="{% url 'admin:index' %}" class="admin-brand-link" title="Go to admin dashboard">
-  <img src="{{ site_settings.logo_url|default:'/static/images/logo.jpg' }}" alt="{{ site_settings.school_name|default:'Shree Jaljala Secondary School' }} logo" class="admin-brand-logo" onerror="this.onerror=null; this.src='/static/images/logo.jpg';">
-  <div class="admin-brand-text">
-    <span class="admin-brand-title">{{ site_settings.school_name|default:'Shree Jaljala Secondary School' }}</span>
-    <span class="admin-brand-subtitle">SJSS Administration</span>
-  </div>
-</a>
+{% block header %}
+<div id="header" class="sjss-header-hidden">
+  {{ block.super }}
+</div>
 {% endblock %}
 
-{% block nav-global %}
-<div class="nav-global-extra">
-  <button id="sidebar-toggle" class="mobile-sidebar-toggle" type="button" aria-label="Toggle admin navigation">
-    <i class="fa-solid fa-bars"></i>
-  </button>
-  <a href="/" class="view-site" target="_blank">View Public Site</a>
-</div>
-{{ block.super }}
-{% endblock %}
+{% block nav-global %}{% endblock %}
+{% block nav-breadcrumbs %}{% endblock %}
+{% block content_title %}{% endblock %}
+{% block content_subtitle %}{% endblock %}
 
 {% block nav-sidebar %}
-<nav id="custom-nav-sidebar" class="custom-nav-sidebar">
-  <div class="sidebar-branding">
-    <div class="sidebar-title">School Administration</div>
-    <div class="sidebar-description">Secure school admin navigation for your team.</div>
+{% if user.is_authenticated %}
+<aside id="sjss-sidebar" class="sjss-sidebar" aria-label="Admin navigation">
+  <div class="sidebar-top">
+    <a href="{% url 'admin:index' %}" class="sidebar-brand">
+      <img src="{{ site_settings.logo_url|default:'/static/images/logo.jpg' }}" alt="{{ site_settings.school_name|default:'Shree Jaljala Secondary School' }} logo" class="sidebar-logo" onerror="this.onerror=null; this.src='/static/images/logo.jpg';">
+      <div class="sidebar-brand-text">
+        <span class="sidebar-school-name">{{ site_settings.school_name|default:'Shree Jaljala Secondary School' }}</span>
+        <span class="sidebar-panel-label">Admin Panel</span>
+      </div>
+    </a>
+
+    <nav class="sidebar-nav">
+      {% admin_sidebar_nav_items as nav_items %}
+      {% for item in nav_items %}
+        {% if item.exact %}
+          <a href="{{ item.url }}" class="sidebar-nav-link{% if request.path == '/admin/' or request.path == '/admin' %} active{% endif %}">
+            <i class="{{ item.icon }}" aria-hidden="true"></i>
+            <span>{{ item.label }}</span>
+          </a>
+        {% else %}
+          <a href="{{ item.url }}" class="sidebar-nav-link{% if request.path|startswith:item.match %} active{% endif %}">
+            <i class="{{ item.icon }}" aria-hidden="true"></i>
+            <span>{{ item.label }}</span>
+          </a>
+        {% endif %}
+      {% endfor %}
+    </nav>
   </div>
 
-  <div class="sidebar-section">
-    <div class="sidebar-section-title">Authentication and Authorization</div>
-    {% url 'admin:auth_group_changelist' as auth_group_url %}
-    {% url 'admin:auth_group_add' as auth_group_add %}
-    {% url 'admin:auth_user_changelist' as auth_user_url %}
-    {% url 'admin:auth_user_add' as auth_user_add %}
-
-    {% if perms.auth.view_group %}
-      <div class="sidebar-item{% if request.path|startswith:auth_group_url %} active{% endif %}">
-        <a class="sidebar-item-link" href="{{ auth_group_url }}">Groups</a>
-        {% if perms.auth.add_group %}
-          <a class="sidebar-add-link" href="{{ auth_group_add }}"><i class="fa-solid fa-plus"></i> Add</a>
+  <div class="sidebar-footer">
+    <div class="sidebar-profile">
+      <div class="profile-avatar">
+        {% if user.first_name %}
+          {{ user.first_name|slice:":1"|upper }}{% if user.last_name %}{{ user.last_name|slice:":1"|upper }}{% endif %}
         {% else %}
-          <span class="sidebar-add-link disabled"><i class="fa-solid fa-plus"></i> Add</span>
+          {{ user.username|slice:":1"|upper }}
         {% endif %}
       </div>
-    {% endif %}
-
-    {% if perms.auth.view_user %}
-      <div class="sidebar-item{% if request.path|startswith:auth_user_url %} active{% endif %}">
-        <a class="sidebar-item-link" href="{{ auth_user_url }}">Users</a>
-        {% if perms.auth.add_user %}
-          <a class="sidebar-add-link" href="{{ auth_user_add }}"><i class="fa-solid fa-plus"></i> Add</a>
-        {% else %}
-          <span class="sidebar-add-link disabled"><i class="fa-solid fa-plus"></i> Add</span>
-        {% endif %}
+      <div class="profile-info">
+        <span class="profile-name">{{ user.get_full_name|default:user.username }}</span>
+        <span class="profile-role">Super Administrator</span>
+        <span class="profile-status"><span class="status-dot"></span> Online</span>
       </div>
-    {% endif %}
+      <a href="{% url 'admin:school_app_sitesettings_changelist' %}" class="profile-settings" title="Settings" aria-label="Settings">
+        <i class="fa-solid fa-gear"></i>
+      </a>
+    </div>
   </div>
+</aside>
+<div class="sidebar-overlay" id="sidebar-overlay" hidden></div>
+{% endif %}
+{% endblock %}
 
-  <div class="sidebar-section">
-    <div class="sidebar-section-title">School Management</div>
-    {% url 'admin:school_app_admissionapplication_changelist' as admissions_url %}
-    {% url 'admin:school_app_admissionapplication_add' as admissions_add %}
-    {% url 'admin:school_app_contactmessage_changelist' as messages_url %}
-    {% url 'admin:school_app_contactmessage_add' as messages_add %}
-    {% url 'admin:school_app_downloadresource_changelist' as downloads_url %}
-    {% url 'admin:school_app_downloadresource_add' as downloads_add %}
-    {% url 'admin:school_app_galleryphoto_changelist' as gallery_url %}
-    {% url 'admin:school_app_galleryphoto_add' as gallery_add %}
-    {% url 'admin:school_app_notice_changelist' as notices_url %}
-    {% url 'admin:school_app_notice_add' as notices_add %}
-    {% url 'admin:school_app_popupnotice_changelist' as popup_url %}
-    {% url 'admin:school_app_popupnotice_add' as popup_add %}
-    {% url 'admin:school_app_program_changelist' as programs_url %}
-    {% url 'admin:school_app_program_add' as programs_add %}
-    {% url 'admin:school_app_sitesettings_changelist' as settings_url %}
-    {% url 'admin:school_app_sitesettings_add' as settings_add %}
-    {% url 'admin:school_app_slider_changelist' as sliders_url %}
-    {% url 'admin:school_app_slider_add' as sliders_add %}
-    {% url 'admin:school_app_teacher_changelist' as teachers_url %}
-    {% url 'admin:school_app_teacher_add' as teachers_add %}
-
-    {% if perms.school_app.view_admissionapplication %}
-      <div class="sidebar-item{% if request.path|startswith:admissions_url %} active{% endif %}">
-        <a class="sidebar-item-link" href="{{ admissions_url }}">Admission applications</a>
-        {% if perms.school_app.add_admissionapplication %}
-          <a class="sidebar-add-link" href="{{ admissions_add }}"><i class="fa-solid fa-plus"></i> Add</a>
-        {% else %}
-          <span class="sidebar-add-link disabled"><i class="fa-solid fa-plus"></i> Add</span>
-        {% endif %}
-      </div>
-    {% endif %}
-
-    {% if perms.school_app.view_contactmessage %}
-      <div class="sidebar-item{% if request.path|startswith:messages_url %} active{% endif %}">
-        <a class="sidebar-item-link" href="{{ messages_url }}">Contact messages</a>
-        {% if perms.school_app.add_contactmessage %}
-          <a class="sidebar-add-link" href="{{ messages_add }}"><i class="fa-solid fa-plus"></i> Add</a>
-        {% else %}
-          <span class="sidebar-add-link disabled"><i class="fa-solid fa-plus"></i> Add</span>
-        {% endif %}
-      </div>
-    {% endif %}
-
-    {% if perms.school_app.view_downloadresource %}
-      <div class="sidebar-item{% if request.path|startswith:downloads_url %} active{% endif %}">
-        <a class="sidebar-item-link" href="{{ downloads_url }}">Download resources</a>
-        {% if perms.school_app.add_downloadresource %}
-          <a class="sidebar-add-link" href="{{ downloads_add }}"><i class="fa-solid fa-plus"></i> Add</a>
-        {% else %}
-          <span class="sidebar-add-link disabled"><i class="fa-solid fa-plus"></i> Add</span>
-        {% endif %}
-      </div>
-    {% endif %}
-
-    {% if perms.school_app.view_galleryphoto %}
-      <div class="sidebar-item{% if request.path|startswith:gallery_url %} active{% endif %}">
-        <a class="sidebar-item-link" href="{{ gallery_url }}">Gallery photos</a>
-        {% if perms.school_app.add_galleryphoto %}
-          <a class="sidebar-add-link" href="{{ gallery_add }}"><i class="fa-solid fa-plus"></i> Add</a>
-        {% else %}
-          <span class="sidebar-add-link disabled"><i class="fa-solid fa-plus"></i> Add</span>
-        {% endif %}
-      </div>
-    {% endif %}
-
-    {% if perms.school_app.view_notice %}
-      <div class="sidebar-item{% if request.path|startswith:notices_url %} active{% endif %}">
-        <a class="sidebar-item-link" href="{{ notices_url }}">Notices</a>
-        {% if perms.school_app.add_notice %}
-          <a class="sidebar-add-link" href="{{ notices_add }}"><i class="fa-solid fa-plus"></i> Add</a>
-        {% else %}
-          <span class="sidebar-add-link disabled"><i class="fa-solid fa-plus"></i> Add</span>
-        {% endif %}
-      </div>
-    {% endif %}
-
-    {% if perms.school_app.view_popupnotice %}
-      <div class="sidebar-item{% if request.path|startswith:popup_url %} active{% endif %}">
-        <a class="sidebar-item-link" href="{{ popup_url }}">Popup notices</a>
-        {% if perms.school_app.add_popupnotice %}
-          <a class="sidebar-add-link" href="{{ popup_add }}"><i class="fa-solid fa-plus"></i> Add</a>
-        {% else %}
-          <span class="sidebar-add-link disabled"><i class="fa-solid fa-plus"></i> Add</span>
-        {% endif %}
-      </div>
-    {% endif %}
-
-    {% if perms.school_app.view_program %}
-      <div class="sidebar-item{% if request.path|startswith:programs_url %} active{% endif %}">
-        <a class="sidebar-item-link" href="{{ programs_url }}">Programs</a>
-        {% if perms.school_app.add_program %}
-          <a class="sidebar-add-link" href="{{ programs_add }}"><i class="fa-solid fa-plus"></i> Add</a>
-        {% else %}
-          <span class="sidebar-add-link disabled"><i class="fa-solid fa-plus"></i> Add</span>
-        {% endif %}
-      </div>
-    {% endif %}
-
-    {% if perms.school_app.view_sitesettings %}
-      <div class="sidebar-item{% if request.path|startswith:settings_url %} active{% endif %}">
-        <a class="sidebar-item-link" href="{{ settings_url }}">Site settings</a>
-        {% if perms.school_app.add_sitesettings %}
-          <a class="sidebar-add-link" href="{{ settings_add }}"><i class="fa-solid fa-plus"></i> Add</a>
-        {% else %}
-          <a class="sidebar-add-link" href="{{ settings_url }}"><i class="fa-solid fa-gear"></i> Manage</a>
-        {% endif %}
-      </div>
-    {% endif %}
-
-    {% if perms.school_app.view_slider %}
-      <div class="sidebar-item{% if request.path|startswith:sliders_url %} active{% endif %}">
-        <a class="sidebar-item-link" href="{{ sliders_url }}">Sliders</a>
-        {% if perms.school_app.add_slider %}
-          <a class="sidebar-add-link" href="{{ sliders_add }}"><i class="fa-solid fa-plus"></i> Add</a>
-        {% else %}
-          <span class="sidebar-add-link disabled"><i class="fa-solid fa-plus"></i> Add</span>
-        {% endif %}
-      </div>
-    {% endif %}
-
-    {% if perms.school_app.view_teacher %}
-      <div class="sidebar-item{% if request.path|startswith:teachers_url %} active{% endif %}">
-        <a class="sidebar-item-link" href="{{ teachers_url }}">Teachers</a>
-        {% if perms.school_app.add_teacher %}
-          <a class="sidebar-add-link" href="{{ teachers_add }}"><i class="fa-solid fa-plus"></i> Add</a>
-        {% else %}
-          <span class="sidebar-add-link disabled"><i class="fa-solid fa-plus"></i> Add</span>
-        {% endif %}
-      </div>
-    {% endif %}
+{% block pretitle %}
+{% if user.is_authenticated %}
+<header class="sjss-topbar">
+  <div class="topbar-left">
+    <button id="sidebar-toggle" class="topbar-menu-btn" type="button" aria-label="Toggle navigation menu" aria-expanded="false">
+      <i class="fa-solid fa-bars"></i>
+    </button>
+    <div class="topbar-welcome">
+      <h1>Welcome back, {{ user.first_name|default:"Admin" }}! 👋</h1>
+      <p>Here's what's happening with your school website today.</p>
+    </div>
   </div>
+  <div class="topbar-right">
+    <a href="/" class="btn btn-outline" target="_blank" rel="noopener noreferrer">
+      <i class="fa-solid fa-arrow-up-right-from-square"></i>
+      View Website
+    </a>
+    <button class="topbar-notify" type="button" aria-label="Notifications">
+      <i class="fa-solid fa-bell"></i>
+      <span class="notify-count">3</span>
+    </button>
+    <div class="topbar-school">
+      <img src="{{ site_settings.logo_url|default:'/static/images/logo.jpg' }}" alt="" class="topbar-logo" onerror="this.onerror=null; this.src='/static/images/logo.jpg';">
+      <span>{{ site_settings.school_name|default:'Shree Jaljala Secondary School' }}</span>
+    </div>
+  </div>
+</header>
+{% endif %}
+{% endblock %}
 
-  <div class="sidebar-overlay" id="sidebar-overlay"></div>
-</nav>
+{% block footer %}
+<footer class="sjss-footer{% if not user.is_authenticated %} sjss-footer-login{% endif %}">
+  <p>© 2026 Shree Jaljala Secondary School. All rights reserved.</p>
+  <p class="footer-heart">Made with ❤️ for our school</p>
+</footer>
 {% endblock %}

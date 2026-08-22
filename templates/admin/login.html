@@ -1,0 +1,62 @@
+{% extends "admin/base_site.html" %}
+{% load i18n static %}
+
+{% block bodyclass %}login sjss-login-page{% endblock %}
+
+{% block nav-sidebar %}{% endblock %}
+
+{% block pretitle %}{% endblock %}
+
+{% block content %}
+<div class="sjss-login-shell">
+  <div class="sjss-login-card">
+    <div class="sjss-login-brand">
+      <img src="{{ site_settings.logo_url|default:'/static/images/logo.jpg' }}" alt="{{ site_settings.school_name|default:'Shree Jaljala Secondary School' }} logo" class="sjss-login-logo" onerror="this.onerror=null; this.src='/static/images/logo.jpg';">
+      <h1>{{ site_settings.school_name|default:'Shree Jaljala Secondary School' }}</h1>
+      <p>Admin Panel — Sign in to manage your school website</p>
+    </div>
+
+    {% if form.errors and not form.non_field_errors %}
+      <p class="sjss-login-error">
+        {% if form.errors.items|length == 1 %}{% trans "Please correct the error below." %}{% else %}{% trans "Please correct the errors below." %}{% endif %}
+      </p>
+    {% endif %}
+
+    {% if form.non_field_errors %}
+      {% for error in form.non_field_errors %}
+        <p class="sjss-login-error">{{ error }}</p>
+      {% endfor %}
+    {% endif %}
+
+    <form action="{{ app_path }}" method="post" id="login-form" class="sjss-login-form">
+      {% csrf_token %}
+      <input type="hidden" name="next" value="{{ next }}">
+
+      <div class="sjss-form-group">
+        <label for="{{ form.username.id_for_label }}">{% trans 'Username' %}</label>
+        {{ form.username }}
+      </div>
+
+      <div class="sjss-form-group">
+        <label for="{{ form.password.id_for_label }}">{% trans 'Password' %}</label>
+        {{ form.password }}
+      </div>
+
+      <button type="submit" class="sjss-login-btn">{% trans 'Log in' %}</button>
+    </form>
+
+    <div class="sjss-login-footer-links">
+      <a href="/" target="_blank" rel="noopener noreferrer">
+        <i class="fa-solid fa-arrow-up-right-from-square"></i> View Public Website
+      </a>
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block footer %}
+<footer class="sjss-footer sjss-footer-login">
+  <p>© 2026 Shree Jaljala Secondary School. All rights reserved.</p>
+  <p class="footer-heart">Made with ❤️ for our school</p>
+</footer>
+{% endblock %}

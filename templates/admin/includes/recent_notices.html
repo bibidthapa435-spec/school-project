@@ -1,0 +1,45 @@
+<section class="dashboard-card dashboard-notices">
+  <div class="dashboard-card-header">
+    <div>
+      <h2>Recent Notices</h2>
+      <p>Latest announcements published on the school website</p>
+    </div>
+    <a class="card-link" href="{{ view_all_url }}">View all notices →</a>
+  </div>
+
+  <ul class="notice-list">
+    {% for notice in notices %}
+      <li class="notice-item">
+        <span class="notice-icon" aria-hidden="true"><i class="fa-solid fa-file-lines"></i></span>
+        <div class="notice-body">
+          <div class="notice-title-row">
+            {% if notice.pk %}
+              <a href="{% url 'admin:school_app_notice_change' notice.pk %}">{{ notice.title }}</a>
+            {% else %}
+              <span class="notice-title">{{ notice.title }}</span>
+            {% endif %}
+            {% if notice.is_new %}
+              <span class="badge badge-new">New</span>
+            {% endif %}
+          </div>
+          <div class="notice-meta">
+            <span>
+              {% if notice.display_date %}
+                {{ notice.display_date }}
+              {% else %}
+                {{ notice.created_at|date:"M d, Y" }}
+              {% endif %}
+            </span>
+            {% if notice.status %}
+              <span class="badge badge-active">Active</span>
+            {% else %}
+              <span class="badge badge-expired">Expired</span>
+            {% endif %}
+          </div>
+        </div>
+      </li>
+    {% empty %}
+      <li class="empty-state">No notices published yet.</li>
+    {% endfor %}
+  </ul>
+</section>

@@ -21,7 +21,7 @@ from .models import (
 
 admin.site.site_header = 'Shree Jaljala Secondary School'
 admin.site.site_title = 'SJSS Administration'
-admin.site.index_title = 'School Administration'
+admin.site.index_title = 'Admin Panel'
 admin.site.index_template = 'admin/index.html'
 
 

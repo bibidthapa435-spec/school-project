@@ -1,59 +1,205 @@
-/* Popup Announcement Modal Styling */
-.modal-backdrop.show {
-  background-color: rgba(15, 23, 42, 0.70) !important;
-  backdrop-filter: blur(10px);
+/* iOS-style Notice Alert Popup — Shree Jaljala Secondary School */
+
+.ios-alert-modal .modal-backdrop.show {
+  background-color: rgba(0, 0, 0, 0.45);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  opacity: 1 !important;
 }
 
-.modal-notice-popup .modal-dialog {
-  max-width: 780px;
+.ios-alert-modal .modal-dialog.ios-alert-dialog {
+  max-width: 320px;
+  width: calc(100% - 48px);
+  margin: 1rem auto;
+  pointer-events: none;
 }
 
-.modal-notice-popup .modal-content {
-  border-radius: 24px;
-  border: 1px solid rgba(255, 255, 255, 0.35);
+.ios-alert-modal.show .modal-dialog.ios-alert-dialog {
+  pointer-events: auto;
+}
+
+.ios-alert-modal .modal-content.ios-alert {
+  border: none;
+  border-radius: 14px;
   overflow: hidden;
-  background: rgba(255, 255, 255, 0.96);
-  box-shadow: 0 24px 60px rgba(15, 23, 42, 0.24);
+  background: rgba(255, 255, 255, 0.92);
+  backdrop-filter: saturate(180%) blur(20px);
+  -webkit-backdrop-filter: saturate(180%) blur(20px);
+  box-shadow:
+    0 0 0 0.5px rgba(0, 0, 0, 0.06),
+    0 8px 28px rgba(0, 0, 0, 0.28);
 }
 
-.modal-notice-popup .modal-header {
-  background-color: #0b2545;
-  color: #ffffff;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.12);
+/* Scale-in animation (iOS spring feel) */
+.ios-alert-modal.fade .modal-dialog {
+  transform: scale(1.08);
+  opacity: 0;
+  transition:
+    transform 0.32s cubic-bezier(0.34, 1.4, 0.64, 1),
+    opacity 0.22s ease;
 }
 
-.modal-notice-popup .modal-body {
-  background: transparent;
-  color: #102a43;
+.ios-alert-modal.show .modal-dialog {
+  transform: scale(1);
+  opacity: 1;
 }
 
-.modal-notice-popup .modal-footer {
-  background: rgba(248, 250, 252, 0.95);
+.ios-alert-body {
+  padding: 20px 16px 16px;
+  text-align: center;
 }
 
-.modal-notice-popup img {
+.ios-alert-image-wrap {
+  margin: 0 auto 14px;
+  max-width: 100%;
+  border-radius: 10px;
+  overflow: hidden;
+  background: #f2f2f7;
+}
+
+.ios-alert-image {
+  display: block;
   width: 100%;
-  max-height: 420px;
-  object-fit: contain;
-  background-color: #f8fafc;
-  border-radius: 18px;
-  box-shadow: 0 20px 40px rgba(15, 23, 42, 0.15);
+  max-height: 180px;
+  object-fit: cover;
 }
 
-.popup-overlay-badge {
-  position: absolute;
-  top: 15px;
-  right: 15px;
-  background-color: #f59e0b;
-  color: #0b2545;
-  font-weight: 700;
-  padding: 6px 16px;
-  border-radius: 20px;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+.ios-alert-title {
+  margin: 0;
+  font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text", Inter, system-ui, sans-serif;
+  font-size: 17px;
+  font-weight: 600;
+  line-height: 1.3;
+  letter-spacing: -0.02em;
+  color: #000000;
+  padding: 0 4px;
+}
+
+.ios-alert-subtitle {
+  margin: 6px 0 0;
+  font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", Inter, system-ui, sans-serif;
+  font-size: 13px;
+  font-weight: 500;
+  line-height: 1.35;
+  color: rgba(60, 60, 67, 0.72);
+  padding: 0 4px;
+}
+
+.ios-alert-message {
+  margin: 8px 0 0;
+  font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", Inter, system-ui, sans-serif;
+  font-size: 13px;
+  font-weight: 400;
+  line-height: 1.45;
+  color: rgba(60, 60, 67, 0.85);
+  padding: 0 2px;
+}
+
+/* Action buttons row — classic iOS alert */
+.ios-alert-actions {
+  display: flex;
+  border-top: 0.5px solid rgba(60, 60, 67, 0.29);
+}
+
+.ios-alert-btn {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 44px;
+  padding: 11px 8px;
+  background: transparent;
+  border: none;
+  font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", Inter, system-ui, sans-serif;
+  font-size: 17px;
+  font-weight: 400;
+  line-height: 1.2;
+  color: #007aff;
+  text-decoration: none;
+  cursor: pointer;
+  transition: background 0.15s ease;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.ios-alert-btn:hover,
+.ios-alert-btn:focus {
+  background: rgba(0, 0, 0, 0.04);
+  color: #007aff;
+  outline: none;
+}
+
+.ios-alert-btn:active {
+  background: rgba(0, 0, 0, 0.08);
+}
+
+.ios-alert-btn-primary {
+  font-weight: 600;
+  border-left: 0.5px solid rgba(60, 60, 67, 0.29);
+}
+
+.ios-alert-actions--single .ios-alert-btn {
+  font-weight: 600;
+  border-left: none;
+}
+
+/* Stacked layout when only one custom action + cancel would be too cramped on small screens */
+@media (max-width: 360px) {
+  .ios-alert-actions:not(.ios-alert-actions--single) {
+    flex-direction: column;
+  }
+
+  .ios-alert-btn-primary {
+    border-left: none;
+    border-top: 0.5px solid rgba(60, 60, 67, 0.29);
+  }
+}
+
+@media (prefers-color-scheme: dark) {
+  .ios-alert-modal .modal-content.ios-alert {
+    background: rgba(44, 44, 46, 0.94);
+    box-shadow:
+      0 0 0 0.5px rgba(255, 255, 255, 0.08),
+      0 8px 28px rgba(0, 0, 0, 0.5);
+  }
+
+  .ios-alert-title {
+    color: #ffffff;
+  }
+
+  .ios-alert-subtitle,
+  .ios-alert-message {
+    color: rgba(235, 235, 245, 0.72);
+  }
+
+  .ios-alert-image-wrap {
+    background: #1c1c1e;
+  }
+
+  .ios-alert-actions {
+    border-top-color: rgba(84, 84, 88, 0.65);
+  }
+
+  .ios-alert-btn-primary {
+    border-left-color: rgba(84, 84, 88, 0.65);
+  }
+
+  .ios-alert-btn {
+    color: #0a84ff;
+  }
+
+  .ios-alert-btn:hover,
+  .ios-alert-btn:focus {
+    background: rgba(255, 255, 255, 0.06);
+    color: #0a84ff;
+  }
+
+  .ios-alert-btn:active {
+    background: rgba(255, 255, 255, 0.12);
+  }
 }
 
 @media (max-width: 768px) {
-  .modal-notice-popup .modal-dialog {
-    margin: 1rem;
+  .ios-alert-modal .modal-dialog.ios-alert-dialog {
+    max-width: 300px;
   }
 }

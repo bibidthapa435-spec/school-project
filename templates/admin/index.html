@@ -2,55 +2,92 @@
 {% load i18n admin_dashboard %}
 
 {% block content %}
-<div class="sjss-dashboard-shell">
-  <section class="dashboard-hero">
-    <div class="hero-copy">
-      <span class="hero-eyebrow">Shree Jaljala Secondary School</span>
-      <h1>School Administration Dashboard</h1>
-      <p class="hero-description">Manage school content, admissions, notices, gallery updates, and site settings from one secure admin workspace.</p>
-    </div>
-    <a class="hero-button" href="{% url 'admin:school_app_sitesettings_changelist' %}">Edit Site Settings</a>
-  </section>
-
-  <section class="dashboard-stat-grid">
+<div class="sjss-dashboard">
+  <section class="dashboard-stat-grid" aria-label="Dashboard statistics">
     {% admin_dashboard_metric_cards as metric_cards %}
     {% for card in metric_cards %}
       <article class="stat-card">
-        <div class="stat-card-preview">
-          <span class="stat-icon"><i class="{{ card.icon }}" aria-hidden="true"></i></span>
-          <div>
-            <p class="stat-label">{{ card.label }}</p>
+        <div class="stat-card-top">
+          <div class="stat-icon {{ card.icon_bg }}">
+            <i class="{{ card.icon }}" aria-hidden="true"></i>
+          </div>
+          <div class="stat-details">
             <p class="stat-value">{{ card.count }}</p>
+            <p class="stat-label">{{ card.label }}</p>
+            <p class="stat-description">{{ card.description }}</p>
           </div>
         </div>
-        <a class="stat-link" href="{{ card.url }}">Open</a>
+        <a class="stat-link" href="{{ card.url }}">View all →</a>
       </article>
     {% endfor %}
   </section>
 
-  <section class="dashboard-quick-actions">
-    <div class="section-heading">
-      <h2>Quick access</h2>
-      <p class="section-note">Open the most active school management sections in one click.</p>
+  <section class="dashboard-card dashboard-analytics" aria-label="Website analytics">
+    <div class="dashboard-card-header">
+      <div>
+        <h2>Website Analytics</h2>
+        <p>Visitor trends and engagement metrics for your school website</p>
+      </div>
+      <label class="analytics-filter" for="analytics-period">
+        <span class="visually-hidden">Analytics period</span>
+        <select id="analytics-period" name="analytics-period">
+          <option value="month" selected>This Month</option>
+          <option value="week">This Week</option>
+          <option value="year">This Year</option>
+        </select>
+      </label>
     </div>
-    <div class="quick-action-grid">
-      <a class="quick-action-card" href="{% url 'admin:school_app_teacher_changelist' %}"><i class="fa-solid fa-chalkboard-user"></i> Teachers</a>
-      <a class="quick-action-card" href="{% url 'admin:school_app_notice_changelist' %}"><i class="fa-solid fa-bullhorn"></i> Notices</a>
-      <a class="quick-action-card" href="{% url 'admin:school_app_galleryphoto_changelist' %}"><i class="fa-solid fa-images"></i> Gallery</a>
-      <a class="quick-action-card" href="{% url 'admin:school_app_program_changelist' %}"><i class="fa-solid fa-graduation-cap"></i> Programs</a>
-      <a class="quick-action-card" href="{% url 'admin:school_app_downloadresource_changelist' %}"><i class="fa-solid fa-download"></i> Downloads</a>
-      <a class="quick-action-card" href="{% url 'admin:school_app_admissionapplication_changelist' %}"><i class="fa-solid fa-file-signature"></i> Admissions</a>
-      <a class="quick-action-card" href="{% url 'admin:school_app_contactmessage_changelist' %}"><i class="fa-solid fa-envelope"></i> Messages</a>
-      <a class="quick-action-card" href="{% url 'admin:school_app_slider_changelist' %}"><i class="fa-solid fa-images"></i> Sliders</a>
+
+    <div class="analytics-chart-wrap">
+      <canvas id="visitors-chart" aria-label="Website visitors line chart" role="img"></canvas>
+    </div>
+
+    <div class="analytics-mini-grid">
+      <article class="analytics-mini-card">
+        <span class="mini-label">Visitors</span>
+        <span class="mini-value">2,458</span>
+        <span class="mini-change up"><i class="fa-solid fa-arrow-trend-up"></i> +12.4%</span>
+      </article>
+      <article class="analytics-mini-card">
+        <span class="mini-label">Page Views</span>
+        <span class="mini-value">6,892</span>
+        <span class="mini-change up"><i class="fa-solid fa-arrow-trend-up"></i> +8.7%</span>
+      </article>
+      <article class="analytics-mini-card">
+        <span class="mini-label">Avg. Session</span>
+        <span class="mini-value">02:45</span>
+        <span class="mini-change up"><i class="fa-solid fa-arrow-trend-up"></i> +3.2%</span>
+      </article>
+      <article class="analytics-mini-card">
+        <span class="mini-label">Bounce Rate</span>
+        <span class="mini-value">32.1%</span>
+        <span class="mini-change down"><i class="fa-solid fa-arrow-trend-down"></i> -2.1%</span>
+      </article>
     </div>
   </section>
 
-  <section class="dashboard-recent">
-    <div class="section-heading">
-      <h2>Recent activity</h2>
-      <p class="section-note">Review the latest school notices, admission requests, and messages.</p>
-    </div>
-    {% admin_dashboard_recent_activity %}
-  </section>
+  <div class="dashboard-two-col">
+    {% admin_dashboard_recent_notices %}
+
+    <section class="dashboard-card dashboard-quick-actions">
+      <div class="dashboard-card-header">
+        <div>
+          <h2>Quick Actions</h2>
+          <p>Common tasks to manage your school website content</p>
+        </div>
+      </div>
+      <div class="quick-action-grid">
+        {% admin_dashboard_quick_actions as quick_actions %}
+        {% for action in quick_actions %}
+          <a href="{{ action.url }}" class="quick-action-card {{ action.color }}">
+            <span class="quick-action-icon"><i class="{{ action.icon }}" aria-hidden="true"></i></span>
+            <span class="quick-action-label">{{ action.label }}</span>
+          </a>
+        {% endfor %}
+      </div>
+    </section>
+  </div>
+
+  {% admin_dashboard_recent_gallery %}
 </div>
 {% endblock %}
