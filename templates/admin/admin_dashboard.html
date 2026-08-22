@@ -1,0 +1,1500 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin Portal | Shree Jaljala Secondary School</title>
+  <link rel="icon" type="image/png" href="{{ schoolSettings.logo_url|default('/static/images/logo.jpg') }}">
+  <!-- Google Fonts & Font Awesome -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="/static/admin/css/custom_admin.css">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.7/dist/chart.umd.min.js" defer></script>
+  <style>
+    body { background-color: #f4f7fb; color: #0f172a; }
+    .sjss-admin-layout { display: flex; min-height: 100vh; }
+    .sjss-sidebar-container { width: 280px; flex-shrink: 0; background: #0f2847; min-height: 100vh; }
+    .sjss-main-container { flex-grow: 1; padding: 1.5rem 2rem; max-width: 100%; overflow-x: hidden; }
+    .table-card { background: #fff; border-radius: 16px; border: 1px solid rgba(15, 40, 71, 0.08); box-shadow: 0 4px 20px rgba(15, 40, 71, 0.05); overflow: hidden; }
+    .badge-soft-primary { background-color: #dbeafe; color: #1e40af; }
+    .badge-soft-success { background-color: #dcfce7; color: #166534; }
+    .badge-soft-warning { background-color: #fef3c7; color: #92400e; }
+    .badge-soft-danger { background-color: #fee2e2; color: #991b1b; }
+    .modal-content { border-radius: 18px; border: none; box-shadow: 0 20px 40px rgba(0,0,0,0.15); }
+    .tab-content-area { animation: fadeIn 0.2s ease-in-out; }
+    @keyframes fadeIn { from { opacity: 0; transform: translateY(4px); } to { opacity: 1; transform: translateY(0); } }
+  </style>
+</head>
+<body class="sjss-admin-authenticated">
+
+<div class="sjss-admin-layout">
+  <!-- Sidebar Navigation -->
+  <aside id="sjss-sidebar" class="sjss-sidebar">
+    <div class="sidebar-top">
+      <a href="/admin?tab=dashboard" class="sidebar-brand text-white">
+        <img src="{{ schoolSettings.logo_url|default('/static/images/logo.jpg') }}" alt="Logo" class="sidebar-logo" onerror="this.onerror=null; this.src='/static/images/logo.jpg';">
+        <div class="sidebar-brand-text">
+          <span class="sidebar-school-name">{{ schoolSettings.school_name|default('Shree Jaljala Secondary School') }}</span>
+          <span class="sidebar-panel-label">Admin Management</span>
+        </div>
+      </a>
+
+      <nav class="sidebar-nav mt-3">
+        <a href="/admin?tab=dashboard" class="sidebar-nav-link {% if activeTab == 'dashboard' or not activeTab %}active{% endif %}">
+          <i class="fa-solid fa-chart-pie"></i>
+          <span>Dashboard Overview</span>
+        </a>
+        <a href="/admin?tab=settings" class="sidebar-nav-link {% if activeTab == 'settings' %}active{% endif %}">
+          <i class="fa-solid fa-school"></i>
+          <span>School Profile & Logo</span>
+        </a>
+        <a href="/admin?tab=sliders" class="sidebar-nav-link {% if activeTab == 'sliders' %}active{% endif %}">
+          <i class="fa-solid fa-images"></i>
+          <span>Hero Carousel Sliders</span>
+        </a>
+        <a href="/admin?tab=teachers" class="sidebar-nav-link {% if activeTab == 'teachers' %}active{% endif %}">
+          <i class="fa-solid fa-chalkboard-user"></i>
+          <span>Faculty & Staff</span>
+        </a>
+        <a href="/admin?tab=notices" class="sidebar-nav-link {% if activeTab == 'notices' %}active{% endif %}">
+          <i class="fa-solid fa-bullhorn"></i>
+          <span>Notices & News</span>
+        </a>
+        <a href="/admin?tab=popups" class="sidebar-nav-link {% if activeTab == 'popups' %}active{% endif %}">
+          <i class="fa-solid fa-window-maximize"></i>
+          <span>Notice Popup Banner</span>
+        </a>
+        <a href="/admin?tab=gallery" class="sidebar-nav-link {% if activeTab == 'gallery' %}active{% endif %}">
+          <i class="fa-solid fa-photo-film"></i>
+          <span>Photo Gallery</span>
+        </a>
+        <a href="/admin?tab=programs" class="sidebar-nav-link {% if activeTab == 'programs' %}active{% endif %}">
+          <i class="fa-solid fa-book-open"></i>
+          <span>Academic Programs</span>
+        </a>
+        <a href="/admin?tab=downloads" class="sidebar-nav-link {% if activeTab == 'downloads' %}active{% endif %}">
+          <i class="fa-solid fa-file-arrow-down"></i>
+          <span>Downloadable Resources</span>
+        </a>
+        <a href="/admin?tab=admissions" class="sidebar-nav-link {% if activeTab == 'admissions' %}active{% endif %}">
+          <i class="fa-solid fa-file-signature"></i>
+          <span>Admissions Applications</span>
+          {% if schoolData.admissions.length > 0 %}
+            <span class="badge bg-warning text-dark ms-auto font-weight-bold">{{ schoolData.admissions.length }}</span>
+          {% endif %}
+        </a>
+        <a href="/admin?tab=contacts" class="sidebar-nav-link {% if activeTab == 'contacts' %}active{% endif %}">
+          <i class="fa-solid fa-envelope-open-text"></i>
+          <span>Contact Messages</span>
+          {% if schoolData.contacts.length > 0 %}
+            <span class="badge bg-info text-dark ms-auto font-weight-bold">{{ schoolData.contacts.length }}</span>
+          {% endif %}
+        </a>
+      </nav>
+    </div>
+
+    <div class="sidebar-footer">
+      <div class="sidebar-profile">
+        <div class="profile-avatar">SJ</div>
+        <div class="profile-info">
+          <span class="profile-name">Principal / Admin</span>
+          <span class="profile-role">Super Administrator</span>
+          <span class="profile-status"><span class="status-dot"></span> System Live</span>
+        </div>
+      </div>
+    </div>
+  </aside>
+
+  <!-- Main Content Body -->
+  <main class="sjss-main-container">
+    <!-- Topbar -->
+    <header class="sjss-topbar mb-4">
+      <div class="topbar-left">
+        <div class="topbar-welcome">
+          <h1 class="h4 fw-bold mb-1">
+            {% if activeTab == 'settings' %}School Profile & Identity Settings
+            {% elif activeTab == 'sliders' %}Homepage Slider Carousel Management
+            {% elif activeTab == 'teachers' %}Faculty & Staff Directory Management
+            {% elif activeTab == 'notices' %}Notices & Announcements Management
+            {% elif activeTab == 'popups' %}Homepage Notice Popup Banner
+            {% elif activeTab == 'gallery' %}Photo Gallery & Album Management
+            {% elif activeTab == 'programs' %}Academic Programs (Nursery - Class 10)
+            {% elif activeTab == 'downloads' %}Downloadable Files & Forms
+            {% elif activeTab == 'admissions' %}Online Admission Applications
+            {% elif activeTab == 'contacts' %}Contact Inquiries & Feedback
+            {% else %}School Administration Dashboard
+            {% endif %}
+          </h1>
+          <p class="text-muted small mb-0">Manage content, media, notices, and communications for Shree Jaljala Secondary School.</p>
+        </div>
+      </div>
+      <div class="topbar-right">
+        <a href="/" target="_blank" class="btn btn-outline">
+          <i class="fa-solid fa-arrow-up-right-from-square me-1"></i> View Live Website
+        </a>
+      </div>
+    </header>
+
+    <!-- Success Message Alert -->
+    {% if successMsg %}
+      <div class="alert alert-success alert-dismissible fade show shadow-sm border-0 d-flex align-items-center gap-2 mb-4" role="alert">
+        <i class="fa-solid fa-circle-check text-success fs-5"></i>
+        <div><strong>Success:</strong> {{ successMsg }}</div>
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+      </div>
+    {% endif %}
+
+    <!-- TAB 1: DASHBOARD OVERVIEW -->
+    {% if activeTab == 'dashboard' or not activeTab %}
+    <div class="tab-content-area">
+      <!-- Metric Cards -->
+      <div class="dashboard-stat-grid mb-4">
+        <article class="stat-card">
+          <div class="stat-card-top">
+            <div class="stat-icon stat-icon--blue"><i class="fa-solid fa-chalkboard-user"></i></div>
+            <div class="stat-details">
+              <p class="stat-value">{{ schoolData.teachers.length }}</p>
+              <p class="stat-label">Faculty Members</p>
+              <p class="stat-description">Qualified Teachers & Staff</p>
+            </div>
+          </div>
+          <a class="stat-link" href="/admin?tab=teachers">Manage Staff →</a>
+        </article>
+
+        <article class="stat-card">
+          <div class="stat-card-top">
+            <div class="stat-icon stat-icon--navy"><i class="fa-solid fa-bullhorn"></i></div>
+            <div class="stat-details">
+              <p class="stat-value">{{ schoolData.notices.length }}</p>
+              <p class="stat-label">Published Notices</p>
+              <p class="stat-description">School Announcements</p>
+            </div>
+          </div>
+          <a class="stat-link" href="/admin?tab=notices">Manage Notices →</a>
+        </article>
+
+        <article class="stat-card">
+          <div class="stat-card-top">
+            <div class="stat-icon stat-icon--sky"><i class="fa-solid fa-images"></i></div>
+            <div class="stat-details">
+              <p class="stat-value">{{ schoolData.gallery.length }}</p>
+              <p class="stat-label">Gallery Photos</p>
+              <p class="stat-description">Sports, Cultural & Labs</p>
+            </div>
+          </div>
+          <a class="stat-link" href="/admin?tab=gallery">Manage Photos →</a>
+        </article>
+
+        <article class="stat-card">
+          <div class="stat-card-top">
+            <div class="stat-icon stat-icon--indigo"><i class="fa-solid fa-file-signature"></i></div>
+            <div class="stat-details">
+              <p class="stat-value">{{ schoolData.admissions.length }}</p>
+              <p class="stat-label">New Admissions</p>
+              <p class="stat-description">Submitted Online Forms</p>
+            </div>
+          </div>
+          <a class="stat-link" href="/admin?tab=admissions">Review Applications →</a>
+        </article>
+
+        <article class="stat-card">
+          <div class="stat-card-top">
+            <div class="stat-icon stat-icon--teal"><i class="fa-solid fa-book-open"></i></div>
+            <div class="stat-details">
+              <p class="stat-value">{{ schoolData.programs.length }}</p>
+              <p class="stat-label">Curriculums</p>
+              <p class="stat-description">Nursery to Class 10</p>
+            </div>
+          </div>
+          <a class="stat-link" href="/admin?tab=programs">View Programs →</a>
+        </article>
+      </div>
+
+      <!-- Quick Actions Grid -->
+      <div class="row g-4 mb-4">
+        <div class="col-lg-8">
+          <div class="dashboard-card">
+            <div class="dashboard-card-header">
+              <div>
+                <h2>Website Visitor Analytics</h2>
+                <p>Monthly visitor activity across Panchkhapan and Nepal</p>
+              </div>
+            </div>
+            <div class="analytics-chart-wrap" style="height: 240px;">
+              <canvas id="visitors-chart"></canvas>
+            </div>
+            <div class="analytics-mini-grid mt-3">
+              <article class="analytics-mini-card">
+                <span class="mini-label">Monthly Visitors</span>
+                <span class="mini-value">2,840</span>
+                <span class="mini-change up"><i class="fa-solid fa-arrow-trend-up"></i> +14.2%</span>
+              </article>
+              <article class="analytics-mini-card">
+                <span class="mini-label">Page Views</span>
+                <span class="mini-value">7,420</span>
+                <span class="mini-change up"><i class="fa-solid fa-arrow-trend-up"></i> +9.1%</span>
+              </article>
+              <article class="analytics-mini-card">
+                <span class="mini-label">Avg. Duration</span>
+                <span class="mini-value">03:12</span>
+                <span class="mini-change up"><i class="fa-solid fa-arrow-trend-up"></i> +4.5%</span>
+              </article>
+              <article class="analytics-mini-card">
+                <span class="mini-label">Mobile Users</span>
+                <span class="mini-value">78.4%</span>
+                <span class="mini-change up"><i class="fa-solid fa-arrow-trend-up"></i> +2.0%</span>
+              </article>
+            </div>
+          </div>
+        </div>
+
+        <div class="col-lg-4">
+          <div class="dashboard-card h-100">
+            <div class="dashboard-card-header">
+              <h2>Quick Actions</h2>
+              <p>Shortcut commands</p>
+            </div>
+            <div class="d-flex flex-column gap-2">
+              <a href="/admin?tab=notices" class="btn btn-outline text-start d-flex align-items-center gap-3 p-3">
+                <i class="fa-solid fa-plus-circle text-primary fs-4"></i>
+                <div>
+                  <div class="fw-bold text-dark">Publish Notice</div>
+                  <small class="text-muted">Post circular or exam routine</small>
+                </div>
+              </a>
+              <a href="/admin?tab=teachers" class="btn btn-outline text-start d-flex align-items-center gap-3 p-3">
+                <i class="fa-solid fa-user-plus text-success fs-4"></i>
+                <div>
+                  <div class="fw-bold text-dark">Add Faculty Member</div>
+                  <small class="text-muted">Register a teacher or staff</small>
+                </div>
+              </a>
+              <a href="/admin?tab=gallery" class="btn btn-outline text-start d-flex align-items-center gap-3 p-3">
+                <i class="fa-solid fa-cloud-arrow-up text-info fs-4"></i>
+                <div>
+                  <div class="fw-bold text-dark">Upload Photos</div>
+                  <small class="text-muted">Add sports, Puja or lab photos</small>
+                </div>
+              </a>
+              <a href="/admin?tab=settings" class="btn btn-outline text-start d-flex align-items-center gap-3 p-3">
+                <i class="fa-solid fa-gear text-secondary fs-4"></i>
+                <div>
+                  <div class="fw-bold text-dark">Edit School Info</div>
+                  <small class="text-muted">Change phone, address or logo</small>
+                </div>
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Recent Notices List -->
+      <div class="dashboard-card">
+        <div class="dashboard-card-header">
+          <div>
+            <h2>Recent Notices & Announcements</h2>
+            <p>Active bulletins published on the public portal</p>
+          </div>
+          <a href="/admin?tab=notices" class="btn btn-sm btn-navy">View All Notices</a>
+        </div>
+        <div class="table-responsive">
+          <table class="table align-middle table-hover mb-0">
+            <thead class="table-light">
+              <tr>
+                <th>Title</th>
+                <th>Category</th>
+                <th>Published Date</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for notice in schoolData.notices.slice(0, 4) %}
+                <tr>
+                  <td class="fw-semibold text-navy">{{ notice.title }}</td>
+                  <td><span class="badge bg-primary">{{ notice.category_display|default(notice.category) }}</span></td>
+                  <td class="text-muted small">{{ notice.created_at|date("F d, Y") }}</td>
+                  <td>
+                    <a href="/notices/{{ notice.slug }}" target="_blank" class="btn btn-sm btn-outline-secondary py-1 px-2">
+                      <i class="fa-solid fa-eye me-1"></i> Preview
+                    </a>
+                  </td>
+                </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+    {% endif %}
+
+    <!-- TAB 2: SCHOOL SETTINGS -->
+    {% if activeTab == 'settings' %}
+    <div class="tab-content-area">
+      <div class="dashboard-card">
+        <div class="dashboard-card-header">
+          <div>
+            <h2>School Identity & Contact Information</h2>
+            <p>Configure official school name, header logo, phone, address, and social links</p>
+          </div>
+        </div>
+
+        <form action="/admin/settings/update" method="POST" enctype="multipart/form-data">
+          <div class="row g-4">
+            <div class="col-md-6">
+              <label class="form-label font-weight-bold">School Name</label>
+              <input type="text" name="school_name" class="form-control" value="{{ schoolSettings.school_name }}" required>
+            </div>
+            <div class="col-md-6">
+              <label class="form-label font-weight-bold">Tagline / Motto</label>
+              <input type="text" name="tagline" class="form-control" value="{{ schoolSettings.tagline }}">
+            </div>
+            <div class="col-md-6">
+              <label class="form-label font-weight-bold">Contact Phone Number(s)</label>
+              <input type="text" name="phone" class="form-control" value="{{ schoolSettings.phone }}" required>
+            </div>
+            <div class="col-md-6">
+              <label class="form-label font-weight-bold">Official Email Address</label>
+              <input type="email" name="email" class="form-control" value="{{ schoolSettings.email }}" required>
+            </div>
+            <div class="col-12">
+              <label class="form-label font-weight-bold">Physical Address & Location</label>
+              <input type="text" name="address" class="form-control" value="{{ schoolSettings.address }}" required>
+            </div>
+            <div class="col-md-6">
+              <label class="form-label font-weight-bold">Facebook Page URL</label>
+              <input type="url" name="facebook_url" class="form-control" value="{{ schoolSettings.facebook_url }}">
+            </div>
+            <div class="col-md-6">
+              <label class="form-label font-weight-bold">YouTube Channel URL</label>
+              <input type="url" name="youtube_url" class="form-control" value="{{ schoolSettings.youtube_url }}">
+            </div>
+            <div class="col-md-6">
+              <label class="form-label font-weight-bold">Upload New Logo Image</label>
+              <input type="file" name="logo_file" class="form-control" accept="image/*">
+              <small class="text-muted">Supports PNG, JPG, WEBP formats</small>
+            </div>
+            <div class="col-md-6">
+              <label class="form-label font-weight-bold">Or Logo URL Path</label>
+              <input type="text" name="logo_url" class="form-control" value="{{ schoolSettings.logo_url }}">
+            </div>
+          </div>
+          <div class="mt-4 pt-3 border-top text-end">
+            <button type="submit" class="btn btn-navy px-4">
+              <i class="fa-solid fa-floppy-disk me-1"></i> Save Changes
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+    {% endif %}
+
+    <!-- TAB 3: SLIDERS -->
+    {% if activeTab == 'sliders' %}
+    <div class="tab-content-area">
+      <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+          <h2 class="h5 fw-bold mb-1 text-navy">Homepage Sliders ({{ schoolData.sliders.length }})</h2>
+          <p class="text-muted small mb-0">High-resolution banner slides featured on the homepage hero carousel</p>
+        </div>
+        <button class="btn btn-gold text-dark font-weight-bold" data-bs-toggle="modal" data-bs-target="#addSliderModal">
+          <i class="fa-solid fa-plus me-1"></i> Add New Slider
+        </button>
+      </div>
+
+      <div class="row g-4">
+        {% for slider in schoolData.sliders %}
+          <div class="col-md-6">
+            <div class="card border-0 shadow-sm rounded-4 overflow-hidden h-100">
+              <div class="position-relative" style="height: 180px;">
+                <img src="{{ slider.image.url }}" class="w-100 h-100 object-fit-cover" alt="{{ slider.title }}" onerror="this.src='/media/slider/slide_2.jpg'">
+                <span class="badge bg-dark position-absolute top-0 start-0 m-3 opacity-75">Slide #{{ loop.index }}</span>
+              </div>
+              <div class="card-body p-4 d-flex flex-column justify-content-between">
+                <div>
+                  <span class="badge bg-warning text-dark mb-2">{{ slider.subtitle|default("Announcement") }}</span>
+                  <h5 class="fw-bold text-navy mb-2" style="color: #0b2545;">{{ slider.title }}</h5>
+                  <p class="text-muted small mb-3">{{ slider.description|truncatewords(20) }}</p>
+                </div>
+                <div class="d-flex justify-content-between align-items-center pt-3 border-top">
+                  <span class="small text-muted">Button: <strong>{{ slider.button_text }}</strong></span>
+                  <div class="d-flex gap-2">
+                    <button class="btn btn-sm btn-outline-primary" data-bs-toggle="modal" data-bs-target="#editSliderModal{{ slider.id }}">
+                      <i class="fa-solid fa-pen-to-square"></i>
+                    </button>
+                    <form action="/admin/slider/delete/{{ slider.id }}" method="POST" onsubmit="return confirm('Are you sure you want to delete this slider?');">
+                      <button type="submit" class="btn btn-sm btn-outline-danger">
+                        <i class="fa-solid fa-trash"></i>
+                      </button>
+                    </form>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Edit Slider Modal -->
+          <div class="modal fade" id="editSliderModal{{ slider.id }}" tabindex="-1" aria-hidden="true">
+            <div class="modal-dialog modal-lg">
+              <div class="modal-content p-3">
+                <form action="/admin/slider/edit/{{ slider.id }}" method="POST" enctype="multipart/form-data">
+                  <div class="modal-header border-0">
+                    <h5 class="modal-title fw-bold">Edit Slider #{{ slider.id }}</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                  </div>
+                  <div class="modal-body">
+                    <div class="mb-3">
+                      <label class="form-label fw-bold">Slider Title</label>
+                      <input type="text" name="title" class="form-control" value="{{ slider.title }}" required>
+                    </div>
+                    <div class="mb-3">
+                      <label class="form-label fw-bold">Subtitle / Badge</label>
+                      <input type="text" name="subtitle" class="form-control" value="{{ slider.subtitle }}">
+                    </div>
+                    <div class="mb-3">
+                      <label class="form-label fw-bold">Description</label>
+                      <textarea name="description" class="form-control" rows="3">{{ slider.description }}</textarea>
+                    </div>
+                    <div class="row g-3 mb-3">
+                      <div class="col-md-6">
+                        <label class="form-label fw-bold">Button Text</label>
+                        <input type="text" name="button_text" class="form-control" value="{{ slider.button_text }}">
+                      </div>
+                      <div class="col-md-6">
+                        <label class="form-label fw-bold">Button Link</label>
+                        <input type="text" name="button_url" class="form-control" value="{{ slider.button_url }}">
+                      </div>
+                    </div>
+                    <div class="row g-3">
+                      <div class="col-md-6">
+                        <label class="form-label fw-bold">Upload New Image</label>
+                        <input type="file" name="image_file" class="form-control" accept="image/*">
+                      </div>
+                      <div class="col-md-6">
+                        <label class="form-label fw-bold">Or Image URL</label>
+                        <input type="text" name="image_url" class="form-control" value="{{ slider.image.url }}">
+                      </div>
+                    </div>
+                  </div>
+                  <div class="modal-footer border-0">
+                    <button type="button" class="btn btn-light" data-bs-dismiss="modal">Cancel</button>
+                    <button type="submit" class="btn btn-navy">Save Changes</button>
+                  </div>
+                </form>
+              </div>
+            </div>
+          </div>
+        {% endfor %}
+      </div>
+
+      <!-- Add Slider Modal -->
+      <div class="modal fade" id="addSliderModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+          <div class="modal-content p-3">
+            <form action="/admin/slider/add" method="POST" enctype="multipart/form-data">
+              <div class="modal-header border-0">
+                <h5 class="modal-title fw-bold">Add New Homepage Slider</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+              </div>
+              <div class="modal-body">
+                <div class="mb-3">
+                  <label class="form-label fw-bold">Title *</label>
+                  <input type="text" name="title" class="form-control" placeholder="E.g., Welcome to Shree Jaljala Secondary School" required>
+                </div>
+                <div class="mb-3">
+                  <label class="form-label fw-bold">Subtitle / Eyebrow</label>
+                  <input type="text" name="subtitle" class="form-control" placeholder="E.g., Affiliated with Government of Nepal">
+                </div>
+                <div class="mb-3">
+                  <label class="form-label fw-bold">Description</label>
+                  <textarea name="description" class="form-control" rows="3" placeholder="Brief description of the school vision"></textarea>
+                </div>
+                <div class="row g-3 mb-3">
+                  <div class="col-md-6">
+                    <label class="form-label fw-bold">Button Text</label>
+                    <input type="text" name="button_text" class="form-control" value="Learn More">
+                  </div>
+                  <div class="col-md-6">
+                    <label class="form-label fw-bold">Button Link</label>
+                    <input type="text" name="button_url" class="form-control" value="/about">
+                  </div>
+                </div>
+                <div class="row g-3">
+                  <div class="col-md-6">
+                    <label class="form-label fw-bold">Upload Slide Image</label>
+                    <input type="file" name="image_file" class="form-control" accept="image/*">
+                  </div>
+                  <div class="col-md-6">
+                    <label class="form-label fw-bold">Or Image URL</label>
+                    <input type="text" name="image_url" class="form-control" placeholder="/static/images/slider1.jpg">
+                  </div>
+                </div>
+              </div>
+              <div class="modal-footer border-0">
+                <button type="button" class="btn btn-light" data-bs-dismiss="modal">Cancel</button>
+                <button type="submit" class="btn btn-navy">Create Slider</button>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+    {% endif %}
+
+    <!-- TAB 4: TEACHERS & FACULTY -->
+    {% if activeTab == 'teachers' %}
+    <div class="tab-content-area">
+      <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+          <h2 class="h5 fw-bold mb-1 text-navy">Faculty & Staff Directory ({{ schoolData.teachers.length }})</h2>
+          <p class="text-muted small mb-0">Principals, senior educators, department heads, and instructors</p>
+        </div>
+        <button class="btn btn-gold text-dark font-weight-bold" data-bs-toggle="modal" data-bs-target="#addTeacherModal">
+          <i class="fa-solid fa-user-plus me-1"></i> Add Faculty Member
+        </button>
+      </div>
+
+      <div class="table-card p-3">
+        <div class="table-responsive">
+          <table class="table align-middle table-hover mb-0">
+            <thead class="table-light">
+              <tr>
+                <th>Photo</th>
+                <th>Name</th>
+                <th>Position</th>
+                <th>Department</th>
+                <th>Contact</th>
+                <th class="text-end">Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for teacher in schoolData.teachers %}
+                <tr>
+                  <td>
+                    <img src="{{ teacher.photo.url }}" class="rounded-circle object-fit-cover" width="45" height="45" alt="{{ teacher.name }}" onerror="this.src='/media/teachers/govinda shrestha.jpg'">
+                  </td>
+                  <td>
+                    <div class="fw-bold text-navy">{{ teacher.name }}</div>
+                    <small class="text-muted">{{ teacher.qualification }}</small>
+                  </td>
+                  <td>
+                    <span class="badge {% if teacher.position == 'Principal' %}bg-danger{% else %}bg-secondary{% endif %}">
+                      {{ teacher.position }}
+                    </span>
+                  </td>
+                  <td><small class="text-dark fw-medium">{{ teacher.department_display|default(teacher.department) }}</small></td>
+                  <td>
+                    <div class="small"><i class="fa-solid fa-phone me-1 text-muted"></i> {{ teacher.phone }}</div>
+                    <div class="small text-muted"><i class="fa-solid fa-envelope me-1 text-muted"></i> {{ teacher.email }}</div>
+                  </td>
+                  <td class="text-end">
+                    <button class="btn btn-sm btn-outline-primary me-1" data-bs-toggle="modal" data-bs-target="#editTeacherModal{{ teacher.id }}">
+                      <i class="fa-solid fa-pen-to-square"></i>
+                    </button>
+                    <form action="/admin/teacher/delete/{{ teacher.id }}" method="POST" class="d-inline" onsubmit="return confirm('Delete this teacher profile?');">
+                      <button type="submit" class="btn btn-sm btn-outline-danger">
+                        <i class="fa-solid fa-trash"></i>
+                      </button>
+                    </form>
+                  </td>
+                </tr>
+
+                <!-- Edit Teacher Modal -->
+                <div class="modal fade" id="editTeacherModal{{ teacher.id }}" tabindex="-1" aria-hidden="true">
+                  <div class="modal-dialog modal-lg">
+                    <div class="modal-content p-3">
+                      <form action="/admin/teacher/edit/{{ teacher.id }}" method="POST" enctype="multipart/form-data">
+                        <div class="modal-header border-0">
+                          <h5 class="modal-title fw-bold">Edit Faculty Member: {{ teacher.name }}</h5>
+                          <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                        </div>
+                        <div class="modal-body">
+                          <div class="row g-3 mb-3">
+                            <div class="col-md-6">
+                              <label class="form-label fw-bold">Full Name *</label>
+                              <input type="text" name="name" class="form-control" value="{{ teacher.name }}" required>
+                            </div>
+                            <div class="col-md-6">
+                              <label class="form-label fw-bold">Position / Designation *</label>
+                              <input type="text" name="position" class="form-control" value="{{ teacher.position }}" required>
+                            </div>
+                          </div>
+                          <div class="row g-3 mb-3">
+                            <div class="col-md-6">
+                              <label class="form-label fw-bold">Department</label>
+                              <select name="department" class="form-select">
+                                {% for dept in departmentChoices %}
+                                  <option value="{{ dept[0] }}" {% if teacher.department == dept[0] %}selected{% endif %}>{{ dept[1] }}</option>
+                                {% endfor %}
+                              </select>
+                            </div>
+                            <div class="col-md-6">
+                              <label class="form-label fw-bold">Academic Qualification</label>
+                              <input type="text" name="qualification" class="form-control" value="{{ teacher.qualification }}">
+                            </div>
+                          </div>
+                          <div class="row g-3 mb-3">
+                            <div class="col-md-6">
+                              <label class="form-label fw-bold">Phone Number</label>
+                              <input type="text" name="phone" class="form-control" value="{{ teacher.phone }}">
+                            </div>
+                            <div class="col-md-6">
+                              <label class="form-label fw-bold">Email Address</label>
+                              <input type="email" name="email" class="form-control" value="{{ teacher.email }}">
+                            </div>
+                          </div>
+                          <div class="mb-3">
+                            <label class="form-label fw-bold">Biography / Role Details</label>
+                            <textarea name="biography" class="form-control" rows="3">{{ teacher.biography }}</textarea>
+                          </div>
+                          <div class="row g-3">
+                            <div class="col-md-6">
+                              <label class="form-label fw-bold">Upload New Photo</label>
+                              <input type="file" name="photo_file" class="form-control" accept="image/*">
+                            </div>
+                            <div class="col-md-6">
+                              <label class="form-label fw-bold">Or Photo URL</label>
+                              <input type="text" name="photo_url" class="form-control" value="{{ teacher.photo.url }}">
+                            </div>
+                          </div>
+                        </div>
+                        <div class="modal-footer border-0">
+                          <button type="button" class="btn btn-light" data-bs-dismiss="modal">Cancel</button>
+                          <button type="submit" class="btn btn-navy">Save Updates</button>
+                        </div>
+                      </form>
+                    </div>
+                  </div>
+                </div>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Add Teacher Modal -->
+      <div class="modal fade" id="addTeacherModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+          <div class="modal-content p-3">
+            <form action="/admin/teacher/add" method="POST" enctype="multipart/form-data">
+              <div class="modal-header border-0">
+                <h5 class="modal-title fw-bold">Add New Faculty / Staff Member</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+              </div>
+              <div class="modal-body">
+                <div class="row g-3 mb-3">
+                  <div class="col-md-6">
+                    <label class="form-label fw-bold">Full Name *</label>
+                    <input type="text" name="name" class="form-control" placeholder="E.g., Ramesh Bhattarai" required>
+                  </div>
+                  <div class="col-md-6">
+                    <label class="form-label fw-bold">Position / Designation *</label>
+                    <input type="text" name="position" class="form-control" placeholder="E.g., Science Teacher" required>
+                  </div>
+                </div>
+                <div class="row g-3 mb-3">
+                  <div class="col-md-6">
+                    <label class="form-label fw-bold">Department</label>
+                    <select name="department" class="form-select">
+                      {% for dept in departmentChoices %}
+                        <option value="{{ dept[0] }}">{{ dept[1] }}</option>
+                      {% endfor %}
+                    </select>
+                  </div>
+                  <div class="col-md-6">
+                    <label class="form-label fw-bold">Academic Qualification</label>
+                    <input type="text" name="qualification" class="form-control" placeholder="E.g., M.Sc in Physics, B.Ed">
+                  </div>
+                </div>
+                <div class="row g-3 mb-3">
+                  <div class="col-md-6">
+                    <label class="form-label fw-bold">Phone Number</label>
+                    <input type="text" name="phone" class="form-control" placeholder="98XXXXXXXX">
+                  </div>
+                  <div class="col-md-6">
+                    <label class="form-label fw-bold">Email Address</label>
+                    <input type="email" name="email" class="form-control" placeholder="teacher@jaljala.edu.np">
+                  </div>
+                </div>
+                <div class="mb-3">
+                  <label class="form-label fw-bold">Biography & Teaching Subjects</label>
+                  <textarea name="biography" class="form-control" rows="3" placeholder="Overview of educator's background and achievements"></textarea>
+                </div>
+                <div class="row g-3">
+                  <div class="col-md-6">
+                    <label class="form-label fw-bold">Upload Portrait Photo</label>
+                    <input type="file" name="photo_file" class="form-control" accept="image/*">
+                  </div>
+                  <div class="col-md-6">
+                    <label class="form-label fw-bold">Or Photo URL</label>
+                    <input type="text" name="photo_url" class="form-control" placeholder="/static/images/principal.jpg">
+                  </div>
+                </div>
+              </div>
+              <div class="modal-footer border-0">
+                <button type="button" class="btn btn-light" data-bs-dismiss="modal">Cancel</button>
+                <button type="submit" class="btn btn-navy">Add Teacher</button>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+    {% endif %}
+
+    <!-- TAB 5: NOTICES -->
+    {% if activeTab == 'notices' %}
+    <div class="tab-content-area">
+      <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+          <h2 class="h5 fw-bold mb-1 text-navy">Notices & Circulars ({{ schoolData.notices.length }})</h2>
+          <p class="text-muted small mb-0">Official academic, admission, examination and general bulletins</p>
+        </div>
+        <button class="btn btn-gold text-dark font-weight-bold" data-bs-toggle="modal" data-bs-target="#addNoticeModal">
+          <i class="fa-solid fa-plus me-1"></i> Post New Notice
+        </button>
+      </div>
+
+      <div class="row g-4">
+        {% for notice in schoolData.notices %}
+          <div class="col-md-6">
+            <div class="card border-0 shadow-sm rounded-4 h-100">
+              <div class="card-body p-4 d-flex flex-column justify-content-between">
+                <div>
+                  <div class="d-flex justify-content-between align-items-start mb-2">
+                    <span class="badge bg-primary">{{ notice.category_display|default(notice.category) }}</span>
+                    <small class="text-muted">{{ notice.created_at|date("M d, Y") }}</small>
+                  </div>
+                  <h5 class="fw-bold text-navy mb-2">{{ notice.title }}</h5>
+                  <p class="text-secondary small mb-3">{{ notice.description|truncatewords(28) }}</p>
+                </div>
+                <div class="d-flex justify-content-between align-items-center pt-3 border-top">
+                  <a href="/notices/{{ notice.slug }}" target="_blank" class="btn btn-sm btn-outline-secondary">
+                    <i class="fa-solid fa-arrow-up-right-from-square me-1"></i> View Notice
+                  </a>
+                  <div class="d-flex gap-2">
+                    <button class="btn btn-sm btn-outline-primary" data-bs-toggle="modal" data-bs-target="#editNoticeModal{{ notice.id }}">
+                      <i class="fa-solid fa-pen-to-square"></i>
+                    </button>
+                    <form action="/admin/notice/delete/{{ notice.id }}" method="POST" onsubmit="return confirm('Delete this notice?');">
+                      <button type="submit" class="btn btn-sm btn-outline-danger">
+                        <i class="fa-solid fa-trash"></i>
+                      </button>
+                    </form>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Edit Notice Modal -->
+          <div class="modal fade" id="editNoticeModal{{ notice.id }}" tabindex="-1" aria-hidden="true">
+            <div class="modal-dialog modal-lg">
+              <div class="modal-content p-3">
+                <form action="/admin/notice/edit/{{ notice.id }}" method="POST" enctype="multipart/form-data">
+                  <div class="modal-header border-0">
+                    <h5 class="modal-title fw-bold">Edit Notice</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                  </div>
+                  <div class="modal-body">
+                    <div class="mb-3">
+                      <label class="form-label fw-bold">Notice Title *</label>
+                      <input type="text" name="title" class="form-control" value="{{ notice.title }}" required>
+                    </div>
+                    <div class="mb-3">
+                      <label class="form-label fw-bold">Category</label>
+                      <select name="category" class="form-select">
+                        {% for cat in noticeCategoryChoices %}
+                          <option value="{{ cat[0] }}" {% if notice.category == cat[0] %}selected{% endif %}>{{ cat[1] }}</option>
+                        {% endfor %}
+                      </select>
+                    </div>
+                    <div class="mb-3">
+                      <label class="form-label fw-bold">Description / Circular Text *</label>
+                      <textarea name="description" class="form-control" rows="5" required>{{ notice.description }}</textarea>
+                    </div>
+                    <div class="row g-3">
+                      <div class="col-md-6">
+                        <label class="form-label fw-bold">Upload Image / Scan</label>
+                        <input type="file" name="image_file" class="form-control" accept="image/*">
+                      </div>
+                      <div class="col-md-6">
+                        <label class="form-label fw-bold">Or Image URL</label>
+                        <input type="text" name="image_url" class="form-control" value="{{ notice.image.url }}">
+                      </div>
+                    </div>
+                  </div>
+                  <div class="modal-footer border-0">
+                    <button type="button" class="btn btn-light" data-bs-dismiss="modal">Cancel</button>
+                    <button type="submit" class="btn btn-navy">Save Notice</button>
+                  </div>
+                </form>
+              </div>
+            </div>
+          </div>
+        {% endfor %}
+      </div>
+
+      <!-- Add Notice Modal -->
+      <div class="modal fade" id="addNoticeModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+          <div class="modal-content p-3">
+            <form action="/admin/notice/add" method="POST" enctype="multipart/form-data">
+              <div class="modal-header border-0">
+                <h5 class="modal-title fw-bold">Post New Notice</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+              </div>
+              <div class="modal-body">
+                <div class="mb-3">
+                  <label class="form-label fw-bold">Notice Title *</label>
+                  <input type="text" name="title" class="form-control" placeholder="E.g., First Terminal Examination Routine 2083" required>
+                </div>
+                <div class="mb-3">
+                  <label class="form-label fw-bold">Notice Category</label>
+                  <select name="category" class="form-select">
+                    {% for cat in noticeCategoryChoices %}
+                      <option value="{{ cat[0] }}">{{ cat[1] }}</option>
+                    {% endfor %}
+                  </select>
+                </div>
+                <div class="mb-3">
+                  <label class="form-label fw-bold">Notice Content / Full Details *</label>
+                  <textarea name="description" class="form-control" rows="5" placeholder="Write notice details, instructions, dates, and guidelines..." required></textarea>
+                </div>
+                <div class="row g-3">
+                  <div class="col-md-6">
+                    <label class="form-label fw-bold">Upload Document / Circular Image</label>
+                    <input type="file" name="image_file" class="form-control" accept="image/*">
+                  </div>
+                  <div class="col-md-6">
+                    <label class="form-label fw-bold">Or Image URL</label>
+                    <input type="text" name="image_url" class="form-control" placeholder="/static/images/image/schoolnotices.png">
+                  </div>
+                </div>
+              </div>
+              <div class="modal-footer border-0">
+                <button type="button" class="btn btn-light" data-bs-dismiss="modal">Cancel</button>
+                <button type="submit" class="btn btn-navy">Publish Notice</button>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+    {% endif %}
+
+    <!-- TAB 6: POPUP NOTICE BANNERS -->
+    {% if activeTab == 'popups' %}
+    <div class="tab-content-area">
+      <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+          <h2 class="h5 fw-bold mb-1 text-navy">Homepage Modal Popup Notices</h2>
+          <p class="text-muted small mb-0">High-priority alerts and admissions banners shown when users open the homepage</p>
+        </div>
+        <button class="btn btn-gold text-dark font-weight-bold" data-bs-toggle="modal" data-bs-target="#addPopupModal">
+          <i class="fa-solid fa-plus me-1"></i> Add Popup Notice
+        </button>
+      </div>
+
+      <div class="row g-4">
+        {% for popup in schoolData.popups %}
+          <div class="col-md-6">
+            <div class="card border-0 shadow-sm rounded-4 h-100">
+              <div class="card-body p-4 d-flex flex-column justify-content-between">
+                <div>
+                  <div class="d-flex justify-content-between align-items-center mb-3">
+                    <span class="badge {% if popup.is_active %}bg-success{% else %}bg-secondary{% endif %} px-3 py-1">
+                      {% if popup.is_active %}● Active on Homepage{% else %}Inactive{% endif %}
+                    </span>
+                    <form action="/admin/popup/toggle/{{ popup.id }}" method="POST">
+                      <button type="submit" class="btn btn-sm {% if popup.is_active %}btn-outline-warning text-dark{% else %}btn-outline-success{% endif %}">
+                        {% if popup.is_active %}Deactivate{% else %}Activate{% endif %}
+                      </button>
+                    </form>
+                  </div>
+                  <h5 class="fw-bold text-navy mb-1">{{ popup.title }}</h5>
+                  <p class="text-muted small mb-2">{{ popup.subtitle }}</p>
+                  <p class="text-secondary small mb-3">{{ popup.message }}</p>
+                  {% if popup.image and popup.image.url %}
+                    <img src="{{ popup.image.url }}" class="rounded-3 w-100 mb-3" style="max-height: 120px; object-fit: cover;" alt="{{ popup.title }}" onerror="this.style.display='none'">
+                  {% endif %}
+                </div>
+                <div class="d-flex justify-content-between align-items-center pt-3 border-top">
+                  <span class="small text-muted">Action Button: <strong>{{ popup.button_text }}</strong></span>
+                  <div class="d-flex gap-2">
+                    <button class="btn btn-sm btn-outline-primary" data-bs-toggle="modal" data-bs-target="#editPopupModal{{ popup.id }}">
+                      <i class="fa-solid fa-pen-to-square"></i>
+                    </button>
+                    <form action="/admin/popup/delete/{{ popup.id }}" method="POST" onsubmit="return confirm('Delete this popup banner?');">
+                      <button type="submit" class="btn btn-sm btn-outline-danger">
+                        <i class="fa-solid fa-trash"></i>
+                      </button>
+                    </form>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Edit Popup Modal -->
+          <div class="modal fade" id="editPopupModal{{ popup.id }}" tabindex="-1" aria-hidden="true">
+            <div class="modal-dialog modal-lg">
+              <div class="modal-content p-3">
+                <form action="/admin/popup/edit/{{ popup.id }}" method="POST" enctype="multipart/form-data">
+                  <div class="modal-header border-0">
+                    <h5 class="modal-title fw-bold">Edit Popup Notice</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                  </div>
+                  <div class="modal-body">
+                    <div class="mb-3">
+                      <label class="form-label fw-bold">Popup Title *</label>
+                      <input type="text" name="title" class="form-control" value="{{ popup.title }}" required>
+                    </div>
+                    <div class="mb-3">
+                      <label class="form-label fw-bold">Subtitle</label>
+                      <input type="text" name="subtitle" class="form-control" value="{{ popup.subtitle }}">
+                    </div>
+                    <div class="mb-3">
+                      <label class="form-label fw-bold">Message Content *</label>
+                      <textarea name="message" class="form-control" rows="4" required>{{ popup.message }}</textarea>
+                    </div>
+                    <div class="row g-3 mb-3">
+                      <div class="col-md-6">
+                        <label class="form-label fw-bold">Button Text</label>
+                        <input type="text" name="button_text" class="form-control" value="{{ popup.button_text }}">
+                      </div>
+                      <div class="col-md-6">
+                        <label class="form-label fw-bold">Button Link</label>
+                        <input type="text" name="button_url" class="form-control" value="{{ popup.button_url }}">
+                      </div>
+                    </div>
+                    <div class="row g-3">
+                      <div class="col-md-6">
+                        <label class="form-label fw-bold">Upload Image</label>
+                        <input type="file" name="image_file" class="form-control" accept="image/*">
+                      </div>
+                      <div class="col-md-6">
+                        <label class="form-label fw-bold">Or Image URL</label>
+                        <input type="text" name="image_url" class="form-control" value="{{ popup.image.url }}">
+                      </div>
+                    </div>
+                  </div>
+                  <div class="modal-footer border-0">
+                    <button type="button" class="btn btn-light" data-bs-dismiss="modal">Cancel</button>
+                    <button type="submit" class="btn btn-navy">Save Popup</button>
+                  </div>
+                </form>
+              </div>
+            </div>
+          </div>
+        {% endfor %}
+      </div>
+
+      <!-- Add Popup Modal -->
+      <div class="modal fade" id="addPopupModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+          <div class="modal-content p-3">
+            <form action="/admin/popup/add" method="POST" enctype="multipart/form-data">
+              <div class="modal-header border-0">
+                <h5 class="modal-title fw-bold">Create New Popup Notice Banner</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+              </div>
+              <div class="modal-body">
+                <div class="mb-3">
+                  <label class="form-label fw-bold">Popup Title *</label>
+                  <input type="text" name="title" class="form-control" placeholder="E.g., Admission Open for Academic Session 2083" required>
+                </div>
+                <div class="mb-3">
+                  <label class="form-label fw-bold">Subtitle</label>
+                  <input type="text" name="subtitle" class="form-control" placeholder="E.g., Shree Jaljala Secondary School Notice">
+                </div>
+                <div class="mb-3">
+                  <label class="form-label fw-bold">Announcement Message *</label>
+                  <textarea name="message" class="form-control" rows="4" placeholder="Enter message text displayed in the modal..." required></textarea>
+                </div>
+                <div class="row g-3 mb-3">
+                  <div class="col-md-6">
+                    <label class="form-label fw-bold">Button Text</label>
+                    <input type="text" name="button_text" class="form-control" value="Fill Online Admission Form">
+                  </div>
+                  <div class="col-md-6">
+                    <label class="form-label fw-bold">Button Link</label>
+                    <input type="text" name="button_url" class="form-control" value="/admission">
+                  </div>
+                </div>
+                <div class="row g-3">
+                  <div class="col-md-6">
+                    <label class="form-label fw-bold">Upload Flyer / Notice Image</label>
+                    <input type="file" name="image_file" class="form-control" accept="image/*">
+                  </div>
+                  <div class="col-md-6">
+                    <label class="form-label fw-bold">Or Image URL</label>
+                    <input type="text" name="image_url" class="form-control" placeholder="/media/notices/admission_notice.png">
+                  </div>
+                </div>
+              </div>
+              <div class="modal-footer border-0">
+                <button type="button" class="btn btn-light" data-bs-dismiss="modal">Cancel</button>
+                <button type="submit" class="btn btn-navy">Create Popup</button>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+    {% endif %}
+
+    <!-- TAB 7: GALLERY -->
+    {% if activeTab == 'gallery' %}
+    <div class="tab-content-area">
+      <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+          <h2 class="h5 fw-bold mb-1 text-navy">Photo Gallery Management ({{ schoolData.gallery.length }} Photos)</h2>
+          <p class="text-muted small mb-0">Manage campus, sports, Saraswati Puja, and educational tour pictures</p>
+        </div>
+        <button class="btn btn-gold text-dark font-weight-bold" data-bs-toggle="modal" data-bs-target="#addGalleryModal">
+          <i class="fa-solid fa-cloud-arrow-up me-1"></i> Add Gallery Photo
+        </button>
+      </div>
+
+      <div class="gallery-grid">
+        {% for item in schoolData.gallery %}
+          <div class="gallery-item position-relative">
+            <div class="gallery-link">
+              <img src="{{ item.image.url }}" alt="{{ item.title }}" onerror="this.src='/static/images/image/firstphoto.jpg'">
+              <div class="gallery-caption">
+                <div class="text-truncate">{{ item.title }}</div>
+                <small class="opacity-75">{{ item.get_category_display }}</small>
+              </div>
+            </div>
+            <div class="p-2 bg-white d-flex justify-content-between align-items-center">
+              <button class="btn btn-sm btn-outline-primary py-1 px-2" data-bs-toggle="modal" data-bs-target="#editGalleryModal{{ item.id }}">
+                <i class="fa-solid fa-pen-to-square"></i>
+              </button>
+              <form action="/admin/gallery/delete/{{ item.id }}" method="POST" onsubmit="return confirm('Delete this gallery photo?');">
+                <button type="submit" class="btn btn-sm btn-outline-danger py-1 px-2">
+                  <i class="fa-solid fa-trash"></i>
+                </button>
+              </form>
+            </div>
+          </div>
+
+          <!-- Edit Gallery Modal -->
+          <div class="modal fade" id="editGalleryModal{{ item.id }}" tabindex="-1" aria-hidden="true">
+            <div class="modal-dialog">
+              <div class="modal-content p-3">
+                <form action="/admin/gallery/edit/{{ item.id }}" method="POST" enctype="multipart/form-data">
+                  <div class="modal-header border-0">
+                    <h5 class="modal-title fw-bold">Edit Photo Details</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                  </div>
+                  <div class="modal-body">
+                    <div class="mb-3">
+                      <label class="form-label fw-bold">Photo Title</label>
+                      <input type="text" name="title" class="form-control" value="{{ item.title }}" required>
+                    </div>
+                    <div class="mb-3">
+                      <label class="form-label fw-bold">Category</label>
+                      <select name="category" class="form-select">
+                        {% for cat in galleryCategoryChoices %}
+                          <option value="{{ cat[0] }}" {% if item.category == cat[0] %}selected{% endif %}>{{ cat[1] }}</option>
+                        {% endfor %}
+                      </select>
+                    </div>
+                    <div class="mb-3">
+                      <label class="form-label fw-bold">Description</label>
+                      <textarea name="description" class="form-control" rows="2">{{ item.description }}</textarea>
+                    </div>
+                    <div class="mb-3">
+                      <label class="form-label fw-bold">Upload New Photo</label>
+                      <input type="file" name="image_file" class="form-control" accept="image/*">
+                    </div>
+                    <div class="mb-3">
+                      <label class="form-label fw-bold">Or Photo URL</label>
+                      <input type="text" name="image_url" class="form-control" value="{{ item.image.url }}">
+                    </div>
+                  </div>
+                  <div class="modal-footer border-0">
+                    <button type="button" class="btn btn-light" data-bs-dismiss="modal">Cancel</button>
+                    <button type="submit" class="btn btn-navy">Save Photo</button>
+                  </div>
+                </form>
+              </div>
+            </div>
+          </div>
+        {% endfor %}
+      </div>
+
+      <!-- Add Gallery Modal -->
+      <div class="modal fade" id="addGalleryModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog">
+          <div class="modal-content p-3">
+            <form action="/admin/gallery/add" method="POST" enctype="multipart/form-data">
+              <div class="modal-header border-0">
+                <h5 class="modal-title fw-bold">Add Photo to Gallery</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+              </div>
+              <div class="modal-body">
+                <div class="mb-3">
+                  <label class="form-label fw-bold">Photo Title *</label>
+                  <input type="text" name="title" class="form-control" placeholder="E.g., Saraswati Puja Cultural Dance" required>
+                </div>
+                <div class="mb-3">
+                  <label class="form-label fw-bold">Album Category</label>
+                  <select name="category" class="form-select">
+                    {% for cat in galleryCategoryChoices %}
+                      <option value="{{ cat[0] }}">{{ cat[1] }}</option>
+                    {% endfor %}
+                  </select>
+                </div>
+                <div class="mb-3">
+                  <label class="form-label fw-bold">Short Description</label>
+                  <textarea name="description" class="form-control" rows="2" placeholder="Describe the event or activity..."></textarea>
+                </div>
+                <div class="mb-3">
+                  <label class="form-label fw-bold">Upload Image File</label>
+                  <input type="file" name="image_file" class="form-control" accept="image/*">
+                </div>
+                <div class="mb-3">
+                  <label class="form-label fw-bold">Or Image URL</label>
+                  <input type="text" name="image_url" class="form-control" placeholder="/static/images/image/firstphoto.jpg">
+                </div>
+              </div>
+              <div class="modal-footer border-0">
+                <button type="button" class="btn btn-light" data-bs-dismiss="modal">Cancel</button>
+                <button type="submit" class="btn btn-navy">Upload Photo</button>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+    {% endif %}
+
+    <!-- TAB 8: ACADEMIC PROGRAMS -->
+    {% if activeTab == 'programs' %}
+    <div class="tab-content-area">
+      <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+          <h2 class="h5 fw-bold mb-1 text-navy">Academic Programs ({{ schoolData.programs.length }})</h2>
+          <p class="text-muted small mb-0">Nursery, Primary, Basic, Secondary (SEE), Computer and Sports Programs</p>
+        </div>
+        <button class="btn btn-gold text-dark font-weight-bold" data-bs-toggle="modal" data-bs-target="#addProgramModal">
+          <i class="fa-solid fa-plus me-1"></i> Add Academic Program
+        </button>
+      </div>
+
+      <div class="row g-4">
+        {% for prog in schoolData.programs %}
+          <div class="col-md-6 col-lg-4">
+            <div class="card border-0 shadow-sm rounded-4 h-100 overflow-hidden">
+              <div style="height: 140px;" class="position-relative">
+                <img src="{{ prog.image.url }}" class="w-100 h-100 object-fit-cover" alt="{{ prog.title }}" onerror="this.src='/media/gallery/image_1.jpg'">
+                <span class="badge bg-primary position-absolute bottom-0 start-0 m-3">{{ prog.duration }}</span>
+              </div>
+              <div class="card-body p-3 d-flex flex-column justify-content-between">
+                <div>
+                  <h6 class="fw-bold text-navy mb-1">{{ prog.title }}</h6>
+                  <p class="small text-muted mb-2">Eligibility: {{ prog.eligibility }}</p>
+                  <p class="small text-secondary mb-3">{{ prog.description|truncatewords(15) }}</p>
+                </div>
+                <div class="d-flex justify-content-between align-items-center pt-2 border-top">
+                  <a href="/programs/{{ prog.slug }}" target="_blank" class="small text-primary text-decoration-none">
+                    <i class="fa-solid fa-eye me-1"></i> Preview
+                  </a>
+                  <form action="/admin/program/delete/{{ prog.id }}" method="POST" onsubmit="return confirm('Delete this program?');">
+                    <button type="submit" class="btn btn-sm btn-outline-danger py-1 px-2">
+                      <i class="fa-solid fa-trash"></i>
+                    </button>
+                  </form>
+                </div>
+              </div>
+            </div>
+          </div>
+        {% endfor %}
+      </div>
+
+      <!-- Add Program Modal -->
+      <div class="modal fade" id="addProgramModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+          <div class="modal-content p-3">
+            <form action="/admin/program/add" method="POST" enctype="multipart/form-data">
+              <div class="modal-header border-0">
+                <h5 class="modal-title fw-bold">Add Academic Program</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+              </div>
+              <div class="modal-body">
+                <div class="row g-3 mb-3">
+                  <div class="col-md-6">
+                    <label class="form-label fw-bold">Program Title *</label>
+                    <input type="text" name="title" class="form-control" placeholder="E.g., Secondary Level (Classes 9-10 SEE)" required>
+                  </div>
+                  <div class="col-md-6">
+                    <label class="form-label fw-bold">Duration</label>
+                    <input type="text" name="duration" class="form-control" placeholder="E.g., 2 Academic Years" required>
+                  </div>
+                </div>
+                <div class="row g-3 mb-3">
+                  <div class="col-md-6">
+                    <label class="form-label fw-bold">Eligibility</label>
+                    <input type="text" name="eligibility" class="form-control" placeholder="E.g., Passed Basic Level Exam (BLE / Class 8)" required>
+                  </div>
+                  <div class="col-md-6">
+                    <label class="form-label fw-bold">Image URL</label>
+                    <input type="text" name="image_url" class="form-control" placeholder="/media/gallery/image_1.jpg">
+                  </div>
+                </div>
+                <div class="mb-3">
+                  <label class="form-label fw-bold">Program Description *</label>
+                  <textarea name="description" class="form-control" rows="4" placeholder="Course curriculum, subjects, laboratories and practicals..." required></textarea>
+                </div>
+              </div>
+              <div class="modal-footer border-0">
+                <button type="button" class="btn btn-light" data-bs-dismiss="modal">Cancel</button>
+                <button type="submit" class="btn btn-navy">Create Program</button>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+    {% endif %}
+
+    <!-- TAB 9: DOWNLOADS -->
+    {% if activeTab == 'downloads' %}
+    <div class="tab-content-area">
+      <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+          <h2 class="h5 fw-bold mb-1 text-navy">Downloadable Resources & Files ({{ schoolData.downloads.length }})</h2>
+          <p class="text-muted small mb-0">Academic calendar, syllabus, SEE question papers, and printable application forms</p>
+        </div>
+        <button class="btn btn-gold text-dark font-weight-bold" data-bs-toggle="modal" data-bs-target="#addDownloadModal">
+          <i class="fa-solid fa-plus me-1"></i> Add File Resource
+        </button>
+      </div>
+
+      <div class="table-card p-3">
+        <table class="table align-middle table-hover mb-0">
+          <thead class="table-light">
+            <tr>
+              <th>Resource Title</th>
+              <th>Category</th>
+              <th>File Size</th>
+              <th>File Link</th>
+              <th class="text-end">Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for item in schoolData.downloads %}
+              <tr>
+                <td class="fw-bold text-navy"><i class="fa-solid fa-file-pdf text-danger me-2"></i> {{ item.title }}</td>
+                <td><span class="badge bg-secondary">{{ item.category }}</span></td>
+                <td class="text-muted small">{{ item.file_size }}</td>
+                <td><a href="{{ item.file.url }}" target="_blank" class="small text-primary text-decoration-none"><i class="fa-solid fa-download me-1"></i> Download</a></td>
+                <td class="text-end">
+                  <form action="/admin/download/delete/{{ item.title }}" method="POST" class="d-inline" onsubmit="return confirm('Delete this file resource?');">
+                    <button type="submit" class="btn btn-sm btn-outline-danger">
+                      <i class="fa-solid fa-trash"></i>
+                    </button>
+                  </form>
+                </td>
+              </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+
+      <!-- Add Download Modal -->
+      <div class="modal fade" id="addDownloadModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog">
+          <div class="modal-content p-3">
+            <form action="/admin/download/add" method="POST">
+              <div class="modal-header border-0">
+                <h5 class="modal-title fw-bold">Add Downloadable File</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+              </div>
+              <div class="modal-body">
+                <div class="mb-3">
+                  <label class="form-label fw-bold">Resource Title *</label>
+                  <input type="text" name="title" class="form-control" placeholder="E.g., Class 10 SEE Exam Routine 2083" required>
+                </div>
+                <div class="mb-3">
+                  <label class="form-label fw-bold">Category</label>
+                  <select name="category" class="form-select">
+                    <option value="routine">Routine / Calendar</option>
+                    <option value="syllabus">Syllabus & Curriculum</option>
+                    <option value="form">Application Form</option>
+                    <option value="notice">Official Circular</option>
+                  </select>
+                </div>
+                <div class="mb-3">
+                  <label class="form-label fw-bold">File URL / Download Link</label>
+                  <input type="text" name="file_url" class="form-control" placeholder="/media/notices/pdf/calendar2083.pdf" required>
+                </div>
+              </div>
+              <div class="modal-footer border-0">
+                <button type="button" class="btn btn-light" data-bs-dismiss="modal">Cancel</button>
+                <button type="submit" class="btn btn-navy">Add Resource</button>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+    {% endif %}
+
+    <!-- TAB 10: ADMISSIONS -->
+    {% if activeTab == 'admissions' %}
+    <div class="tab-content-area">
+      <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+          <h2 class="h5 fw-bold mb-1 text-navy">Online Admission Applications ({{ schoolData.admissions.length }})</h2>
+          <p class="text-muted small mb-0">Applications submitted via the online admission portal</p>
+        </div>
+      </div>
+
+      <div class="table-card p-3">
+        {% if schoolData.admissions.length == 0 %}
+          <div class="text-center py-5 text-muted">
+            <i class="fa-solid fa-file-circle-check fa-3x mb-3 text-secondary opacity-50"></i>
+            <h5>No New Admission Applications</h5>
+            <p class="small">When students or parents submit online forms on <a href="/admission" target="_blank">/admission</a>, records will appear here.</p>
+          </div>
+        {% else %}
+          <div class="table-responsive">
+            <table class="table align-middle table-hover mb-0">
+              <thead class="table-light">
+                <tr>
+                  <th>Student Name</th>
+                  <th>Parent / Guardian</th>
+                  <th>Applying Class</th>
+                  <th>Phone Number</th>
+                  <th>Address</th>
+                  <th>Status</th>
+                  <th class="text-end">Action</th>
+                </tr>
+              </thead>
+              <tbody>
+                {% for app in schoolData.admissions %}
+                  <tr>
+                    <td class="fw-bold text-navy">{{ app.student_name }}</td>
+                    <td>{{ app.parent_name|default('N/A') }}</td>
+                    <td><span class="badge bg-primary">{{ app.class_applying }}</span></td>
+                    <td>{{ app.phone }}</td>
+                    <td>{{ app.address }}</td>
+                    <td><span class="badge bg-warning text-dark">{{ app.status }}</span></td>
+                    <td class="text-end">
+                      <form action="/admin/admission/delete/{{ app.id }}" method="POST" onsubmit="return confirm('Delete this record?');">
+                        <button type="submit" class="btn btn-sm btn-outline-danger">
+                          <i class="fa-solid fa-trash"></i>
+                        </button>
+                      </form>
+                    </td>
+                  </tr>
+                {% endfor %}
+              </tbody>
+            </table>
+          </div>
+        {% endif %}
+      </div>
+    </div>
+    {% endif %}
+
+    <!-- TAB 11: CONTACTS -->
+    {% if activeTab == 'contacts' %}
+    <div class="tab-content-area">
+      <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+          <h2 class="h5 fw-bold mb-1 text-navy">Contact Inquiries & Messages ({{ schoolData.contacts.length }})</h2>
+          <p class="text-muted small mb-0">Messages sent by parents and visitors via the Contact page</p>
+        </div>
+      </div>
+
+      <div class="table-card p-3">
+        {% if schoolData.contacts.length == 0 %}
+          <div class="text-center py-5 text-muted">
+            <i class="fa-solid fa-envelope-open fa-3x mb-3 text-secondary opacity-50"></i>
+            <h5>No Inquiries Yet</h5>
+            <p class="small">Messages submitted on <a href="/contact" target="_blank">/contact</a> will be displayed here.</p>
+          </div>
+        {% else %}
+          <div class="table-responsive">
+            <table class="table align-middle table-hover mb-0">
+              <thead class="table-light">
+                <tr>
+                  <th>Sender</th>
+                  <th>Email</th>
+                  <th>Subject</th>
+                  <th>Message</th>
+                  <th>Received</th>
+                  <th class="text-end">Action</th>
+                </tr>
+              </thead>
+              <tbody>
+                {% for contact in schoolData.contacts %}
+                  <tr>
+                    <td class="fw-bold text-navy">{{ contact.name }}</td>
+                    <td><a href="mailto:{{ contact.email }}" class="text-decoration-none">{{ contact.email }}</a></td>
+                    <td><span class="badge bg-secondary">{{ contact.subject }}</span></td>
+                    <td class="small text-muted">{{ contact.message }}</td>
+                    <td class="small text-muted">{{ contact.created_at|date("M d, Y") }}</td>
+                    <td class="text-end">
+                      <form action="/admin/contact/delete/{{ contact.id }}" method="POST" onsubmit="return confirm('Delete this message?');">
+                        <button type="submit" class="btn btn-sm btn-outline-danger">
+                          <i class="fa-solid fa-trash"></i>
+                        </button>
+                      </form>
+                    </td>
+                  </tr>
+                {% endfor %}
+              </tbody>
+            </table>
+          </div>
+        {% endif %}
+      </div>
+    </div>
+    {% endif %}
+
+  </main>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+  // Initialize Website Analytics Chart if on dashboard
+  document.addEventListener('DOMContentLoaded', () => {
+    const chartCanvas = document.getElementById('visitors-chart');
+    if (chartCanvas && typeof Chart !== 'undefined') {
+      new Chart(chartCanvas, {
+        type: 'line',
+        data: {
+          labels: ['1st', '5th', '10th', '15th', '20th', '25th', '30th'],
+          datasets: [{
+            label: 'Website Visitors',
+            data: [120, 240, 310, 480, 520, 680, 810],
+            borderColor: '#2563eb',
+            backgroundColor: 'rgba(37, 99, 235, 0.1)',
+            fill: true,
+            tension: 0.4
+          }, {
+            label: 'Admission Views',
+            data: [45, 90, 140, 210, 290, 340, 430],
+            borderColor: '#0f2847',
+            backgroundColor: 'rgba(15, 40, 71, 0.05)',
+            fill: true,
+            tension: 0.4
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: { legend: { position: 'top' } },
+          scales: { y: { beginAtZero: true } }
+        }
+      });
+    }
+  });
+</script>
+</body>
+</html>

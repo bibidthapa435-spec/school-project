@@ -45,15 +45,15 @@
           {% if downloads %}
             {% for item in downloads %}
             <tr>
-              <td>{{ forloop.counter }}</td>
+              <td>{{ loop.index }}</td>
               <td class="fw-bold text-dark">
                 <i class="fa-solid fa-file-pdf text-danger me-2"></i> {{ item.title }}
               </td>
-              <td><span class="badge bg-secondary text-capitalize">{{ item.category_display|default:item.category }}</span></td>
-              <td class="small text-muted">{{ item.file_size|default:"PDF Document" }}</td>
+              <td><span class="badge bg-secondary text-capitalize">{{ item.category_display|default(item.category) }}</span></td>
+              <td class="small text-muted">{{ item.file_size|default("PDF Document") }}</td>
               <td class="small text-muted">Recent</td>
               <td class="text-end">
-                <a href="{{ item.file.url|default:'#' }}" target="_blank" class="btn btn-navy btn-sm">
+                <a href="{{ item.file.url|default('#') }}" target="_blank" class="btn btn-navy btn-sm">
                   <i class="fa-solid fa-download me-1"></i> Download
                 </a>
               </td>

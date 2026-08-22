@@ -14,7 +14,7 @@
           <i class="fa-solid fa-bullhorn text-warning fs-4 me-1"></i>
           <div>
             <h5 class="modal-title fw-bold text-white mb-0" id="noticePopupModalLabel">{{ activePopup.title }}</h5>
-            <small class="text-light opacity-75">{{ activePopup.subtitle|default:"Shree Jaljala Secondary School Notice" }}</small>
+            <small class="text-light opacity-75">{{ activePopup.subtitle|default("Shree Jaljala Secondary School Notice") }}</small>
           </div>
         </div>
         <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
@@ -32,7 +32,7 @@
       <div class="modal-footer bg-light px-4 py-3 justify-content-between">
         <button type="button" class="btn btn-outline-secondary px-4 fw-semibold" data-bs-dismiss="modal">Close Notice</button>
         {% if activePopup.button_text %}
-          <a href="{{ activePopup.button_url|default:'/admission' }}" class="btn btn-warning text-dark font-weight-bold px-4 shadow-sm">
+          <a href="{{ activePopup.button_url|default('/admission') }}" class="btn btn-warning text-dark font-weight-bold px-4 shadow-sm">
             {{ activePopup.button_text }} <i class="fa-solid fa-arrow-right ms-1"></i>
           </a>
         {% endif %}
@@ -47,21 +47,21 @@
 <div id="heroCarousel" class="carousel slide hero-carousel carousel-fade" data-bs-ride="carousel" data-bs-interval="5000">
   <div class="carousel-indicators">
     {% for slider in sliders %}
-      <button type="button" data-bs-target="#heroCarousel" data-bs-slide-to="{{ forloop.counter0 }}" class="{% if forloop.first %}active{% endif %}" aria-current="{% if forloop.first %}true{% else %}false{% endif %}"></button>
+      <button type="button" data-bs-target="#heroCarousel" data-bs-slide-to="{{ loop.index0 }}" class="{% if loop.first %}active{% endif %}" aria-current="{% if loop.first %}true{% else %}false{% endif %}"></button>
     {% endfor %}
   </div>
 
   <div class="carousel-inner">
     {% for slider in sliders %}
-      <div class="carousel-item {% if forloop.first %}active{% endif %}">
-        <img src="{{ slider.image.url|default:'/media/slider/slide_2.jpg' }}" alt="{{ slider.title }}" class="d-block w-100" onerror="this.onerror=null; this.src='/media/slider/slide_2.jpg';">
-        <div class="hero-overlay" style="background-color: {{ slider.overlay_color|default:'#0b1b2b' }}; opacity: {{ slider.overlay_opacity|default:0.5 }};"></div>
+      <div class="carousel-item {% if loop.first %}active{% endif %}">
+        <img src="{{ slider.image.url|default('/media/slider/slide_2.jpg') }}" alt="{{ slider.title }}" class="d-block w-100" onerror="this.onerror=null; this.src='/media/slider/slide_2.jpg';">
+        <div class="hero-overlay" style="background-color: {{ slider.overlay_color|default('#0b1b2b') }}; opacity: {{ slider.overlay_opacity|default(0.5) }};"></div>
         <div class="container hero-caption-wrapper">
           <div class="hero-overlay d-flex align-items-center">
             <div class="container">
               <div class="hero-caption">
                 <span class="badge bg-warning text-dark px-3 py-2 fs-6 mb-3 font-weight-bold">
-                  {{ slider.subtitle|default:"Affiliated by Government of Nepal" }}
+                  {{ slider.subtitle|default("Affiliated by Government of Nepal") }}
                 </span>
                 <h1>{{ slider.title }}</h1>
                 <p>{{ slider.description }}</p>
@@ -174,7 +174,7 @@
     <div class="custom-card p-4 p-md-5 rounded-4">
       <div class="row align-items-center g-4">
         <div class="col-md-4 text-center" data-aos="fade-right">
-          <img src="{{ principal.photo.url|default:'/media/teachers/govinda shrestha.jpg' }}" alt="{{ principal.name }}" class="img-fluid rounded-circle shadow" style="width: 200px; height: 200px; object-fit: cover; border: 5px solid var(--accent-gold);">
+          <img src="{{ principal.photo.url|default('/media/teachers/govinda shrestha.jpg') }}" alt="{{ principal.name }}" class="img-fluid rounded-circle shadow" style="width: 200px; height: 200px; object-fit: cover; border: 5px solid var(--accent-gold);">
           <h5 class="fw-bold mt-3 text-navy mb-1" style="color: #0b2545;">{{ principal.name }}</h5>
           <p class="text-muted small mb-0">{{ principal.position }}</p>
           <span class="badge bg-secondary mt-1">{{ principal.qualification }}</span>
@@ -246,7 +246,7 @@
         <div class="col-lg-4 col-md-6" data-aos="flip-left" data-aos-delay="100">
           <div class="card custom-card h-100">
             <div class="card-img-wrapper">
-              <img src="{{ program.image.url|default:'/media/programs/image 1.jpg' }}" alt="{{ program.name }}" class="card-img-top">
+              <img src="{{ program.image.url|default('/media/programs/image 1.jpg') }}" alt="{{ program.name }}" class="card-img-top">
             </div>
             <div class="card-body d-flex flex-column">
               <h5 class="card-title fw-bold text-navy" style="color: #0b2545;">{{ program.name }}</h5>
@@ -291,7 +291,7 @@
           <div class="notice-item h-100 d-flex flex-column justify-content-between">
             <div>
               <div class="d-flex justify-content-between align-items-center mb-2">
-                <span class="badge bg-primary text-capitalize">{{ notice.category_display|default:notice.category }}</span>
+                <span class="badge bg-primary text-capitalize">{{ notice.category_display|default(notice.category) }}</span>
               </div>
               <h5 class="fw-bold text-dark fs-6">{{ notice.title }}</h5>
               <p class="text-secondary small mb-3">
@@ -325,7 +325,7 @@
         {% for teacher in teachers %}
         <div class="col-lg-3 col-md-4 col-sm-6" data-aos="flip-left" data-aos-delay="100">
           <div class="card custom-card teacher-card h-100">
-            <img src="{{ teacher.photo.url|default:'/media/teachers/govinda shrestha.jpg' }}" alt="{{ teacher.name }}" class="teacher-photo">
+            <img src="{{ teacher.photo.url|default('/media/teachers/govinda shrestha.jpg') }}" alt="{{ teacher.name }}" class="teacher-photo">
             <h6 class="fw-bold mb-1 text-navy" style="color: #0b2545;">{{ teacher.name }}</h6>
             <p class="text-primary small mb-1 fw-semibold">{{ teacher.position }}</p>
             <p class="text-muted small mb-2">{{ teacher.qualification }}</p>

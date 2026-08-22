@@ -26,7 +26,7 @@
           <option value="">All Notice Categories</option>
           {% if categories %}
             {% for cat in categories %}
-              <option value="{{ cat.0 }}" {% if selected_category == cat.0 %}selected{% endif %}>{{ cat.1 }}</option>
+              <option value="{{ cat[0] }}" {% if selected_category == cat[0] %}selected{% endif %}>{{ cat[1] }}</option>
             {% endfor %}
           {% endif %}
         </select>
@@ -40,11 +40,11 @@
     </form>
   </div>
 
-  <p class="text-muted mb-4">Showing {{ page_obj|length|default:notices|length }} notice(s)</p>
+  <p class="text-muted mb-4">Showing {{ (page_obj or notices).length }} notice(s)</p>
 
   <div class="row g-4">
     {% if page_obj or notices %}
-      {% for notice in page_obj|default:notices %}
+      {% for notice in page_obj or notices %}
       <div class="col-md-6 col-lg-4">
         <div class="notice-item h-100 d-flex flex-column justify-content-between">
           <div>
@@ -52,7 +52,7 @@
               <img src="{{ notice.image.url }}" alt="{{ notice.title }}" class="img-fluid rounded mb-3 w-100" style="height: 160px; object-fit: cover;">
             {% endif %}
             <div class="d-flex justify-content-between align-items-center mb-2">
-              <span class="badge bg-primary text-capitalize">{{ notice.category_display|default:notice.category }}</span>
+              <span class="badge bg-primary text-capitalize">{{ notice.category_display|default(notice.category) }}</span>
             </div>
             <h5 class="fw-bold text-dark fs-6">{{ notice.title }}</h5>
             <p class="text-secondary small mb-3">

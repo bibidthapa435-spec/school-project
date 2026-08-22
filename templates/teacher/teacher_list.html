@@ -19,8 +19,8 @@
     </a>
     {% if departments %}
       {% for dept in departments %}
-        <a href="/teachers?dept={{ dept.0 }}" class="btn btn-sm {% if selected_dept == dept.0 %}btn-navy{% else %}btn-outline-secondary{% endif %} px-3 rounded-pill">
-          {{ dept.1 }}
+        <a href="/teachers?dept={{ dept[0] }}" class="btn btn-sm {% if selected_dept == dept[0] %}btn-navy{% else %}btn-outline-secondary{% endif %} px-3 rounded-pill">
+          {{ dept[1] }}
         </a>
       {% endfor %}
     {% endif %}
@@ -32,11 +32,11 @@
       <div class="col-lg-3 col-md-4 col-sm-6">
         <div class="card custom-card teacher-card h-100 d-flex flex-column justify-content-between">
           <div>
-            <img src="{{ teacher.photo.url|default:'/media/teachers/govinda shrestha.jpg' }}" alt="{{ teacher.name }}" class="teacher-photo">
+            <img src="{{ teacher.photo.url|default('/media/teachers/govinda shrestha.jpg') }}" alt="{{ teacher.name }}" class="teacher-photo">
             <h5 class="fw-bold mb-1 text-navy" style="color: #0b2545;">{{ teacher.name }}</h5>
             <p class="text-primary small mb-1 fw-semibold">{{ teacher.position }}</p>
             <p class="text-muted small mb-2">{{ teacher.qualification }}</p>
-            <span class="badge bg-light text-dark border mb-3 text-wrap">{{ teacher.department_display|default:teacher.department }}</span>
+            <span class="badge bg-light text-dark border mb-3 text-wrap">{{ teacher.department_display|default(teacher.department) }}</span>
           </div>
           <div>
             <a href="/teachers/{{ teacher.slug }}" class="btn btn-sm btn-navy w-100">

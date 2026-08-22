@@ -5,9 +5,9 @@
       {% for notice in notices %}
         <li>
           <a href="{% url 'admin:school_app_notice_change' notice.pk %}">{{ notice.title }}</a>
-          <span class="recent-meta">{{ notice.created_at|date:"M d, Y" }}</span>
+          <span class="recent-meta">{{ notice.created_at|date("M d, Y") }}</span>
         </li>
-      {% empty %}
+      {% else %}
         <li class="empty-state">No notices yet.</li>
       {% endfor %}
     </ul>
@@ -19,9 +19,9 @@
       {% for application in applications %}
         <li>
           <a href="{% url 'admin:school_app_admissionapplication_change' application.pk %}">{{ application.student_name }}</a>
-          <span class="recent-meta">{{ application.class_applying }} • {{ application.created_at|date:"M d, Y" }}</span>
+          <span class="recent-meta">{{ application.class_applying }} • {{ application.created_at|date("M d, Y") }}</span>
         </li>
-      {% empty %}
+      {% else %}
         <li class="empty-state">No admission requests.</li>
       {% endfor %}
     </ul>
@@ -32,10 +32,10 @@
     <ul class="recent-list">
       {% for message in messages %}
         <li>
-          <a href="{% url 'admin:school_app_contactmessage_change' message.pk %}">{{ message.subject|default:message.name }}</a>
-          <span class="recent-meta">{{ message.name }} • {{ message.created_at|date:"M d, Y" }}</span>
+          <a href="{% url 'admin:school_app_contactmessage_change' message.pk %}">{{ message.subject|default(message.name) }}</a>
+          <span class="recent-meta">{{ message.name }} • {{ message.created_at|date("M d, Y") }}</span>
         </li>
-      {% empty %}
+      {% else %}
         <li class="empty-state">No messages yet.</li>
       {% endfor %}
     </ul>

@@ -11,8 +11,8 @@
 <div class="sjss-login-shell">
   <div class="sjss-login-card">
     <div class="sjss-login-brand">
-      <img src="{{ site_settings.logo_url|default:'/static/images/logo.jpg' }}" alt="{{ site_settings.school_name|default:'Shree Jaljala Secondary School' }} logo" class="sjss-login-logo" onerror="this.onerror=null; this.src='/static/images/logo.jpg';">
-      <h1>{{ site_settings.school_name|default:'Shree Jaljala Secondary School' }}</h1>
+      <img src="{{ site_settings.logo_url|default('/static/images/logo.jpg') }}" alt="{{ site_settings.school_name|default('Shree Jaljala Secondary School') }} logo" class="sjss-login-logo" onerror="this.onerror=null; this.src='/static/images/logo.jpg';">
+      <h1>{{ site_settings.school_name|default('Shree Jaljala Secondary School') }}</h1>
       <p>Admin Panel — Sign in to manage your school website</p>
     </div>
 

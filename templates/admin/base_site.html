@@ -1,7 +1,7 @@
 {% extends "admin/base.html" %}
 {% load i18n static admin_dashboard %}
 
-{% block title %}{{ site_title|default:_('Admin Panel') }}{% endblock %}
+{% block title %}{{ site_title|default('Admin Panel') }}{% endblock %}
 
 {% block bodyclass %}{{ block.super }}{% if user.is_authenticated %} sjss-admin-authenticated{% endif %}{% endblock %}
 
@@ -34,9 +34,9 @@
 <aside id="sjss-sidebar" class="sjss-sidebar" aria-label="Admin navigation">
   <div class="sidebar-top">
     <a href="{% url 'admin:index' %}" class="sidebar-brand">
-      <img src="{{ site_settings.logo_url|default:'/static/images/logo.jpg' }}" alt="{{ site_settings.school_name|default:'Shree Jaljala Secondary School' }} logo" class="sidebar-logo" onerror="this.onerror=null; this.src='/static/images/logo.jpg';">
+      <img src="{{ site_settings.logo_url|default('/static/images/logo.jpg') }}" alt="{{ site_settings.school_name|default('Shree Jaljala Secondary School') }} logo" class="sidebar-logo" onerror="this.onerror=null; this.src='/static/images/logo.jpg';">
       <div class="sidebar-brand-text">
-        <span class="sidebar-school-name">{{ site_settings.school_name|default:'Shree Jaljala Secondary School' }}</span>
+        <span class="sidebar-school-name">{{ site_settings.school_name|default('Shree Jaljala Secondary School') }}</span>
         <span class="sidebar-panel-label">Admin Panel</span>
       </div>
     </a>
@@ -63,13 +63,13 @@
     <div class="sidebar-profile">
       <div class="profile-avatar">
         {% if user.first_name %}
-          {{ user.first_name|slice:":1"|upper }}{% if user.last_name %}{{ user.last_name|slice:":1"|upper }}{% endif %}
+          {{ user.first_name|slice(":1")|upper }}{% if user.last_name %}{{ user.last_name|slice(":1")|upper }}{% endif %}
         {% else %}
-          {{ user.username|slice:":1"|upper }}
+          {{ user.username|slice(":1")|upper }}
         {% endif %}
       </div>
       <div class="profile-info">
-        <span class="profile-name">{{ user.get_full_name|default:user.username }}</span>
+        <span class="profile-name">{{ user.get_full_name|default(user.username) }}</span>
         <span class="profile-role">Super Administrator</span>
         <span class="profile-status"><span class="status-dot"></span> Online</span>
       </div>
@@ -91,7 +91,7 @@
       <i class="fa-solid fa-bars"></i>
     </button>
     <div class="topbar-welcome">
-      <h1>Welcome back, {{ user.first_name|default:"Admin" }}! 👋</h1>
+      <h1>Welcome back, {{ user.first_name|default("Admin") }}! 👋</h1>
       <p>Here's what's happening with your school website today.</p>
     </div>
   </div>
@@ -105,8 +105,8 @@
       <span class="notify-count">3</span>
     </button>
     <div class="topbar-school">
-      <img src="{{ site_settings.logo_url|default:'/static/images/logo.jpg' }}" alt="" class="topbar-logo" onerror="this.onerror=null; this.src='/static/images/logo.jpg';">
-      <span>{{ site_settings.school_name|default:'Shree Jaljala Secondary School' }}</span>
+      <img src="{{ site_settings.logo_url|default('/static/images/logo.jpg') }}" alt="" class="topbar-logo" onerror="this.onerror=null; this.src='/static/images/logo.jpg';">
+      <span>{{ site_settings.school_name|default('Shree Jaljala Secondary School') }}</span>
     </div>
   </div>
 </header>

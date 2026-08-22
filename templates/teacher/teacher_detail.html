@@ -14,7 +14,7 @@
       </ol>
     </nav>
     <h1 class="fw-bold fs-3 mb-1">{{ teacher.name }}</h1>
-    <p class="mb-0 text-light opacity-75">{{ teacher.position }} - {{ teacher.department_display|default:teacher.department }}</p>
+    <p class="mb-0 text-light opacity-75">{{ teacher.position }} - {{ teacher.department_display|default(teacher.department) }}</p>
   </div>
 </div>
 
@@ -23,7 +23,7 @@
     <!-- Left Column: Portrait & Info -->
     <div class="col-lg-4">
       <div class="card custom-card p-4 text-center">
-        <img src="{{ teacher.photo.url|default:'/media/teachers/govinda shrestha.jpg' }}" alt="{{ teacher.name }}" class="img-fluid rounded-circle shadow mb-3 mx-auto" style="width: 180px; height: 180px; object-fit: cover; border: 4px solid var(--accent-gold);">
+        <img src="{{ teacher.photo.url|default('/media/teachers/govinda shrestha.jpg') }}" alt="{{ teacher.name }}" class="img-fluid rounded-circle shadow mb-3 mx-auto" style="width: 180px; height: 180px; object-fit: cover; border: 4px solid var(--accent-gold);">
         <h4 class="fw-bold text-navy mb-1" style="color: #0b2545;">{{ teacher.name }}</h4>
         <p class="text-primary fw-semibold mb-2">{{ teacher.position }}</p>
         <span class="badge bg-secondary mb-3">{{ teacher.qualification }}</span>
@@ -36,7 +36,7 @@
           {% if teacher.phone %}
             <div><i class="fa-solid fa-phone me-2 text-warning"></i> {{ teacher.phone }}</div>
           {% endif %}
-          <div><i class="fa-solid fa-building me-2 text-warning"></i> {{ teacher.department_display|default:teacher.department }}</div>
+          <div><i class="fa-solid fa-building me-2 text-warning"></i> {{ teacher.department_display|default(teacher.department) }}</div>
         </div>
 
         {% if teacher.facebook or teacher.linkedin %}
@@ -57,7 +57,7 @@
       <div class="card custom-card p-4 mb-4">
         <h5 class="fw-bold text-navy mb-3" style="color: #0b2545;">Teacher Profile & Biography</h5>
         <div class="fs-6 text-secondary lh-lg mb-4" style="white-space: pre-line;">
-          {{ teacher.biography|default:"This teacher is dedicated to empowering students at Shree Jaljala Secondary School through engaging classroom instruction, practical laboratory learning, and continuous academic guidance." }}
+          {{ teacher.biography|default("This teacher is dedicated to empowering students at Shree Jaljala Secondary School through engaging classroom instruction, practical laboratory learning, and continuous academic guidance.") }}
         </div>
         <a href="/teachers" class="btn btn-outline-secondary btn-sm">
           <i class="fa-solid fa-arrow-left me-1"></i> Back to Faculty List
@@ -72,7 +72,7 @@
           {% for ot in other_teachers %}
             <div class="col-sm-6">
               <div class="d-flex align-items-center gap-3 p-2 border rounded">
-                <img src="{{ ot.photo.url|default:'/media/teachers/govinda shrestha.jpg' }}" alt="{{ ot.name }}" class="rounded-circle" style="width: 50px; height: 50px; object-fit: cover;">
+                <img src="{{ ot.photo.url|default('/media/teachers/govinda shrestha.jpg') }}" alt="{{ ot.name }}" class="rounded-circle" style="width: 50px; height: 50px; object-fit: cover;">
                 <div>
                   <h6 class="fw-bold mb-0 text-dark small">{{ ot.name }}</h6>
                   <small class="text-muted d-block" style="font-size: 0.75rem;">{{ ot.position }}</small>

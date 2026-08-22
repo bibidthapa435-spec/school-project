@@ -22,7 +22,7 @@
   <div class="row g-4">
     <div class="col-lg-8">
       <div class="card custom-card p-4 mb-4">
-        <img src="{{ program.image.url|default:'/media/programs/image 1.jpg' }}" alt="{{ program.name }}" class="img-fluid rounded-3 mb-4 w-100" style="max-height: 400px; object-fit: cover;">
+        <img src="{{ program.image.url|default('/media/programs/image 1.jpg') }}" alt="{{ program.name }}" class="img-fluid rounded-3 mb-4 w-100" style="max-height: 400px; object-fit: cover;">
         
         <h4 class="fw-bold text-navy mb-3" style="color: #0b2545;">Program Overview</h4>
         <div class="fs-6 text-secondary lh-lg mb-4" style="white-space: pre-line;">
