@@ -25,7 +25,7 @@
           बन्द गर्नुहोस्
         </button>
         {% if activePopup.button_text %}
-          <a href="{{ activePopup.button_url|default('/admission/') }}" class="ios-alert-btn ios-alert-btn-primary">
+          <a href="{{ activePopup.button_url|default:'/admission/' }}" class="ios-alert-btn ios-alert-btn-primary">
             {{ activePopup.button_text }}
           </a>
         {% endif %}

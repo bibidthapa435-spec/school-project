@@ -19,8 +19,8 @@
     </a>
     {% if categories %}
       {% for cat in categories %}
-        <a href="/gallery?cat={{ cat[0] }}" class="btn btn-sm {% if selected_cat == cat[0] %}btn-navy{% else %}btn-outline-secondary{% endif %} px-3 rounded-pill">
-          {{ cat[1] }}
+        <a href="/gallery?cat={{ cat.0 }}" class="btn btn-sm {% if selected_cat == cat.0 %}btn-navy{% else %}btn-outline-secondary{% endif %} px-3 rounded-pill">
+          {{ cat.1 }}
         </a>
       {% endfor %}
     {% endif %}
@@ -28,7 +28,7 @@
 
   <div class="row g-4">
     {% if page_obj or gallery_items %}
-      {% for item in page_obj or gallery_items %}
+      {% for item in page_obj|default:gallery_items %}
       <div class="col-lg-3 col-md-4 col-sm-6">
         <a href="#" class="gallery-lightbox-trigger text-decoration-none" data-img="{{ item.image.url }}" data-title="{{ item.title }}">
           <div class="card custom-card h-100 overflow-hidden">
@@ -36,7 +36,7 @@
               <img src="{{ item.image.url }}" alt="{{ item.title }}" class="img-fluid w-100 h-100 object-fit-cover">
             </div>
             <div class="card-body p-3">
-              <span class="badge bg-secondary mb-1 text-capitalize" style="font-size: 0.7rem;">{{ item.get_category_display|default(item.category) }}</span>
+              <span class="badge bg-secondary mb-1 text-capitalize" style="font-size: 0.7rem;">{{ item.get_category_display|default:item.category }}</span>
               <h6 class="card-title fw-bold text-dark mb-1 text-truncate">{{ item.title }}</h6>
               {% if item.description %}
                 <p class="card-text text-muted small text-truncate mb-0">{{ item.description }}</p>

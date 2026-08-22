@@ -67,7 +67,7 @@ app.use(express.json());
 app.use('/static', express.static(path.join(__dirname, 'static')));
 app.use('/media', express.static(path.join(__dirname, 'media')));
 
-// View engine setup using Nunjucks
+// View engine setup using Nunjucks (Django-compatible syntax)
 const nunjucksEnv = nunjucks.configure(path.join(__dirname, 'templates'), {
   autoescape: true,
   express: app,
@@ -97,73 +97,6 @@ nunjucksEnv.addExtension('CsrfTag', new (function() {
   this.run = function() { return ''; };
 })());
 
-// Custom tag extension for Django {% static '...' %}
-nunjucksEnv.addExtension('StaticTag', new (function() {
-  this.tags = ['static'];
-  this.parse = function(parser, nodes) {
-    var tok = parser.nextToken();
-    var args = parser.parseSignature(null, true);
-    parser.advanceAfterBlockEnd(tok.value);
-    return new nodes.CallExtension(this, 'run', args, []);
-  };
-  this.run = function(context, staticPath) {
-    if (!staticPath) return '/static/';
-    const cleanPath = String(staticPath).startsWith('/') ? staticPath : '/' + staticPath;
-    return '/static' + cleanPath;
-  };
-})());
-
-// Custom tag extension for Django {% url '...' %}
-nunjucksEnv.addExtension('UrlTag', new (function() {
-  this.tags = ['url'];
-  this.parse = function(parser, nodes) {
-    var tok = parser.nextToken();
-    var args = parser.parseSignature(null, true);
-    parser.advanceAfterBlockEnd(tok.value);
-    return new nodes.CallExtension(this, 'run', args, []);
-  };
-  this.run = function(context, routeName, param) {
-    if (!routeName) return '#';
-    const name = String(routeName).trim();
-    if (name.includes('login')) return '/login';
-    if (name.includes('register')) return '/register';
-    if (name.includes('logout')) return '/logout';
-    if (name.includes('about')) return '/about';
-    if (name.includes('contact')) return '/contact';
-    if (name.includes('admission')) return '/admission';
-    if (name.includes('notices')) return '/notices';
-    if (name.includes('programs')) return '/programs';
-    if (name.includes('teachers')) return '/teachers';
-    if (name.includes('gallery')) return '/gallery';
-    if (name.includes('downloads')) return '/downloads';
-    if (name.includes('principal')) return '/principal-message';
-    if (name.includes('facilities')) return '/facilities';
-    if (name.includes('admin')) return '/admin';
-    return '/';
-  };
-})());
-
-// Custom Nunjucks Filters
-nunjucksEnv.addFilter('date', function(val, formatStr) {
-  if (!val) return '';
-  const d = new Date(val);
-  if (isNaN(d.getTime())) return String(val);
-  const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
-  const fullMonths = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
-  if (formatStr && (formatStr.includes('F') || formatStr.includes('MMMM'))) {
-    return `${fullMonths[d.getMonth()]} ${d.getDate()}, ${d.getFullYear()}`;
-  }
-  return `${months[d.getMonth()]} ${d.getDate()}, ${d.getFullYear()}`;
-});
-
-nunjucksEnv.addFilter('truncatewords', function(val, num) {
-  if (!val) return '';
-  const words = String(val).trim().split(/\s+/);
-  const limit = parseInt(num) || 20;
-  if (words.length <= limit) return val;
-  return words.slice(0, limit).join(' ') + '...';
-});
-
 app.set('view engine', 'html');
 
 // Global middleware for local template variables
@@ -192,7 +125,6 @@ app.use((req, res, next) => {
   res.locals.MARQUEE_NOTICES = schoolData.notices;
   res.locals.user = null;
   res.locals.path = req.path;
-  res.locals.request = { path: req.path, url: req.url, query: req.query };
   res.locals.messages = [];
   res.locals.showPreloader = false;
   next();

@@ -1,6 +1,6 @@
 {
   "name": "Jaljala Secondary School",
-  "description": "Official school website and administration portal for Shree Jaljala Secondary School in Panchkhapan Municipality-7, Bihibare, Sankhuwasabha, Nepal featuring academic programs, notices, admissions, teachers directory, and gallery.",
+  "description": "Official website for Shree Jaljala Secondary School in Panchkhapan Municipality-7, Bihibare, Sankhuwasabha, Nepal.",
   "requestFramePermissions": [],
   "majorCapabilities": [
     "MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"

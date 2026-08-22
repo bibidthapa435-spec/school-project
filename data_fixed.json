@@ -1,0 +1,1054 @@
+[
+{
+  "model": "auth.permission",
+  "fields": {
+    "name": "Can add log entry",
+    "content_type": [
+      "admin",
+      "logentry"
+    ],
+    "codename": "add_logentry"
+  }
+},
+{
+  "model": "auth.permission",
+  "fields": {
+    "name": "Can change log entry",
+    "content_type": [
+      "admin",
+      "logentry"
+    ],
+    "codename": "change_logentry"
+  }
+},
+{
+  "model": "auth.permission",
+  "fields": {
+    "name": "Can delete log entry",
+    "content_type": [
+      "admin",
+      "logentry"
+    ],
+    "codename": "delete_logentry"
+  }
+},
+{
+  "model": "auth.permission",
+  "fields": {
+    "name": "Can view log entry",
+    "content_type": [
+      "admin",
+      "logentry"
+    ],
+    "codename": "view_logentry"
+  }
+},
+{
+  "model": "auth.permission",
+  "fields": {
+    "name": "Can add permission",
+    "content_type": [
+      "auth",
+      "permission"
+    ],
+    "codename": "add_permission"
+  }
+},
+{
+  "model": "auth.permission",
+  "fields": {
+    "name": "Can change permission",
+    "content_type": [
+      "auth",
+      "permission"
+    ],
+    "codename": "change_permission"
+  }
+},
+{
+  "model": "auth.permission",
+  "fields": {
+    "name": "Can delete permission",
+    "content_type": [
+      "auth",
+      "permission"
+    ],
+    "codename": "delete_permission"
+  }
+},
+{
+  "model": "auth.permission",
+  "fields": {
+    "name": "Can view permission",
+    "content_type": [
+      "auth",
+      "permission"
+    ],
+    "codename": "view_permission"
+  }
+},
+{
+  "model": "auth.permission",
+  "fields": {
+    "name": "Can add group",
+    "content_type": [
+      "auth",
+      "group"
+    ],
+    "codename": "add_group"
+  }
+},
+{
+  "model": "auth.permission",
+  "fields": {
+    "name": "Can change group",
+    "content_type": [
+      "auth",
+      "group"
+    ],
+    "codename": "change_group"
+  }
+},
+{
+  "model": "auth.permission",
+  "fields": {
+    "name": "Can delete group",
+    "content_type": [
+      "auth",
+      "group"
+    ],
+    "codename": "delete_group"
+  }
+},
+{
+  "model": "auth.permission",
+  "fields": {
+    "name": "Can view group",
+    "content_type": [
+      "auth",
+      "group"
+    ],
+    "codename": "view_group"
+  }
+},
+{
+  "model": "auth.permission",
+  "fields": {
+    "name": "Can add user",
+    "content_type": [
+      "auth",
+      "user"
+    ],
+    "codename": "add_user"
+  }
+},
+{
+  "model": "auth.permission",
+  "fields": {
+    "name": "Can change user",
+    "content_type": [
+      "auth",
+      "user"
+    ],
+    "codename": "change_user"
+  }
+},
+{
+  "model": "auth.permission",
+  "fields": {
+    "name": "Can delete user",
+    "content_type": [
+      "auth",
+      "user"
+    ],
+    "codename": "delete_user"
+  }
+},
+{
+  "model": "auth.permission",
+  "fields": {
+    "name": "Can view user",
+    "content_type": [
+      "auth",
+      "user"
+    ],
+    "codename": "view_user"
+  }
+},
+{
+  "model": "auth.permission",
+  "fields": {
+    "name": "Can add content type",
+    "content_type": [
+      "contenttypes",
+      "contenttype"
+    ],
+    "codename": "add_contenttype"
+  }
+},
+{
+  "model": "auth.permission",
+  "fields": {
+    "name": "Can change content type",
+    "content_type": [
+      "contenttypes",
+      "contenttype"
+    ],
+    "codename": "change_contenttype"
+  }
+},
+{
+  "model": "auth.permission",
+  "fields": {
+    "name": "Can delete content type",
+    "content_type": [
+      "contenttypes",
+      "contenttype"
+    ],
+    "codename": "delete_contenttype"
+  }
+},
+{
+  "model": "auth.permission",
+  "fields": {
+    "name": "Can view content type",
+    "content_type": [
+      "contenttypes",
+      "contenttype"
+    ],
+    "codename": "view_contenttype"
+  }
+},
+{
+  "model": "auth.permission",
+  "fields": {
+    "name": "Can add session",
+    "content_type": [
+      "sessions",
+      "session"
+    ],
+    "codename": "add_session"
+  }
+},
+{
+  "model": "auth.permission",
+  "fields": {
+    "name": "Can change session",
+    "content_type": [
+      "sessions",
+      "session"
+    ],
+    "codename": "change_session"
+  }
+},
+{
+  "model": "auth.permission",
+  "fields": {
+    "name": "Can delete session",
+    "content_type": [
+      "sessions",
+      "session"
+    ],
+    "codename": "delete_session"
+  }
+},
+{
+  "model": "auth.permission",
+  "fields": {
+    "name": "Can view session",
+    "content_type": [
+      "sessions",
+      "session"
+    ],
+    "codename": "view_session"
+  }
+},
+{
+  "model": "auth.permission",
+  "fields": {
+    "name": "Can add admission application",
+    "content_type": [
+      "school_app",
+      "admissionapplication"
+    ],
+    "codename": "add_admissionapplication"
+  }
+},
+{
+  "model": "auth.permission",
+  "fields": {
+    "name": "Can change admission application",
+    "content_type": [
+      "school_app",
+      "admissionapplication"
+    ],
+    "codename": "change_admissionapplication"
+  }
+},
+{
+  "model": "auth.permission",
+  "fields": {
+    "name": "Can delete admission application",
+    "content_type": [
+      "school_app",
+      "admissionapplication"
+    ],
+    "codename": "delete_admissionapplication"
+  }
+},
+{
+  "model": "auth.permission",
+  "fields": {
+    "name": "Can view admission application",
+    "content_type": [
+      "school_app",
+      "admissionapplication"
+    ],
+    "codename": "view_admissionapplication"
+  }
+},
+{
+  "model": "auth.permission",
+  "fields": {
+    "name": "Can add contact message",
+    "content_type": [
+      "school_app",
+      "contactmessage"
+    ],
+    "codename": "add_contactmessage"
+  }
+},
+{
+  "model": "auth.permission",
+  "fields": {
+    "name": "Can change contact message",
+    "content_type": [
+      "school_app",
+      "contactmessage"
+    ],
+    "codename": "change_contactmessage"
+  }
+},
+{
+  "model": "auth.permission",
+  "fields": {
+    "name": "Can delete contact message",
+    "content_type": [
+      "school_app",
+      "contactmessage"
+    ],
+    "codename": "delete_contactmessage"
+  }
+},
+{
+  "model": "auth.permission",
+  "fields": {
+    "name": "Can view contact message",
+    "content_type": [
+      "school_app",
+      "contactmessage"
+    ],
+    "codename": "view_contactmessage"
+  }
+},
+{
+  "model": "auth.permission",
+  "fields": {
+    "name": "Can add download resource",
+    "content_type": [
+      "school_app",
+      "downloadresource"
+    ],
+    "codename": "add_downloadresource"
+  }
+},
+{
+  "model": "auth.permission",
+  "fields": {
+    "name": "Can change download resource",
+    "content_type": [
+      "school_app",
+      "downloadresource"
+    ],
+    "codename": "change_downloadresource"
+  }
+},
+{
+  "model": "auth.permission",
+  "fields": {
+    "name": "Can delete download resource",
+    "content_type": [
+      "school_app",
+      "downloadresource"
+    ],
+    "codename": "delete_downloadresource"
+  }
+},
+{
+  "model": "auth.permission",
+  "fields": {
+    "name": "Can view download resource",
+    "content_type": [
+      "school_app",
+      "downloadresource"
+    ],
+    "codename": "view_downloadresource"
+  }
+},
+{
+  "model": "auth.permission",
+  "fields": {
+    "name": "Can add gallery photo",
+    "content_type": [
+      "school_app",
+      "galleryphoto"
+    ],
+    "codename": "add_galleryphoto"
+  }
+},
+{
+  "model": "auth.permission",
+  "fields": {
+    "name": "Can change gallery photo",
+    "content_type": [
+      "school_app",
+      "galleryphoto"
+    ],
+    "codename": "change_galleryphoto"
+  }
+},
+{
+  "model": "auth.permission",
+  "fields": {
+    "name": "Can delete gallery photo",
+    "content_type": [
+      "school_app",
+      "galleryphoto"
+    ],
+    "codename": "delete_galleryphoto"
+  }
+},
+{
+  "model": "auth.permission",
+  "fields": {
+    "name": "Can view gallery photo",
+    "content_type": [
+      "school_app",
+      "galleryphoto"
+    ],
+    "codename": "view_galleryphoto"
+  }
+},
+{
+  "model": "auth.permission",
+  "fields": {
+    "name": "Can add notice",
+    "content_type": [
+      "school_app",
+      "notice"
+    ],
+    "codename": "add_notice"
+  }
+},
+{
+  "model": "auth.permission",
+  "fields": {
+    "name": "Can change notice",
+    "content_type": [
+      "school_app",
+      "notice"
+    ],
+    "codename": "change_notice"
+  }
+},
+{
+  "model": "auth.permission",
+  "fields": {
+    "name": "Can delete notice",
+    "content_type": [
+      "school_app",
+      "notice"
+    ],
+    "codename": "delete_notice"
+  }
+},
+{
+  "model": "auth.permission",
+  "fields": {
+    "name": "Can view notice",
+    "content_type": [
+      "school_app",
+      "notice"
+    ],
+    "codename": "view_notice"
+  }
+},
+{
+  "model": "auth.permission",
+  "fields": {
+    "name": "Can add popup notice",
+    "content_type": [
+      "school_app",
+      "popupnotice"
+    ],
+    "codename": "add_popupnotice"
+  }
+},
+{
+  "model": "auth.permission",
+  "fields": {
+    "name": "Can change popup notice",
+    "content_type": [
+      "school_app",
+      "popupnotice"
+    ],
+    "codename": "change_popupnotice"
+  }
+},
+{
+  "model": "auth.permission",
+  "fields": {
+    "name": "Can delete popup notice",
+    "content_type": [
+      "school_app",
+      "popupnotice"
+    ],
+    "codename": "delete_popupnotice"
+  }
+},
+{
+  "model": "auth.permission",
+  "fields": {
+    "name": "Can view popup notice",
+    "content_type": [
+      "school_app",
+      "popupnotice"
+    ],
+    "codename": "view_popupnotice"
+  }
+},
+{
+  "model": "auth.permission",
+  "fields": {
+    "name": "Can add program",
+    "content_type": [
+      "school_app",
+      "program"
+    ],
+    "codename": "add_program"
+  }
+},
+{
+  "model": "auth.permission",
+  "fields": {
+    "name": "Can change program",
+    "content_type": [
+      "school_app",
+      "program"
+    ],
+    "codename": "change_program"
+  }
+},
+{
+  "model": "auth.permission",
+  "fields": {
+    "name": "Can delete program",
+    "content_type": [
+      "school_app",
+      "program"
+    ],
+    "codename": "delete_program"
+  }
+},
+{
+  "model": "auth.permission",
+  "fields": {
+    "name": "Can view program",
+    "content_type": [
+      "school_app",
+      "program"
+    ],
+    "codename": "view_program"
+  }
+},
+{
+  "model": "auth.permission",
+  "fields": {
+    "name": "Can add slider",
+    "content_type": [
+      "school_app",
+      "slider"
+    ],
+    "codename": "add_slider"
+  }
+},
+{
+  "model": "auth.permission",
+  "fields": {
+    "name": "Can change slider",
+    "content_type": [
+      "school_app",
+      "slider"
+    ],
+    "codename": "change_slider"
+  }
+},
+{
+  "model": "auth.permission",
+  "fields": {
+    "name": "Can delete slider",
+    "content_type": [
+      "school_app",
+      "slider"
+    ],
+    "codename": "delete_slider"
+  }
+},
+{
+  "model": "auth.permission",
+  "fields": {
+    "name": "Can view slider",
+    "content_type": [
+      "school_app",
+      "slider"
+    ],
+    "codename": "view_slider"
+  }
+},
+{
+  "model": "auth.permission",
+  "fields": {
+    "name": "Can add teacher",
+    "content_type": [
+      "school_app",
+      "teacher"
+    ],
+    "codename": "add_teacher"
+  }
+},
+{
+  "model": "auth.permission",
+  "fields": {
+    "name": "Can change teacher",
+    "content_type": [
+      "school_app",
+      "teacher"
+    ],
+    "codename": "change_teacher"
+  }
+},
+{
+  "model": "auth.permission",
+  "fields": {
+    "name": "Can delete teacher",
+    "content_type": [
+      "school_app",
+      "teacher"
+    ],
+    "codename": "delete_teacher"
+  }
+},
+{
+  "model": "auth.permission",
+  "fields": {
+    "name": "Can view teacher",
+    "content_type": [
+      "school_app",
+      "teacher"
+    ],
+    "codename": "view_teacher"
+  }
+},
+{
+  "model": "auth.permission",
+  "fields": {
+    "name": "Can add site settings",
+    "content_type": [
+      "school_app",
+      "sitesettings"
+    ],
+    "codename": "add_sitesettings"
+  }
+},
+{
+  "model": "auth.permission",
+  "fields": {
+    "name": "Can change site settings",
+    "content_type": [
+      "school_app",
+      "sitesettings"
+    ],
+    "codename": "change_sitesettings"
+  }
+},
+{
+  "model": "auth.permission",
+  "fields": {
+    "name": "Can delete site settings",
+    "content_type": [
+      "school_app",
+      "sitesettings"
+    ],
+    "codename": "delete_sitesettings"
+  }
+},
+{
+  "model": "auth.permission",
+  "fields": {
+    "name": "Can view site settings",
+    "content_type": [
+      "school_app",
+      "sitesettings"
+    ],
+    "codename": "view_sitesettings"
+  }
+},
+{
+  "model": "auth.user",
+  "fields": {
+    "password": "pbkdf2_sha256$1500000$yQz4Zl0iXFSfsL5UDzj2qW$jhR3+zyMsSg37elK6u8VhBlSGeUlpb7+WsDOGKTXgVg=",
+    "last_login": "2026-08-18T08:30:00.839Z",
+    "is_superuser": true,
+    "username": "bibid",
+    "first_name": "",
+    "last_name": "",
+    "email": "bibid@gmail.com",
+    "is_staff": true,
+    "is_active": true,
+    "date_joined": "2026-08-09T12:05:25.216Z",
+    "groups": [],
+    "user_permissions": []
+  }
+},
+{
+  "model": "school_app.sitesettings",
+  "pk": 1,
+  "fields": {
+    "school_name": "Shree Jaljala Secondary School",
+    "tagline": "Play, Learn, Grow Together",
+    "phone": "9761348645",
+    "email": "shreejaljala435@gmail.com",
+    "address": "panchkahapan municipality -7",
+    "logo": "site/logo_dLai1EY.png",
+    "favicon": "site/tilogo.png"
+  }
+},
+{
+  "model": "school_app.notice",
+  "pk": 1,
+  "fields": {
+    "title": "📢 EXAMINATION NOTICE  |  📝 First Terminal Examination 2082 Begins from Magh 1",
+    "slug": "exam-notices",
+    "status": true,
+    "display_order": 1,
+    "created_at": "2026-08-12T08:44:32.634Z",
+    "description": "first terminal examination notices",
+    "category": "exam",
+    "image": "notices/690526008_2102994157305668_2179464770244474911_n.jpg",
+    "pdf_attachment": "",
+    "category_display": "exam"
+  }
+},
+{
+  "model": "school_app.galleryphoto",
+  "pk": 2,
+  "fields": {
+    "title": "saraswoti puja",
+    "slug": "saraswoti-puja",
+    "status": true,
+    "display_order": 1,
+    "created_at": "2026-08-11T16:44:57.326Z",
+    "image": "gallery/saraswoti_2.jpg",
+    "category": "cultural",
+    "category_display": "saraswoti puja"
+  }
+},
+{
+  "model": "school_app.galleryphoto",
+  "pk": 3,
+  "fields": {
+    "title": "saraswoti puja (student from nursery class)",
+    "slug": "saraswoti-puja-student-from-nursery-class",
+    "status": true,
+    "display_order": 2,
+    "created_at": "2026-08-11T16:46:37.793Z",
+    "image": "gallery/saraswoti_3.jpg",
+    "category": "cultural",
+    "category_display": "saraswoti puja"
+  }
+},
+{
+  "model": "school_app.galleryphoto",
+  "pk": 4,
+  "fields": {
+    "title": "2082 Farewell to Our SEE Graduates",
+    "slug": "2082-farewell-to-our-see-graduates",
+    "status": true,
+    "display_order": 3,
+    "created_at": "2026-08-11T16:53:33.838Z",
+    "image": "gallery/image_9.jpg",
+    "category": "events",
+    "category_display": "Farewell Program"
+  }
+},
+{
+  "model": "school_app.galleryphoto",
+  "pk": 5,
+  "fields": {
+    "title": "Police Awareness and Educational Program",
+    "slug": "police-awareness-and-educational-program",
+    "status": true,
+    "display_order": 4,
+    "created_at": "2026-08-13T05:27:18.128Z",
+    "image": "gallery/image_1.jpg",
+    "category": "events",
+    "category_display": "Awareness Program"
+  }
+},
+{
+  "model": "school_app.galleryphoto",
+  "pk": 6,
+  "fields": {
+    "title": "Student Health Check-up Program",
+    "slug": "student-health-check-up-program",
+    "status": true,
+    "display_order": 5,
+    "created_at": "2026-08-13T05:30:16.194Z",
+    "image": "gallery/eightphoto.jpg",
+    "category": "sports",
+    "category_display": "Health Program"
+  }
+},
+{
+  "model": "school_app.galleryphoto",
+  "pk": 7,
+  "fields": {
+    "title": "Bag, Copy & Stationery Distribution Program",
+    "slug": "bag-copy-stationery-distribution-program",
+    "status": true,
+    "display_order": 6,
+    "created_at": "2026-08-13T15:46:28.267Z",
+    "image": "gallery/ninephoto.jpg",
+    "category": "sports",
+    "category_display": "School Activities"
+  }
+},
+{
+  "model": "school_app.galleryphoto",
+  "pk": 8,
+  "fields": {
+    "title": "Students Participating in Cultural Program",
+    "slug": "students-participating-in-cultural-program",
+    "status": true,
+    "display_order": 7,
+    "created_at": "2026-08-13T15:52:22.607Z",
+    "image": "gallery/image_10.jpg",
+    "category": "cultural",
+    "category_display": "Cultural Program"
+  }
+},
+{
+  "model": "school_app.galleryphoto",
+  "pk": 9,
+  "fields": {
+    "title": "Traditional Cultural Performance",
+    "slug": "traditional-cultural-performance",
+    "status": true,
+    "display_order": 8,
+    "created_at": "2026-08-13T15:54:32.931Z",
+    "image": "gallery/sixphoto.jpg",
+    "category": "cultural",
+    "category_display": "Cultural Program"
+  }
+},
+{
+  "model": "school_app.galleryphoto",
+  "pk": 10,
+  "fields": {
+    "title": "School Community Book Distribution Program",
+    "slug": "school-community-book-distribution-program",
+    "status": true,
+    "display_order": 9,
+    "created_at": "2026-08-13T15:56:02.915Z",
+    "image": "gallery/image_2.jpg",
+    "category": "events",
+    "category_display": "Educational Program"
+  }
+},
+{
+  "model": "school_app.teacher",
+  "pk": 2,
+  "fields": {
+    "title": "Chairperson of the School",
+    "slug": "chairperson-of-the-school",
+    "status": true,
+    "display_order": 1,
+    "created_at": "2026-08-11T13:51:25.091Z",
+    "photo": "teachers/head_management.jpg",
+    "qualification": "M.Ed",
+    "department": "management",
+    "department_display": "School Management & Administration",
+    "position": "chairman",
+    "email": "santobasent124@gmail.com",
+    "phone": "976100002",
+    "biography": "**Mr. Santos Basnet** is the Chairperson of the School Management Committee at **Shree Jaljala Secondary School, Bihibare**. He is committed to supporting the school's educational development and creating a positive and supportive environment for students.\r\n\r\nAs Chairperson, Mr. Basnet works in coordination with the school administration, teachers, parents, and the local community to support effective school management and continuous improvement in the quality of education.\r\n\r\nHis vision is to contribute to the development of a safe, inclusive, and student-centered learning environment where every student has the opportunity to learn, grow, and achieve their potential."
+  }
+},
+{
+  "model": "school_app.teacher",
+  "pk": 3,
+  "fields": {
+    "title": "Kamal bhadur adhikari",
+    "slug": "principal",
+    "status": true,
+    "display_order": 2,
+    "created_at": "2026-08-13T05:22:22.468Z",
+    "photo": "teachers/kamal_adhikari.jpg",
+    "qualification": "M.Ed",
+    "department": "management",
+    "department_display": "School Administration",
+    "position": "principal",
+    "email": "kamaladhikari435@gmail.com",
+    "phone": "976100003",
+    "biography": "Mr. Kamal Bahadur Adhikari — Principal\r\n\r\nA dedicated and experienced educational leader committed to providing quality education, supporting teachers, and creating a safe and inspiring learning environment. He focuses on the overall academic development, discipline, and progress of students while working to achieve the school’s educational goals."
+  }
+},
+{
+  "model": "school_app.program",
+  "pk": 1,
+  "fields": {
+    "title": "Secondary Education (Grades 9–10)",
+    "slug": "secondary-education-grades-910",
+    "status": true,
+    "display_order": 1,
+    "created_at": "2026-08-13T05:48:18.376Z",
+    "image": "programs/ChatGPT_Image_Aug_13_2026_11_32_59_AM.png",
+    "description": "A structured secondary-level program that strengthens students' academic foundation, practical skills, discipline, and preparation for the Secondary Education Examination (SEE).",
+    "duration": "2 Years",
+    "fee": "As per school policy / Contact School",
+    "eligibility": "Successful completion of Grade 8"
+  }
+},
+{
+  "model": "school_app.downloadresource",
+  "pk": 1,
+  "fields": {
+    "title": "exam routine",
+    "slug": "exam-routine",
+    "status": true,
+    "display_order": 1,
+    "created_at": "2026-08-11T12:58:00.756Z",
+    "category": "routine",
+    "file": "downloads/schoolnotices.png",
+    "file_size": "5mb",
+    "category_display": "image"
+  }
+},
+{
+  "model": "school_app.popupnotice",
+  "pk": 2,
+  "fields": {
+    "title": "exam",
+    "slug": "exam-notice",
+    "status": true,
+    "display_order": 1,
+    "created_at": "2026-08-12T08:46:51.398Z",
+    "subtitle": "terminal exam",
+    "image": "popups/690526008_2102994157305668_2179464770244474911_n_W7rb6lb.jpg",
+    "message": "exam held magh first",
+    "button_text": "exam",
+    "button_url": "/popup/",
+    "is_active": true
+  }
+},
+{
+  "model": "school_app.slider",
+  "pk": 1,
+  "fields": {
+    "title": "school ceremony",
+    "slug": "school-ceremony",
+    "status": true,
+    "display_order": 1,
+    "created_at": "2026-08-10T14:08:12.393Z",
+    "subtitle": "play",
+    "description": "Fun-filled activities help our students develop teamwork, confidence and essential life skills.",
+    "button_text": "Explore Our Activities",
+    "button_url": "/gallery/",
+    "image": "sliders/sport_3.jpg",
+    "overlay_color": "#0b1b2b",
+    "overlay_opacity": 0.5
+  }
+},
+{
+  "model": "school_app.slider",
+  "pk": 2,
+  "fields": {
+    "title": "A Proud Moment for Our School",
+    "slug": "a-proud-moment-for-our-school",
+    "status": true,
+    "display_order": 2,
+    "created_at": "2026-08-11T04:17:59.774Z",
+    "subtitle": "Distinguished Guest & Community Leader",
+    "description": "We are honored to welcome the respected Mayor to our school program and celebrate this special occasion together with our students, teachers, and community.",
+    "button_text": "View Program",
+    "button_url": "/sliders/",
+    "image": "sliders/mayor.jpg",
+    "overlay_color": "#0b1b2b",
+    "overlay_opacity": 0.5
+  }
+},
+{
+  "model": "school_app.slider",
+  "pk": 3,
+  "fields": {
+    "title": "Our Students Shine in Volleyball 🏐",
+    "slug": "our-students-shine-in-volleyball",
+    "status": true,
+    "display_order": 4,
+    "created_at": "2026-08-11T11:47:26.300Z",
+    "subtitle": "Teamwork • Skill • Sportsmanship",
+    "description": "Our students proudly represent our school with teamwork, dedication, and enthusiasm on the volleyball court.",
+    "button_text": "View Sports Gallery",
+    "button_url": "/sliders/",
+    "image": "sliders/sport_6.jpg",
+    "overlay_color": "#0b1b2bb3",
+    "overlay_opacity": 0.5
+  }
+},
+{
+  "model": "school_app.slider",
+  "pk": 4,
+  "fields": {
+    "title": "Learning Through Play",
+    "slug": "learning-through-play",
+    "status": true,
+    "display_order": 5,
+    "created_at": "2026-08-11T12:03:50.670Z",
+    "subtitle": "Play • Learn • Grow",
+    "description": "Our students enjoy learning beyond the classroom through play, teamwork, friendship, and active participation.",
+    "button_text": "Explore Student Activities",
+    "button_url": "/sliders/",
+    "image": "sliders/thirdphoto.jpg",
+    "overlay_color": "#0b1b2bb3",
+    "overlay_opacity": 0.5
+  }
+},
+{
+  "model": "school_app.slider",
+  "pk": 6,
+  "fields": {
+    "title": "Our School, Our Students, Our Future",
+    "slug": "our-school-our-students-our-future",
+    "status": true,
+    "display_order": 3,
+    "created_at": "2026-08-11T12:19:19.032Z",
+    "subtitle": "• Achieve Together",
+    "description": "Creating a positive learning environment where every student is encouraged to learn, grow, and dream big.",
+    "button_text": "",
+    "button_url": "/sliders/",
+    "image": "sliders/fifthphoto.jpg",
+    "overlay_color": "#0b1b2b",
+    "overlay_opacity": 0.5
+  }
+}
+]

@@ -8,9 +8,9 @@
           Affiliated with the Government of Nepal (Ministry of Education). Providing quality public secondary education from Class Nursery up to Class 10 (SEE level) in Panchkhapan Municipality-7, Bihibare, Sankhuwasabha.
         </p>
         <div class="d-flex gap-3 social-icons fs-5">
-          <a href="{{ settings.facebook_url|default('https://facebook.com') }}" target="_blank" class="text-white"><i class="fa-brands fa-facebook-f"></i></a>
-          <a href="{{ settings.instagram_url|default('https://instagram.com') }}" target="_blank" class="text-white"><i class="fa-brands fa-instagram"></i></a>
-          <a href="{{ settings.youtube_url|default('https://youtube.com') }}" target="_blank" class="text-white"><i class="fa-brands fa-youtube"></i></a>
+          <a href="{{ settings.facebook_url|default:'https://facebook.com' }}" target="_blank" class="text-white"><i class="fa-brands fa-facebook-f"></i></a>
+          <a href="{{ settings.instagram_url|default:'https://instagram.com' }}" target="_blank" class="text-white"><i class="fa-brands fa-instagram"></i></a>
+          <a href="{{ settings.youtube_url|default:'https://youtube.com' }}" target="_blank" class="text-white"><i class="fa-brands fa-youtube"></i></a>
         </div>
       </div>
 
@@ -42,9 +42,9 @@
       <div class="col-lg-3 col-md-6">
         <h5>Contact Us</h5>
         <ul class="list-unstyled d-flex flex-column gap-2 small text-muted" style="color: #cbd5e1 !important;">
-          <li><i class="fa-solid fa-location-dot me-2 text-warning"></i> {{ settings.address|default("Panchkhapan Municipality-7, Bihibare, Sankhuwasabha, Nepal") }}</li>
-          <li><i class="fa-solid fa-phone me-2 text-warning"></i> {{ settings.phone|default("+977-9842000000 / +977-9800000000") }}</li>
-          <li><i class="fa-solid fa-envelope me-2 text-warning"></i> {{ settings.email|default("info@shreejaljala.edu.np") }}</li>
+          <li><i class="fa-solid fa-location-dot me-2 text-warning"></i> {{ settings.address|default:"Panchkhapan Municipality-7, Bihibare, Sankhuwasabha, Nepal" }}</li>
+          <li><i class="fa-solid fa-phone me-2 text-warning"></i> {{ settings.phone|default:"+977-9842000000 / +977-9800000000" }}</li>
+          <li><i class="fa-solid fa-envelope me-2 text-warning"></i> {{ settings.email|default:"info@shreejaljala.edu.np" }}</li>
           <li><i class="fa-solid fa-clock me-2 text-warning"></i> Sun - Fri: 10:00 AM - 4:00 PM</li>
         </ul>
       </div>

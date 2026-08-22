@@ -1,9 +1,9 @@
 {% if messages %}
 <div class="container mt-3">
   {% for msg in messages %}
-    <div class="alert alert-{% if msg.tags == 'error' %}danger{% else %}{{ msg.tags|default('info') }}{% endif %} alert-dismissible fade show shadow-sm" role="alert">
+    <div class="alert alert-{% if msg.tags == 'error' %}danger{% else %}{{ msg.tags|default:'info' }}{% endif %} alert-dismissible fade show shadow-sm" role="alert">
       <i class="fa-solid {% if msg.tags == 'success' %}fa-circle-check{% elif msg.tags == 'error' %}fa-triangle-exclamation{% else %}fa-circle-info{% endif %} me-2"></i>
-      {{ msg.message|default(msg) }}
+      {{ msg.message|default:msg }}
       <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
     </div>
   {% endfor %}

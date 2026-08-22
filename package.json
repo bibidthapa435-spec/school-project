@@ -4,8 +4,9 @@
   "private": true,
   "type": "module",
   "scripts": {
+    "S": "python manage.py runserver",
     "dev": "node server.js",
-    "build": "echo 'Build successful'",
+    "build": "echo 'No build step required for static site'",
     "start": "node server.js",
     "lint": "echo 'No lint errors'"
   },
