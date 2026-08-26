@@ -244,7 +244,7 @@ class PopupNoticeAdmin(StatusBaseAdmin):
     preview.short_description = 'Preview'
 
 
-@admin.register(Slider)
+@admin.register(Slider) 
 class SliderAdmin(StatusBaseAdmin):
     list_display = ('title', 'subtitle', 'button_text', 'status', 'display_order', 'created_at', 'preview')
     list_filter = ('status', 'created_at')

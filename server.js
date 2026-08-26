@@ -133,7 +133,15 @@ app.use((req, res, next) => {
 // Home Page
 app.get('/', (req, res) => {
   const principal = schoolData.teachers.find(t => t.position === 'Principal') || schoolData.teachers[0];
-  const activePopup = (schoolData.popups && schoolData.popups.length > 0) ? schoolData.popups.find(p => p.is_active) : null;
+  const nowStr = new Date().toISOString().split('T')[0];
+  const activePopups = (schoolData.popups || []).filter(p => {
+    if (p.is_active === false) return false;
+    if (p.start_date && p.start_date > nowStr) return false;
+    if (p.end_date && p.end_date < nowStr) return false;
+    return true;
+  });
+  const activePopup = activePopups.length > 0 ? activePopups[0] : null;
+
   res.render('home/index', {
     title: 'Shree Jaljala Secondary School | Panchkhapan, Sankhuwasabha',
     sliders: schoolData.sliders,
@@ -144,6 +152,7 @@ app.get('/', (req, res) => {
     gallery_items: schoolData.gallery.slice(0, 8),
     testimonials: schoolData.testimonials,
     activePopup: activePopup,
+    activePopups: activePopups,
     showPreloader: true
   });
 });
@@ -480,11 +489,15 @@ app.post('/admin/popup/add', upload.single('image_file'), (req, res) => {
     id: Date.now(),
     title: req.body.title,
     subtitle: req.body.subtitle || '',
-    message: req.body.message,
+    description: req.body.description || req.body.message || '',
+    message: req.body.message || req.body.description || '',
     button_text: req.body.button_text || 'Learn More',
     button_url: req.body.button_url || '/admission',
+    start_date: req.body.start_date || '',
+    end_date: req.body.end_date || '',
     image: { url: imageUrl },
-    is_active: true
+    is_active: req.body.is_active !== 'false' && req.body.is_active !== false,
+    display_order: schoolData.popups.length + 1
   };
   schoolData.popups.unshift(newPopup);
   res.redirect('/admin?tab=popups&msg=' + encodeURIComponent('Popup notice banner created!'));
@@ -498,9 +511,12 @@ app.post('/admin/popup/edit/:id', upload.single('image_file'), (req, res) => {
     const imageUrl = resolveImageUrl(req, 'image_file', 'image_url', popup.image ? popup.image.url : '/media/notices/admission_notice.png');
     popup.title = req.body.title || popup.title;
     popup.subtitle = req.body.subtitle !== undefined ? req.body.subtitle : popup.subtitle;
-    popup.message = req.body.message || popup.message;
+    popup.description = req.body.description !== undefined ? req.body.description : (req.body.message || popup.description);
+    popup.message = req.body.message !== undefined ? req.body.message : (req.body.description || popup.message);
     popup.button_text = req.body.button_text !== undefined ? req.body.button_text : popup.button_text;
     popup.button_url = req.body.button_url !== undefined ? req.body.button_url : popup.button_url;
+    popup.start_date = req.body.start_date !== undefined ? req.body.start_date : popup.start_date;
+    popup.end_date = req.body.end_date !== undefined ? req.body.end_date : popup.end_date;
     popup.image = { url: imageUrl };
   }
   res.redirect('/admin?tab=popups&msg=' + encodeURIComponent('Popup banner updated!'));

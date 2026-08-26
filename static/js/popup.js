@@ -1,4 +1,4 @@
-// Notice Popup Modal Handler
+// Notice Popup Modal Handlern 
 document.addEventListener('DOMContentLoaded', function() {
   const popupModalEl = document.getElementById('noticePopupModal');
   if (popupModalEl && typeof bootstrap !== 'undefined') {
