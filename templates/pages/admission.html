@@ -22,8 +22,16 @@
           </div>
         </div>
 
-        <form method="POST" action="/admission" enctype="multipart/form-data">
+        <form method="POST" action="" enctype="multipart/form-data">
           {% csrf_token %}
+          
+          {% if form.non_field_errors %}
+            <div class="alert alert-danger">
+              {% for error in form.non_field_errors %}
+                {{ error }}
+              {% endfor %}
+            </div>
+          {% endif %}
           
           <h5 class="fw-bold text-navy border-bottom pb-2 mb-3" style="color: #0b2545;">
             <i class="fa-solid fa-user-graduate me-2 text-warning"></i> 1. Student Personal Information
@@ -31,21 +39,36 @@
           <div class="row g-3 mb-4">
             <div class="col-md-6">
               <label class="form-label font-weight-bold">Student Full Name *</label>
-              <input type="text" name="student_name" class="form-control" placeholder="Full Name" required>
+              <input type="text" name="student_name" class="form-control {% if form.student_name.errors %}is-invalid{% endif %}" placeholder="Full Name" value="{% if form.student_name.value %}{{ form.student_name.value }}{% endif %}" required>
+              {% if form.student_name.errors %}
+                <div class="invalid-feedback">
+                  {% for error in form.student_name.errors %}{{ error }}{% endfor %}
+                </div>
+              {% endif %}
             </div>
 
             <div class="col-md-3">
               <label class="form-label font-weight-bold">Date of Birth *</label>
-              <input type="date" name="dob" class="form-control" required>
+              <input type="date" name="dob" class="form-control {% if form.dob.errors %}is-invalid{% endif %}" value="{% if form.dob.value %}{{ form.dob.value|date:'Y-m-d' }}{% endif %}" required>
+              {% if form.dob.errors %}
+                <div class="invalid-feedback">
+                  {% for error in form.dob.errors %}{{ error }}{% endfor %}
+                </div>
+              {% endif %}
             </div>
 
             <div class="col-md-3">
               <label class="form-label font-weight-bold">Gender *</label>
-              <select name="gender" class="form-select" required>
-                <option value="male">Male</option>
-                <option value="female">Female</option>
-                <option value="other">Other</option>
+              <select name="gender" class="form-select {% if form.gender.errors %}is-invalid{% endif %}" required>
+                <option value="male" {% if form.gender.value == 'male' %}selected{% endif %}>Male</option>
+                <option value="female" {% if form.gender.value == 'female' %}selected{% endif %}>Female</option>
+                <option value="other" {% if form.gender.value == 'other' %}selected{% endif %}>Other</option>
               </select>
+              {% if form.gender.errors %}
+                <div class="invalid-feedback">
+                  {% for error in form.gender.errors %}{{ error }}{% endfor %}
+                </div>
+              {% endif %}
             </div>
           </div>
 
@@ -55,27 +78,52 @@
           <div class="row g-3 mb-4">
             <div class="col-md-6">
               <label class="form-label font-weight-bold">Father's Full Name *</label>
-              <input type="text" name="father_name" class="form-control" placeholder="Father's Full Name" required>
+              <input type="text" name="father_name" class="form-control {% if form.father_name.errors %}is-invalid{% endif %}" placeholder="Father's Full Name" value="{% if form.father_name.value %}{{ form.father_name.value }}{% endif %}" required>
+              {% if form.father_name.errors %}
+                <div class="invalid-feedback">
+                  {% for error in form.father_name.errors %}{{ error }}{% endfor %}
+                </div>
+              {% endif %}
             </div>
 
             <div class="col-md-6">
               <label class="form-label font-weight-bold">Mother's Full Name *</label>
-              <input type="text" name="mother_name" class="form-control" placeholder="Mother's Full Name" required>
+              <input type="text" name="mother_name" class="form-control {% if form.mother_name.errors %}is-invalid{% endif %}" placeholder="Mother's Full Name" value="{% if form.mother_name.value %}{{ form.mother_name.value }}{% endif %}" required>
+              {% if form.mother_name.errors %}
+                <div class="invalid-feedback">
+                  {% for error in form.mother_name.errors %}{{ error }}{% endfor %}
+                </div>
+              {% endif %}
             </div>
 
             <div class="col-md-6">
               <label class="form-label font-weight-bold">Permanent / Current Address *</label>
-              <input type="text" name="address" class="form-control" placeholder="Panchkhapan-7, Bihibare" required>
+              <textarea name="address" class="form-control {% if form.address.errors %}is-invalid{% endif %}" placeholder="Panchkhapan-7, Bihibare" required>{% if form.address.value %}{{ form.address.value }}{% endif %}</textarea>
+              {% if form.address.errors %}
+                <div class="invalid-feedback">
+                  {% for error in form.address.errors %}{{ error }}{% endfor %}
+                </div>
+              {% endif %}
             </div>
 
             <div class="col-md-3">
               <label class="form-label font-weight-bold">Mobile Phone *</label>
-              <input type="text" name="phone" class="form-control" placeholder="98XXXXXXXX" required>
+              <input type="text" name="phone" class="form-control {% if form.phone.errors %}is-invalid{% endif %}" placeholder="98XXXXXXXX" value="{% if form.phone.value %}{{ form.phone.value }}{% endif %}" required>
+              {% if form.phone.errors %}
+                <div class="invalid-feedback">
+                  {% for error in form.phone.errors %}{{ error }}{% endfor %}
+                </div>
+              {% endif %}
             </div>
 
             <div class="col-md-3">
               <label class="form-label font-weight-bold">Email Address</label>
-              <input type="email" name="email" class="form-control" placeholder="Email (optional)">
+              <input type="email" name="email" class="form-control {% if form.email.errors %}is-invalid{% endif %}" placeholder="Email (optional)" value="{% if form.email.value %}{{ form.email.value }}{% endif %}">
+              {% if form.email.errors %}
+                <div class="invalid-feedback">
+                  {% for error in form.email.errors %}{{ error }}{% endfor %}
+                </div>
+              {% endif %}
             </div>
           </div>
 
@@ -85,38 +133,58 @@
           <div class="row g-3 mb-4">
             <div class="col-md-6">
               <label class="form-label font-weight-bold">Class Applying For *</label>
-              <select name="class_applying" class="form-select" required>
-                <option value="Nursery">Class Nursery</option>
-                <option value="LKG">Class LKG</option>
-                <option value="UKG">Class UKG</option>
-                <option value="Class 1">Class 1</option>
-                <option value="Class 2">Class 2</option>
-                <option value="Class 3">Class 3</option>
-                <option value="Class 4">Class 4</option>
-                <option value="Class 5">Class 5</option>
-                <option value="Class 6">Class 6</option>
-                <option value="Class 7">Class 7</option>
-                <option value="Class 8">Class 8</option>
-                <option value="Class 9">Class 9</option>
-                <option value="Class 10">Class 10 (SEE)</option>
+              <select name="class_applying" class="form-select {% if form.class_applying.errors %}is-invalid{% endif %}" required>
+                <option value="Nursery" {% if form.class_applying.value == 'Nursery' %}selected{% endif %}>Class Nursery</option>
+                <option value="LKG" {% if form.class_applying.value == 'LKG' %}selected{% endif %}>Class LKG</option>
+                <option value="UKG" {% if form.class_applying.value == 'UKG' %}selected{% endif %}>Class UKG</option>
+                <option value="Class 1" {% if form.class_applying.value == 'Class 1' %}selected{% endif %}>Class 1</option>
+                <option value="Class 2" {% if form.class_applying.value == 'Class 2' %}selected{% endif %}>Class 2</option>
+                <option value="Class 3" {% if form.class_applying.value == 'Class 3' %}selected{% endif %}>Class 3</option>
+                <option value="Class 4" {% if form.class_applying.value == 'Class 4' %}selected{% endif %}>Class 4</option>
+                <option value="Class 5" {% if form.class_applying.value == 'Class 5' %}selected{% endif %}>Class 5</option>
+                <option value="Class 6" {% if form.class_applying.value == 'Class 6' %}selected{% endif %}>Class 6</option>
+                <option value="Class 7" {% if form.class_applying.value == 'Class 7' %}selected{% endif %}>Class 7</option>
+                <option value="Class 8" {% if form.class_applying.value == 'Class 8' %}selected{% endif %}>Class 8</option>
+                <option value="Class 9" {% if form.class_applying.value == 'Class 9' %}selected{% endif %}>Class 9</option>
+                <option value="Class 10" {% if form.class_applying.value == 'Class 10' %}selected{% endif %}>Class 10 (SEE)</option>
               </select>
+              {% if form.class_applying.errors %}
+                <div class="invalid-feedback">
+                  {% for error in form.class_applying.errors %}{{ error }}{% endfor %}
+                </div>
+              {% endif %}
             </div>
 
             <div class="col-md-6">
               <label class="form-label font-weight-bold">Previous School Name (if applicable)</label>
-              <input type="text" name="previous_school" class="form-control" placeholder="Previous School Name">
+              <input type="text" name="previous_school" class="form-control {% if form.previous_school.errors %}is-invalid{% endif %}" placeholder="Previous School Name" value="{% if form.previous_school.value %}{{ form.previous_school.value }}{% endif %}">
+              {% if form.previous_school.errors %}
+                <div class="invalid-feedback">
+                  {% for error in form.previous_school.errors %}{{ error }}{% endfor %}
+                </div>
+              {% endif %}
             </div>
 
             <div class="col-md-6">
               <label class="form-label font-weight-bold">Student Passport Photo</label>
-              <input type="file" name="photo" class="form-control" accept="image/*">
-              <small class="text-muted d-block">Upload passport size photo (JPG/PNG)</small>
+              <input type="file" name="photo" class="form-control {% if form.photo.errors %}is-invalid{% endif %}" accept="image/*">
+              <small class="text-muted d-block">Upload passport size photo (JPG/PNG, max 2MB)</small>
+              {% if form.photo.errors %}
+                <div class="invalid-feedback">
+                  {% for error in form.photo.errors %}{{ error }}{% endfor %}
+                </div>
+              {% endif %}
             </div>
 
             <div class="col-md-6">
               <label class="form-label font-weight-bold">Supporting Document / Grade Sheet</label>
-              <input type="file" name="documents" class="form-control" accept="image/*,.pdf">
-              <small class="text-muted d-block">Upload Birth Certificate or Marksheet (PDF/JPG)</small>
+              <input type="file" name="documents" class="form-control {% if form.documents.errors %}is-invalid{% endif %}" accept="image/*,.pdf">
+              <small class="text-muted d-block">Upload Birth Certificate or Marksheet (PDF/JPG, max 5MB)</small>
+              {% if form.documents.errors %}
+                <div class="invalid-feedback">
+                  {% for error in form.documents.errors %}{{ error }}{% endfor %}
+                </div>
+              {% endif %}
             </div>
           </div>
 

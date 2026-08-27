@@ -151,25 +151,87 @@ class DownloadResource(BaseSlugModel):
 
 
 class AdmissionApplication(models.Model):
+    STATUS_CHOICES = [
+        ('pending', 'Pending'),
+        ('approved', 'Approved'),
+        ('rejected', 'Rejected'),
+    ]
+    
+    GENDER_CHOICES = [
+        ('male', 'Male'),
+        ('female', 'Female'),
+        ('other', 'Other'),
+    ]
+    
+    # Generate unique application ID
+    application_id = models.CharField(max_length=20, unique=True, editable=False)
+    
+    # Student Information
     student_name = models.CharField(max_length=255)
-    parent_name = models.CharField(max_length=255, blank=True)
-    class_applying = models.CharField(max_length=100, blank=True)
-    phone = models.CharField(max_length=50, blank=True)
-    address = models.TextField(blank=True)
-    status = models.CharField(max_length=100, default='Pending Review')
+    dob = models.DateField()
+    gender = models.CharField(max_length=10, choices=GENDER_CHOICES)
+    
+    # Parent Information
+    father_name = models.CharField(max_length=255)
+    mother_name = models.CharField(max_length=255)
+    
+    # Contact Information
+    address = models.TextField()
+    phone = models.CharField(max_length=20)
+    email = models.EmailField(blank=True)
+    
+    # Academic Information
+    class_applying = models.CharField(max_length=50)
+    previous_school = models.CharField(max_length=255, blank=True)
+    
+    # Documents
+    photo = models.ImageField(upload_to='admissions/photos/', blank=True, null=True)
+    documents = models.FileField(upload_to='admissions/documents/', blank=True, null=True)
+    
+    # Status and Timestamps
+    status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='pending')
     created_at = models.DateTimeField(auto_now_add=True)
-
+    updated_at = models.DateTimeField(auto_now=True)
+    
+    class Meta:
+        ordering = ['-created_at']
+        verbose_name = 'Admission Application'
+        verbose_name_plural = 'Admission Applications'
+    
     def __str__(self):
-        return f"{self.student_name} - {self.class_applying}"
+        return f"{self.application_id} - {self.student_name}"
+    
+    def save(self, *args, **kwargs):
+        if not self.application_id:
+            # Generate unique application ID: ADM + year + random 6 digits
+            import random
+            from django.utils import timezone
+            year = timezone.now().year
+            random_digits = ''.join([str(random.randint(0, 9)) for _ in range(6)])
+            self.application_id = f"ADM{year}{random_digits}"
+        super().save(*args, **kwargs)
 
 
 class ContactMessage(models.Model):
+    STATUS_CHOICES = [
+        ('unread', 'Unread'),
+        ('read', 'Read'),
+        ('replied', 'Replied'),
+    ]
+    
     name = models.CharField(max_length=255)
-    email = models.EmailField(blank=True)
-    subject = models.CharField(max_length=255, blank=True)
-    message = models.TextField(blank=True)
+    email = models.EmailField()
+    phone = models.CharField(max_length=20, blank=True)
+    subject = models.CharField(max_length=255)
+    message = models.TextField()
+    status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='unread')
     created_at = models.DateTimeField(auto_now_add=True)
-
+    
+    class Meta:
+        ordering = ['-created_at']
+        verbose_name = 'Contact Message'
+        verbose_name_plural = 'Contact Messages'
+    
     def __str__(self):
         return f"{self.name} - {self.subject}"
 
@@ -181,6 +243,19 @@ class PopupNotice(BaseSlugModel):
     button_text = models.CharField(max_length=100, blank=True)
     button_url = models.CharField(max_length=255, blank=True)
     is_active = models.BooleanField(default=False)
+    start_date = models.DateTimeField(blank=True, null=True)
+    end_date = models.DateTimeField(blank=True, null=True)
+
+    def is_currently_active(self):
+        from django.utils import timezone
+        now = timezone.now()
+        if not self.is_active:
+            return False
+        if self.start_date and self.start_date > now:
+            return False
+        if self.end_date and self.end_date < now:
+            return False
+        return True
 
 
 class Slider(BaseSlugModel):
@@ -191,3 +266,6 @@ class Slider(BaseSlugModel):
     image = models.ImageField(upload_to='sliders/', blank=True, null=True)
     overlay_color = models.CharField(max_length=20, default='#0b1b2b')
     overlay_opacity = models.FloatField(default=0.5)
+
+
+

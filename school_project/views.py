@@ -1,5 +1,10 @@
 from django.shortcuts import render, redirect
 from django.db import models
+from django.contrib import messages
+from django.core.mail import send_mail
+from django.conf import settings
+from django.utils import timezone
+from datetime import timedelta
 from school_project.data import (
     school_data,
     department_choices,
@@ -15,7 +20,10 @@ from school_app.models import (
     PopupNotice,
     Slider,
     SiteSettings,
+    AdmissionApplication,
+    ContactMessage,
 )
+from school_app.forms import AdmissionApplicationForm, ContactMessageForm
 
 
 def get_base_context(extra=None):
@@ -45,12 +53,10 @@ def get_base_context(extra=None):
 
 
 def home(request):
-    active_popup = PopupNotice.objects.filter(is_active=True, status=True).order_by('-created_at').first()
     principal = Teacher.objects.filter(position__iexact='Principal', status=True).first()
 
     sliders = list(Slider.objects.filter(status=True).order_by('display_order'))
     programs_qs = list(Program.objects.filter(status=True).order_by('display_order'))
-    # templates expect a `name` attribute for programs (data.py used 'name')
     for p in programs_qs:
         setattr(p, 'name', getattr(p, 'title', None))
 
@@ -68,7 +74,6 @@ def home(request):
         get_base_context(
             {
                 'sliders': sliders,
-                'activePopup': active_popup,
                 'principal': principal,
                 'programs': programs_qs,
                 'notices': notices_qs,
@@ -240,12 +245,103 @@ def downloads(request):
 
 
 def admission(request):
-    return render(request, 'pages/admission.html', get_base_context())
+    last_submission_time = request.session.get('last_admission_submission')
+    current_time = timezone.now().timestamp()
+    
+    if last_submission_time and (current_time - last_submission_time) < 300:
+        messages.error(request, 'Please wait 5 minutes before submitting another application.')
+        return redirect('/')
+    
+    if request.method == 'POST':
+        form = AdmissionApplicationForm(request.POST, request.FILES)
+        if form.is_valid():
+            application = form.save()
+            request.session['last_admission_submission'] = current_time
+            
+            try:
+                subject = f'New Admission Application: {application.application_id}'
+                message = f'''
+New Admission Application Received
+
+Application ID: {application.application_id}
+Student Name: {application.student_name}
+Class Applying: {application.class_applying}
+Parent Phone: {application.phone}
+Email: {application.email or 'Not provided'}
+Address: {application.address}
+Father's Name: {application.father_name}
+Mother's Name: {application.mother_name}
+Date of Birth: {application.dob}
+Gender: {application.get_gender_display()}
+Previous School: {application.previous_school or 'Not provided'}
+Submitted: {application.created_at.strftime('%Y-%m-%d %H:%M:%S')}
+
+Please review this application in the Django Admin panel.
+'''
+                recipient_list = [settings.ADMIN_EMAIL]
+                send_mail(subject, message, settings.DEFAULT_FROM_EMAIL, recipient_list, fail_silently=True)
+            except Exception as e:
+                print(f"Email sending failed: {e}")
+            
+            messages.success(
+                request,
+                f'Thank you! Your admission application has been submitted successfully. '
+                f'Your Application ID is {application.application_id}. We will contact you after review.'
+            )
+            return redirect('/')
+        else:
+            messages.error(request, 'Please correct the errors in the form.')
+    else:
+        form = AdmissionApplicationForm()
+    
+    return render(request, 'pages/admission.html', get_base_context({'form': form}))
 
 
 def contact(request):
-    return render(request, 'pages/contact.html', get_base_context())
+    last_submission_time = request.session.get('last_contact_submission')
+    current_time = timezone.now().timestamp()
+    
+    # Rate limit check: Redirect to Home instead of 'contact' to prevent infinite loop
+    if last_submission_time and (current_time - last_submission_time) < 180:
+        messages.error(request, 'Please wait 3 minutes before submitting another message.')
+        return redirect('/')
+    
+    if request.method == 'POST':
+        form = ContactMessageForm(request.POST)
+        if form.is_valid():
+            message = form.save()
+            request.session['last_contact_submission'] = current_time
+            
+            try:
+                subject = f'New Contact Message: {message.subject}'
+                email_message = f'''
+New Contact Message Received
 
+Name: {message.name}
+Email: {message.email}
+Phone: {message.phone or 'Not provided'}
+Subject: {message.subject}
+Message: {message.message}
+Submitted: {message.created_at.strftime('%Y-%m-%d %H:%M:%S')}
+
+Please review this message in the Django Admin panel.
+'''
+                recipient_list = [settings.ADMIN_EMAIL]
+                send_mail(subject, email_message, settings.DEFAULT_FROM_EMAIL, recipient_list, fail_silently=True)
+            except Exception as e:
+                print(f"Email sending failed: {e}")
+            
+            messages.success(
+                request,
+                'Thank you for your message! We have received your inquiry and will get back to you shortly.'
+            )
+            return redirect('/')  # Redirect to Home page after success
+        else:
+            messages.error(request, 'Please correct the errors in the form.')
+    else:
+        form = ContactMessageForm()
+    
+    return render(request, 'pages/contact.html', get_base_context({'form': form}))
 
 def admin_portal(request):
     return redirect('/admin/')

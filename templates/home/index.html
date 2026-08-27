@@ -4,44 +4,6 @@
 {% block title %}Shree Jaljala Secondary School | Panchkhapan, Sankhuwasabha{% endblock %}
 
 {% block content %}
-{% if activePopup and activePopup.is_active %}
-<!-- Homepage Notice Popup Modal -->
-<div class="modal fade modal-notice-popup" id="noticePopupModal" tabindex="-1" aria-labelledby="noticePopupModalLabel" aria-hidden="true">
-  <div class="modal-dialog modal-dialog-centered modal-lg">
-    <div class="modal-content border-0 shadow-lg overflow-hidden" style="border-radius: 16px;">
-      <div class="modal-header text-white py-3 px-4" style="background-color: #0b2545;">
-        <div class="d-flex align-items-center gap-2">
-          <i class="fa-solid fa-bullhorn text-warning fs-4 me-1"></i>
-          <div>
-            <h5 class="modal-title fw-bold text-white mb-0" id="noticePopupModalLabel">{{ activePopup.title }}</h5>
-            <small class="text-light opacity-75">{{ activePopup.subtitle|default:"Shree Jaljala Secondary School Notice" }}</small>
-          </div>
-        </div>
-        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
-      </div>
-      <div class="modal-body p-4">
-        {% if activePopup.image and activePopup.image.url %}
-          <div class="text-center mb-3">
-            <img src="{{ activePopup.image.url }}" alt="{{ activePopup.title }}" class="img-fluid rounded-3 shadow-sm" style="max-height: 340px; object-fit: contain; width: 100%;" onerror="this.style.display='none'">
-          </div>
-        {% endif %}
-        <p class="fs-6 text-dark leading-relaxed mb-0">
-          {{ activePopup.message }}
-        </p>
-      </div>
-      <div class="modal-footer bg-light px-4 py-3 justify-content-between">
-        <button type="button" class="btn btn-outline-secondary px-4 fw-semibold" data-bs-dismiss="modal">Close Notice</button>
-        {% if activePopup.button_text %}
-          <a href="{{ activePopup.button_url|default:'/admission' }}" class="btn btn-warning text-dark font-weight-bold px-4 shadow-sm">
-            {{ activePopup.button_text }} <i class="fa-solid fa-arrow-right ms-1"></i>
-          </a>
-        {% endif %}
-      </div>
-    </div>
-  </div>
-</div>
-{% endif %}
-
 <!-- Hero Slider Section -->
 {% if sliders %}
 <div id="heroCarousel" class="carousel slide hero-carousel carousel-fade" data-bs-ride="carousel" data-bs-interval="5000">
@@ -357,7 +319,7 @@
     <div class="row g-3">
       {% if gallery_items %}
         {% for item in gallery_items %}
-        <div class="col-lg-3 col-md-4 col-6" data-aos="zoom-in" data-aos-delay="100">
+        <div class="col-lg-3 col-md-4 col-6">
           <a href="#" class="gallery-lightbox-trigger" data-img="{{ item.image.url }}" data-title="{{ item.title }}">
             <div class="card custom-card overflow-hidden">
               <div class="card-img-wrapper" style="height: 180px;">

@@ -195,44 +195,80 @@ class DownloadResourceAdmin(StatusBaseAdmin):
 
 @admin.register(AdmissionApplication)
 class AdmissionApplicationAdmin(AdminCSSMixin, admin.ModelAdmin):
-    list_display = ('student_name', 'class_applying', 'parent_name', 'phone', 'status', 'created_at')
-    list_filter = ('status', 'created_at')
-    search_fields = ('student_name', 'parent_name', 'phone', 'address')
-    readonly_fields = ('created_at',)
+    list_display = ('application_id', 'student_name', 'class_applying', 'phone', 'status', 'created_at')
+    list_filter = ('status', 'gender', 'class_applying', 'created_at')
+    search_fields = ('application_id', 'student_name', 'father_name', 'mother_name', 'phone', 'email', 'address')
+    readonly_fields = ('application_id', 'created_at', 'updated_at')
     date_hierarchy = 'created_at'
     list_per_page = 25
+    ordering = ['-created_at']
+    
     fieldsets = (
-        (None, {'fields': ('student_name', 'parent_name', 'class_applying', 'phone', 'address', 'status')}),
+        ('Application Information', {'fields': ('application_id', 'status')}),
+        ('Student Details', {'fields': ('student_name', 'dob', 'gender')}),
+        ('Parent Information', {'fields': ('father_name', 'mother_name')}),
+        ('Contact Information', {'fields': ('address', 'phone', 'email')}),
+        ('Academic Information', {'fields': ('class_applying', 'previous_school')}),
+        ('Documents', {'fields': ('photo', 'documents')}),
+        ('Timestamps', {'fields': ('created_at', 'updated_at')}),
     )
-    actions = ('mark_as_reviewed',)
+    
+    actions = ('mark_as_approved', 'mark_as_rejected', 'mark_as_pending')
 
-    def mark_as_reviewed(self, request, queryset):
-        queryset.update(status='Reviewed')
-    mark_as_reviewed.short_description = 'Mark selected applications as Reviewed'
+    def mark_as_approved(self, request, queryset):
+        queryset.update(status='approved')
+    mark_as_approved.short_description = 'Mark selected applications as Approved'
+
+    def mark_as_rejected(self, request, queryset):
+        queryset.update(status='rejected')
+    mark_as_rejected.short_description = 'Mark selected applications as Rejected'
+
+    def mark_as_pending(self, request, queryset):
+        queryset.update(status='pending')
+    mark_as_pending.short_description = 'Mark selected applications as Pending'
 
 
 @admin.register(ContactMessage)
 class ContactMessageAdmin(AdminCSSMixin, admin.ModelAdmin):
-    list_display = ('name', 'subject', 'email', 'created_at')
-    list_filter = ('created_at',)
-    search_fields = ('name', 'subject', 'email', 'message')
+    list_display = ('name', 'subject', 'email', 'phone', 'status', 'created_at')
+    list_filter = ('status', 'created_at')
+    search_fields = ('name', 'email', 'phone', 'subject', 'message')
     readonly_fields = ('created_at',)
     date_hierarchy = 'created_at'
     list_per_page = 25
+    ordering = ['-created_at']
+    
     fieldsets = (
-        (None, {'fields': ('name', 'email', 'subject', 'message')}),
+        ('Message Information', {'fields': ('name', 'email', 'phone', 'subject', 'status')}),
+        ('Message Content', {'fields': ('message',)}),
+        ('Timestamp', {'fields': ('created_at',)}),
     )
+    
+    actions = ('mark_as_read', 'mark_as_unread', 'mark_as_replied')
+
+    def mark_as_read(self, request, queryset):
+        queryset.update(status='read')
+    mark_as_read.short_description = 'Mark selected messages as Read'
+
+    def mark_as_unread(self, request, queryset):
+        queryset.update(status='unread')
+    mark_as_unread.short_description = 'Mark selected messages as Unread'
+
+    def mark_as_replied(self, request, queryset):
+        queryset.update(status='replied')
+    mark_as_replied.short_description = 'Mark selected messages as Replied'
 
 
 @admin.register(PopupNotice)
 class PopupNoticeAdmin(StatusBaseAdmin):
     list_display = ('title', 'is_active', 'status', 'display_order', 'created_at', 'preview')
-    list_filter = ('is_active', 'status', 'created_at')
+    list_filter = ('is_active', 'status', 'created_at', 'start_date', 'end_date')
     search_fields = ('title', 'subtitle', 'message')
     date_hierarchy = 'created_at'
     fieldsets = (
         (None, {'fields': ('title', 'status', 'display_order')}),
         ('Popup Content', {'fields': ('subtitle', 'image', 'message', 'button_text', 'button_url', 'is_active')}),
+        ('Schedule', {'fields': ('start_date', 'end_date')}),
     )
 
     def preview(self, obj):

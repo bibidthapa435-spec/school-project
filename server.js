@@ -133,14 +133,6 @@ app.use((req, res, next) => {
 // Home Page
 app.get('/', (req, res) => {
   const principal = schoolData.teachers.find(t => t.position === 'Principal') || schoolData.teachers[0];
-  const nowStr = new Date().toISOString().split('T')[0];
-  const activePopups = (schoolData.popups || []).filter(p => {
-    if (p.is_active === false) return false;
-    if (p.start_date && p.start_date > nowStr) return false;
-    if (p.end_date && p.end_date < nowStr) return false;
-    return true;
-  });
-  const activePopup = activePopups.length > 0 ? activePopups[0] : null;
 
   res.render('home/index', {
     title: 'Shree Jaljala Secondary School | Panchkhapan, Sankhuwasabha',
@@ -151,8 +143,6 @@ app.get('/', (req, res) => {
     teachers: schoolData.teachers.slice(0, 4),
     gallery_items: schoolData.gallery.slice(0, 8),
     testimonials: schoolData.testimonials,
-    activePopup: activePopup,
-    activePopups: activePopups,
     showPreloader: true
   });
 });
