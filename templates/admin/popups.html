@@ -1,0 +1,101 @@
+{% extends 'admin/base.html' %}
+
+{% block content %}
+<!-- Filters -->
+<div class="admin-card">
+    <h3><i class="fa-solid fa-filter me-2"></i>Filter Popup Notices</h3>
+    <form method="GET" class="row g-3">
+        <div class="col-md-3">
+            <input type="text" name="q" class="form-control" placeholder="Search popups..." value="{{ search_query }}">
+        </div>
+        <div class="col-md-3">
+            <select name="status" class="form-select">
+                <option value="">All Status</option>
+                <option value="active" {% if status_filter == 'active' %}selected{% endif %}>Active</option>
+                <option value="inactive" {% if status_filter == 'inactive' %}selected{% endif %}>Inactive</option>
+            </select>
+        </div>
+        <div class="col-md-3">
+            <select name="is_active" class="form-select">
+                <option value="">All Active States</option>
+                <option value="true" {% if active_filter == 'true' %}selected{% endif %}>Currently Active</option>
+                <option value="false" {% if active_filter == 'false' %}selected{% endif %}>Not Active</option>
+            </select>
+        </div>
+        <div class="col-md-3">
+            <button type="submit" class="btn btn-primary w-100">Apply Filters</button>
+        </div>
+    </form>
+</div>
+
+<!-- Quick Actions -->
+<div class="admin-card">
+    <h3><i class="fa-solid fa-bolt me-2"></i>Quick Actions</h3>
+    <div class="d-flex gap-2 flex-wrap">
+        <a href="/admin/school_app/popupnotice/add/" class="action-btn action-btn-primary" target="_blank">
+            <i class="fa-solid fa-plus"></i> Add Popup Notice
+        </a>
+        <a href="{% url 'admin_popups' %}" class="action-btn action-btn-accent">
+            <i class="fa-solid fa-rotate-right"></i> Reset Filters
+        </a>
+    </div>
+</div>
+
+<!-- Popups List -->
+<div class="admin-card">
+    <h3><i class="fa-solid fa-list me-2"></i>All Popup Notices ({{ popups|length }})</h3>
+    {% if popups %}
+        <div class="table-responsive">
+            <table class="data-table">
+                <thead>
+                    <tr>
+                        <th>Preview</th>
+                        <th>Title</th>
+                        <th>Currently Active</th>
+                        <th>Status</th>
+                        <th>Display Order</th>
+                        <th>Created</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for popup in popups %}
+                        <tr>
+                            <td>
+                                {% if popup.image %}
+                                    <img src="{{ popup.image.url }}" alt="{{ popup.title }}" style="width: 50px; height: 50px; object-fit: cover; border-radius: 4px;">
+                                {% else %}
+                                    <span class="text-muted">No image</span>
+                                {% endif %}
+                            </td>
+                            <td>{{ popup.title }}</td>
+                            <td>
+                                <span class="status-badge {% if popup.is_currently_active %}status-active{% else %}status-inactive{% endif %}">
+                                    {% if popup.is_currently_active %}Yes{% else %}No{% endif %}
+                                </span>
+                            </td>
+                            <td>
+                                <span class="status-badge {% if popup.status %}status-active{% else %}status-inactive{% endif %}">
+                                    {% if popup.status %}Active{% else %}Inactive{% endif %}
+                                </span>
+                            </td>
+                            <td>{{ popup.display_order }}</td>
+                            <td>{{ popup.created_at|date:"M d, Y" }}</td>
+                            <td>
+                                <a href="/admin/school_app/popupnotice/{{ popup.id }}/change/" class="btn btn-sm btn-outline-primary" target="_blank">
+                                    <i class="fa-solid fa-edit"></i> Edit
+                                </a>
+                                <a href="/admin/school_app/popupnotice/{{ popup.id }}/delete/" class="btn btn-sm btn-outline-danger" target="_blank">
+                                    <i class="fa-solid fa-trash"></i> Delete
+                                </a>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    {% else %}
+        <p class="text-muted mb-0">No popup notices found matching your criteria.</p>
+    {% endif %}
+</div>
+{% endblock %}

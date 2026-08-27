@@ -1,0 +1,82 @@
+{% extends 'admin/base.html' %}
+
+{% block content %}
+<!-- Filters -->
+<div class="admin-card">
+    <h3><i class="fa-solid fa-filter me-2"></i>Filter Programs</h3>
+    <form method="GET" class="row g-3">
+        <div class="col-md-4">
+            <input type="text" name="q" class="form-control" placeholder="Search programs..." value="{{ search_query }}">
+        </div>
+        <div class="col-md-4">
+            <select name="status" class="form-select">
+                <option value="">All Status</option>
+                <option value="active" {% if status_filter == 'active' %}selected{% endif %}>Active</option>
+                <option value="inactive" {% if status_filter == 'inactive' %}selected{% endif %}>Inactive</option>
+            </select>
+        </div>
+        <div class="col-md-4">
+            <button type="submit" class="btn btn-primary w-100">Apply Filters</button>
+        </div>
+    </form>
+</div>
+
+<!-- Quick Actions -->
+<div class="admin-card">
+    <h3><i class="fa-solid fa-bolt me-2"></i>Quick Actions</h3>
+    <div class="d-flex gap-2 flex-wrap">
+        <a href="/admin/school_app/program/add/" class="action-btn action-btn-primary" target="_blank">
+            <i class="fa-solid fa-plus"></i> Add Program
+        </a>
+        <a href="{% url 'admin_programs' %}" class="action-btn action-btn-accent">
+            <i class="fa-solid fa-rotate-right"></i> Reset Filters
+        </a>
+    </div>
+</div>
+
+<!-- Programs List -->
+<div class="admin-card">
+    <h3><i class="fa-solid fa-list me-2"></i>All Programs ({{ programs|length }})</h3>
+    {% if programs %}
+        <div class="table-responsive">
+            <table class="data-table">
+                <thead>
+                    <tr>
+                        <th>Title</th>
+                        <th>Duration</th>
+                        <th>Fee</th>
+                        <th>Status</th>
+                        <th>Created</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for program in programs %}
+                        <tr>
+                            <td>{{ program.title }}</td>
+                            <td>{{ program.duration }}</td>
+                            <td>{{ program.fee }}</td>
+                            <td>
+                                <span class="status-badge {% if program.status %}status-active{% else %}status-inactive{% endif %}">
+                                    {% if program.status %}Active{% else %}Inactive{% endif %}
+                                </span>
+                            </td>
+                            <td>{{ program.created_at|date:"M d, Y" }}</td>
+                            <td>
+                                <a href="/admin/school_app/program/{{ program.id }}/change/" class="btn btn-sm btn-outline-primary" target="_blank">
+                                    <i class="fa-solid fa-edit"></i> Edit
+                                </a>
+                                <a href="/admin/school_app/program/{{ program.id }}/delete/" class="btn btn-sm btn-outline-danger" target="_blank">
+                                    <i class="fa-solid fa-trash"></i> Delete
+                                </a>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    {% else %}
+        <p class="text-muted mb-0">No programs found matching your criteria.</p>
+    {% endif %}
+</div>
+{% endblock %}

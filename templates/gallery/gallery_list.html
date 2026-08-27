@@ -29,7 +29,7 @@
   <div class="row g-4">
     {% if page_obj or gallery_items %}
       {% for item in page_obj|default:gallery_items %}
-      <div class="col-lg-3 col-md-4 col-sm-6">
+      <div class="col-lg-3 col-md-4 col-sm-6 gallery-item-animate">
         <a href="#" class="gallery-lightbox-trigger text-decoration-none" data-img="{{ item.image.url }}" data-title="{{ item.title }}">
           <div class="card custom-card h-100 overflow-hidden">
             <div class="card-img-wrapper" style="height: 220px;">

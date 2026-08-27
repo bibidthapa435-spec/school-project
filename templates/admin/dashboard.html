@@ -1,0 +1,246 @@
+{% extends 'admin/base.html' %}
+
+{% block content %}
+<!-- Stats Cards -->
+<div class="row mb-4">
+    <div class="col-lg-2 col-md-4 col-sm-6 mb-3">
+        <div class="stat-card">
+            <div class="stat-icon">
+                <i class="fa-solid fa-bullhorn"></i>
+            </div>
+            <div class="stat-number">{{ stats.total_notices }}</div>
+            <div class="stat-label">Total Notices</div>
+        </div>
+    </div>
+    <div class="col-lg-2 col-md-4 col-sm-6 mb-3">
+        <div class="stat-card">
+            <div class="stat-icon">
+                <i class="fa-solid fa-photo-film"></i>
+            </div>
+            <div class="stat-number">{{ stats.total_gallery }}</div>
+            <div class="stat-label">Gallery Images</div>
+        </div>
+    </div>
+    <div class="col-lg-2 col-md-4 col-sm-6 mb-3">
+        <div class="stat-card">
+            <div class="stat-icon">
+                <i class="fa-solid fa-chalkboard-user"></i>
+            </div>
+            <div class="stat-number">{{ stats.total_teachers }}</div>
+            <div class="stat-label">Total Teachers</div>
+        </div>
+    </div>
+    <div class="col-lg-2 col-md-4 col-sm-6 mb-3">
+        <div class="stat-card">
+            <div class="stat-icon">
+                <i class="fa-solid fa-user-graduate"></i>
+            </div>
+            <div class="stat-number">{{ stats.total_students }}</div>
+            <div class="stat-label">Total Students</div>
+        </div>
+    </div>
+    <div class="col-lg-2 col-md-4 col-sm-6 mb-3">
+        <div class="stat-card">
+            <div class="stat-icon">
+                <i class="fa-solid fa-file-signature"></i>
+            </div>
+            <div class="stat-number">{{ stats.new_admissions }}</div>
+            <div class="stat-label">New Admissions</div>
+        </div>
+    </div>
+    <div class="col-lg-2 col-md-4 col-sm-6 mb-3">
+        <div class="stat-card">
+            <div class="stat-icon">
+                <i class="fa-solid fa-envelope"></i>
+            </div>
+            <div class="stat-number">{{ stats.unread_messages }}</div>
+            <div class="stat-label">Unread Messages</div>
+        </div>
+    </div>
+</div>
+
+<!-- Quick Actions -->
+<div class="admin-card">
+    <h3><i class="fa-solid fa-bolt me-2"></i>Quick Actions</h3>
+    <div class="row">
+        <div class="col-lg-3 col-md-4 col-sm-6 mb-3">
+            <a href="/admin/school_app/notice/add/" class="action-btn action-btn-primary" target="_blank">
+                <i class="fa-solid fa-plus"></i> Add Notice
+            </a>
+        </div>
+        <div class="col-lg-3 col-md-4 col-sm-6 mb-3">
+            <a href="/admin/school_app/slider/add/" class="action-btn action-btn-primary" target="_blank">
+                <i class="fa-solid fa-plus"></i> Add Slider
+            </a>
+        </div>
+        <div class="col-lg-3 col-md-4 col-sm-6 mb-3">
+            <a href="/admin/school_app/galleryphoto/add/" class="action-btn action-btn-primary" target="_blank">
+                <i class="fa-solid fa-plus"></i> Add Gallery Image
+            </a>
+        </div>
+        <div class="col-lg-3 col-md-4 col-sm-6 mb-3">
+            <a href="/admin/school_app/teacher/add/" class="action-btn action-btn-primary" target="_blank">
+                <i class="fa-solid fa-plus"></i> Add Teacher
+            </a>
+        </div>
+        <div class="col-lg-3 col-md-4 col-sm-6 mb-3">
+            <a href="/admission/" class="action-btn action-btn-accent" target="_blank">
+                <i class="fa-solid fa-plus"></i> Add Student
+            </a>
+        </div>
+        <div class="col-lg-3 col-md-4 col-sm-6 mb-3">
+            <a href="/admin/school_app/program/add/" class="action-btn action-btn-primary" target="_blank">
+                <i class="fa-solid fa-plus"></i> Add Program
+            </a>
+        </div>
+        <div class="col-lg-3 col-md-4 col-sm-6 mb-3">
+            <a href="{% url 'admin_admissions' %}" class="action-btn action-btn-accent">
+                <i class="fa-solid fa-eye"></i> View Admissions
+            </a>
+        </div>
+        <div class="col-lg-3 col-md-4 col-sm-6 mb-3">
+            <a href="{% url 'admin_messages' %}" class="action-btn action-btn-accent">
+                <i class="fa-solid fa-eye"></i> View Messages
+            </a>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <!-- Recent Notices -->
+    <div class="col-lg-4 mb-4">
+        <div class="admin-card">
+            <h3><i class="fa-solid fa-bullhorn me-2"></i>Recent Notices</h3>
+            {% if recent_notices %}
+                <div class="table-responsive">
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>Title</th>
+                                <th>Date</th>
+                                <th>Status</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for notice in recent_notices %}
+                                <tr>
+                                    <td>{{ notice.title|truncatechars:30 }}</td>
+                                    <td>{{ notice.created_at|date:"M d, Y" }}</td>
+                                    <td>
+                                        <span class="status-badge {% if notice.status %}status-active{% else %}status-inactive{% endif %}">
+                                            {% if notice.status %}Active{% else %}Inactive{% endif %}
+                                        </span>
+                                    </td>
+                                    <td>
+                                        <a href="/admin/school_app/notice/{{ notice.id }}/change/" class="btn btn-sm btn-outline-primary" target="_blank">
+                                            <i class="fa-solid fa-edit"></i>
+                                        </a>
+                                    </td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            {% else %}
+                <p class="text-muted mb-0">No notices found.</p>
+            {% endif %}
+            <div class="mt-3">
+                <a href="{% url 'admin_notices' %}" class="btn btn-sm btn-outline-primary">View All Notices</a>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Recent Admissions -->
+    <div class="col-lg-4 mb-4">
+        <div class="admin-card">
+            <h3><i class="fa-solid fa-file-signature me-2"></i>Recent Admissions</h3>
+            {% if recent_admissions %}
+                <div class="table-responsive">
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>Student</th>
+                                <th>Class</th>
+                                <th>Date</th>
+                                <th>Status</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for admission in recent_admissions %}
+                                <tr>
+                                    <td>{{ admission.student_name|truncatechars:20 }}</td>
+                                    <td>{{ admission.class_applying }}</td>
+                                    <td>{{ admission.created_at|date:"M d, Y" }}</td>
+                                    <td>
+                                        <span class="status-badge status-{{ admission.status }}">
+                                            {{ admission.status|title }}
+                                        </span>
+                                    </td>
+                                    <td>
+                                        <a href="/admin/school_app/admissionapplication/{{ admission.id }}/change/" class="btn btn-sm btn-outline-primary" target="_blank">
+                                            <i class="fa-solid fa-eye"></i>
+                                        </a>
+                                    </td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            {% else %}
+                <p class="text-muted mb-0">No admission applications found.</p>
+            {% endif %}
+            <div class="mt-3">
+                <a href="{% url 'admin_admissions' %}" class="btn btn-sm btn-outline-primary">View All Admissions</a>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Recent Messages -->
+    <div class="col-lg-4 mb-4">
+        <div class="admin-card">
+            <h3><i class="fa-solid fa-envelope me-2"></i>Recent Messages</h3>
+            {% if recent_messages %}
+                <div class="table-responsive">
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>Sender</th>
+                                <th>Subject</th>
+                                <th>Date</th>
+                                <th>Status</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for message in recent_messages %}
+                                <tr>
+                                    <td>{{ message.name|truncatechars:15 }}</td>
+                                    <td>{{ message.subject|truncatechars:20 }}</td>
+                                    <td>{{ message.created_at|date:"M d, Y" }}</td>
+                                    <td>
+                                        <span class="status-badge status-{{ message.status }}">
+                                            {{ message.status|title }}
+                                        </span>
+                                    </td>
+                                    <td>
+                                        <a href="/admin/school_app/contactmessage/{{ message.id }}/change/" class="btn btn-sm btn-outline-primary" target="_blank">
+                                            <i class="fa-solid fa-eye"></i>
+                                        </a>
+                                    </td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            {% else %}
+                <p class="text-muted mb-0">No messages found.</p>
+            {% endif %}
+            <div class="mt-3">
+                <a href="{% url 'admin_messages' %}" class="btn btn-sm btn-outline-primary">View All Messages</a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

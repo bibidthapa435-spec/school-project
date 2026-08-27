@@ -110,9 +110,14 @@
         </li>
       </ul>
       <div class="d-flex align-items-center">
-        <a href="/admin" class="btn btn-sm btn-gold text-dark font-weight-bold ms-2">
-          <i class="fa-solid fa-lock me-1"></i> Admin Dashboard
-        </a>
+        <div class="dropdown ms-2">
+          <button class="btn btn-sm btn-gold text-dark font-weight-bold dropdown-toggle" type="button" id="loginDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+            <i class="fa-solid fa-right-to-bracket me-1"></i> Login
+          </button>
+          <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="loginDropdown">
+            <li><a class="dropdown-item" href="/admin-dashboard/"><i class="fa-solid fa-lock me-2"></i> Admin Login</a></li>
+          </ul>
+        </div>
       </div>
     </div>
   </div>

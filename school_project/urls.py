@@ -21,6 +21,20 @@ urlpatterns = [
     path('contact/', views.contact, name='contact'),
     path('admin-portal/', views.admin_portal, name='admin_portal'),
     path('admin/', admin.site.urls),
+    # Admin Dashboard URLs
+    path('admin-dashboard/', views.admin_dashboard, name='admin_dashboard'),
+    path('admin-dashboard/notices/', views.admin_notices, name='admin_notices'),
+    path('admin-dashboard/gallery/', views.admin_gallery, name='admin_gallery'),
+    path('admin-dashboard/teachers/', views.admin_teachers, name='admin_teachers'),
+    path('admin-dashboard/students/', views.admin_students, name='admin_students'),
+    path('admin-dashboard/programs/', views.admin_programs, name='admin_programs'),
+    path('admin-dashboard/admissions/', views.admin_admissions, name='admin_admissions'),
+    path('admin-dashboard/messages/', views.admin_messages, name='admin_messages'),
+    path('admin-dashboard/sliders/', views.admin_sliders, name='admin_sliders'),
+    path('admin-dashboard/popups/', views.admin_popups, name='admin_popups'),
+    path('admin-dashboard/downloads/', views.admin_downloads, name='admin_downloads'),
+    path('admin-dashboard/settings/', views.admin_settings, name='admin_settings'),
+    path('admin-dashboard/users/', views.admin_users, name='admin_users'),
 ]
 
 if settings.DEBUG:

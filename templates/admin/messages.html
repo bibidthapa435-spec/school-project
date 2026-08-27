@@ -1,0 +1,80 @@
+{% extends 'admin/base.html' %}
+
+{% block content %}
+<!-- Filters -->
+<div class="admin-card">
+    <h3><i class="fa-solid fa-filter me-2"></i>Filter Messages</h3>
+    <form method="GET" class="row g-3">
+        <div class="col-md-4">
+            <input type="text" name="q" class="form-control" placeholder="Search messages..." value="{{ search_query }}">
+        </div>
+        <div class="col-md-4">
+            <select name="status" class="form-select">
+                <option value="">All Status</option>
+                {% for value, label in status_choices %}
+                    <option value="{{ value }}" {% if status_filter == value %}selected{% endif %}>{{ label }}</option>
+                {% endfor %}
+            </select>
+        </div>
+        <div class="col-md-4">
+            <button type="submit" class="btn btn-primary w-100">Apply Filters</button>
+        </div>
+    </form>
+</div>
+
+<!-- Quick Actions -->
+<div class="admin-card">
+    <h3><i class="fa-solid fa-bolt me-2"></i>Quick Actions</h3>
+    <div class="d-flex gap-2 flex-wrap">
+        <a href="/contact/" class="action-btn action-btn-primary" target="_blank">
+            <i class="fa-solid fa-envelope"></i> Send Test Message
+        </a>
+        <a href="{% url 'admin_messages' %}" class="action-btn action-btn-accent">
+            <i class="fa-solid fa-rotate-right"></i> Reset Filters
+        </a>
+    </div>
+</div>
+
+<!-- Messages List -->
+<div class="admin-card">
+    <h3><i class="fa-solid fa-list me-2"></i>All Messages ({{ messages|length }})</h3>
+    {% if messages %}
+        <div class="table-responsive">
+            <table class="data-table">
+                <thead>
+                    <tr>
+                        <th>Sender</th>
+                        <th>Email</th>
+                        <th>Subject</th>
+                        <th>Status</th>
+                        <th>Created</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for message in messages %}
+                        <tr>
+                            <td>{{ message.name }}</td>
+                            <td>{{ message.email }}</td>
+                            <td>{{ message.subject|truncatechars:30 }}</td>
+                            <td>
+                                <span class="status-badge status-{{ message.status }}">
+                                    {{ message.status|title }}
+                                </span>
+                            </td>
+                            <td>{{ message.created_at|date:"M d, Y" }}</td>
+                            <td>
+                                <a href="/admin/school_app/contactmessage/{{ message.id }}/change/" class="btn btn-sm btn-outline-primary" target="_blank">
+                                    <i class="fa-solid fa-eye"></i> View
+                                </a>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    {% else %}
+        <p class="text-muted mb-0">No messages found matching your criteria.</p>
+    {% endif %}
+</div>
+{% endblock %}

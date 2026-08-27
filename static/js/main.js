@@ -121,4 +121,53 @@ document.addEventListener('DOMContentLoaded', function () {
 
   window.addEventListener('scroll', runCounters);
   runCounters();
+
+  // Gallery scroll-triggered animation using IntersectionObserver
+  function initGalleryAnimation() {
+    // Check if user prefers reduced motion
+    const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    
+    if (prefersReducedMotion) {
+      // Skip animation for users who prefer reduced motion
+      document.querySelectorAll('.gallery-item-animate').forEach(item => {
+        item.classList.add('animated');
+      });
+      return;
+    }
+
+    const galleryItems = document.querySelectorAll('.gallery-item-animate');
+    
+    if (galleryItems.length === 0) return;
+
+    // Create IntersectionObserver for scroll-triggered animations
+    const observerOptions = {
+      root: null, // viewport
+      rootMargin: '0px',
+      threshold: 0.1 // trigger when 10% of element is visible
+    };
+
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach((entry) => {
+        if (entry.isIntersecting) {
+          // Add staggered delay based on item position
+          const delay = entry.target.dataset.index * 100; // 100ms stagger between items
+          setTimeout(() => {
+            entry.target.classList.add('animated');
+          }, delay);
+          
+          // Stop observing once animated
+          observer.unobserve(entry.target);
+        }
+      });
+    }, observerOptions);
+
+    // Add index to each gallery item for staggered animation
+    galleryItems.forEach((item, index) => {
+      item.dataset.index = index;
+      observer.observe(item);
+    });
+  }
+
+  // Initialize gallery animation on page load
+  initGalleryAnimation();
 });

@@ -1,0 +1,98 @@
+{% extends 'admin/base.html' %}
+
+{% block content %}
+<!-- Filters -->
+<div class="admin-card">
+    <h3><i class="fa-solid fa-filter me-2"></i>Filter Gallery</h3>
+    <form method="GET" class="row g-3">
+        <div class="col-md-3">
+            <input type="text" name="q" class="form-control" placeholder="Search gallery..." value="{{ search_query }}">
+        </div>
+        <div class="col-md-3">
+            <select name="status" class="form-select">
+                <option value="">All Status</option>
+                <option value="active" {% if status_filter == 'active' %}selected{% endif %}>Active</option>
+                <option value="inactive" {% if status_filter == 'inactive' %}selected{% endif %}>Inactive</option>
+            </select>
+        </div>
+        <div class="col-md-3">
+            <select name="category" class="form-select">
+                <option value="">All Categories</option>
+                {% for value, label in categories %}
+                    <option value="{{ value }}" {% if category_filter == value %}selected{% endif %}>{{ label }}</option>
+                {% endfor %}
+            </select>
+        </div>
+        <div class="col-md-3">
+            <button type="submit" class="btn btn-primary w-100">Apply Filters</button>
+        </div>
+    </form>
+</div>
+
+<!-- Quick Actions -->
+<div class="admin-card">
+    <h3><i class="fa-solid fa-bolt me-2"></i>Quick Actions</h3>
+    <div class="d-flex gap-2 flex-wrap">
+        <a href="/admin/school_app/galleryphoto/add/" class="action-btn action-btn-primary" target="_blank">
+            <i class="fa-solid fa-plus"></i> Add Gallery Image
+        </a>
+        <a href="{% url 'admin_gallery' %}" class="action-btn action-btn-accent">
+            <i class="fa-solid fa-rotate-right"></i> Reset Filters
+        </a>
+    </div>
+</div>
+
+<!-- Gallery List -->
+<div class="admin-card">
+    <h3><i class="fa-solid fa-list me-2"></i>Gallery Images ({{ gallery_items|length }})</h3>
+    {% if gallery_items %}
+        <div class="table-responsive">
+            <table class="data-table">
+                <thead>
+                    <tr>
+                        <th>Preview</th>
+                        <th>Title</th>
+                        <th>Category</th>
+                        <th>Status</th>
+                        <th>Display Order</th>
+                        <th>Created</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for item in gallery_items %}
+                        <tr>
+                            <td>
+                                {% if item.image %}
+                                    <img src="{{ item.image.url }}" alt="{{ item.title }}" style="width: 50px; height: 50px; object-fit: cover; border-radius: 4px;">
+                                {% else %}
+                                    <span class="text-muted">No image</span>
+                                {% endif %}
+                            </td>
+                            <td>{{ item.title }}</td>
+                            <td>{{ item.get_category_display }}</td>
+                            <td>
+                                <span class="status-badge {% if item.status %}status-active{% else %}status-inactive{% endif %}">
+                                    {% if item.status %}Active{% else %}Inactive{% endif %}
+                                </span>
+                            </td>
+                            <td>{{ item.display_order }}</td>
+                            <td>{{ item.created_at|date:"M d, Y" }}</td>
+                            <td>
+                                <a href="/admin/school_app/galleryphoto/{{ item.id }}/change/" class="btn btn-sm btn-outline-primary" target="_blank">
+                                    <i class="fa-solid fa-edit"></i> Edit
+                                </a>
+                                <a href="/admin/school_app/galleryphoto/{{ item.id }}/delete/" class="btn btn-sm btn-outline-danger" target="_blank">
+                                    <i class="fa-solid fa-trash"></i> Delete
+                                </a>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    {% else %}
+        <p class="text-muted mb-0">No gallery images found matching your criteria.</p>
+    {% endif %}
+</div>
+{% endblock %}
