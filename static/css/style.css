@@ -143,6 +143,8 @@ blockquote {
   box-shadow: 0 10px 25px rgba(0,0,0,0.15);
   border-radius: 8px;
   padding: 8px 0;
+  min-width: 240px;
+  white-space: nowrap;
 }
 
 .navbar-custom .dropdown-item {
@@ -150,6 +152,23 @@ blockquote {
   padding: 10px 20px;
   color: var(--dark-text);
   transition: background var(--transition-speed);
+}
+
+/* Sticky Navbar Animation */
+.navbar-custom.sticky {
+  position: fixed;
+  top: -80px; /* start slightly above viewport */
+  left: 0;
+  right: 0;
+  opacity: 0;
+  transition: top 0.5s ease-in-out, opacity 0.5s ease-in-out, box-shadow 0.3s ease-in-out;
+  z-index: 1030;
+}
+
+.navbar-custom.sticky.show {
+  top: 0;
+  opacity: 1;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
 }
 
 .navbar-custom .dropdown-item:hover {

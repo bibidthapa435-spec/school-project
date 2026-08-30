@@ -13,14 +13,16 @@
 <a href="{{ settings.facebook_url|default:'https://facebook.com' }}" target="_blank" title="Facebook"><i class="fa-brands fa-facebook-f"></i></a>
 <a href="{{ settings.instagram_url|default:'https://instagram.com' }}" target="_blank" title="Instagram"><i class="fa-brands fa-instagram"></i></a>
 <a href="{{ settings.youtube_url|default:'https://youtube.com' }}" target="_blank" title="YouTube"><i class="fa-brands fa-youtube"></i></a>
-        <div class="d-flex align-items-center gap-2 border-start border-secondary ps-3">
-        {% if user.is_authenticated or user %}
-          <!-- Authenticated users: top logout removed per request -->
-        {% else %}
-          <button class="btn btn-sm btn-gold text-dark font-weight-bold py-1 px-2.5 shadow-sm" style="font-size: 0.78rem;" data-bs-toggle="modal" data-bs-target="#authModal">
-            <i class="fa-solid fa-right-to-bracket me-1"></i> LOGIN / REGISTER
+      </div>
+      <div class="ms-3 ps-3 border-start border-secondary d-flex align-items-center">
+        <div class="dropdown">
+          <button class="btn btn-sm btn-gold text-dark fw-bold dropdown-toggle" type="button" id="topbarLoginDropdown" data-bs-toggle="dropdown" aria-expanded="false" style="font-size:0.78rem; border-radius:20px;">
+            <i class="fa-solid fa-right-to-bracket me-1"></i> Login
           </button>
-        {% endif %}
+          <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="topbarLoginDropdown">
+            <li><a class="dropdown-item" href="/admin-dashboard/"><i class="fa-solid fa-lock me-2"></i> Admin Login</a></li>
+          </ul>
+        </div>
       </div>
     </div>
   </div>
@@ -38,7 +40,7 @@
     <small class="text-dark fw-bold">Estd. {{ settings.estd|default:"2045 B.S." }} (1988 A.D.) | Panchkhapan-7, Sankhuwasabha</small>
           </div>
     </div>
-    <div class="d-none d-lg-flex align-items-center gap-2">
+    <div class="d-flex align-items-center gap-2 brand-admission-cta">
       <a href="/admission" class="btn btn-gold shadow-sm">
         <i class="fa-solid fa-file-pen me-2"></i> ONLINE ADMISSION
       </a>
@@ -47,7 +49,7 @@
 </div>
 
 <!-- Navigation Bar -->
-<nav class="navbar navbar-expand-lg navbar-dark navbar-custom sticky-top">
+<nav class="navbar navbar-expand-lg navbar-dark navbar-custom">
   <div class="container">
     <a class="navbar-brand d-lg-none font-weight-bold text-white" href="/">
       Jaljala Secondary School
@@ -94,6 +96,11 @@
           </a>
         </li>
         <li class="nav-item">
+          <a class="nav-link {% if 'results' in request.path or 'results' in path %}active{% endif %}" href="/results">
+            RESULTS
+          </a>
+        </li>
+        <li class="nav-item">
           <a class="nav-link {% if 'admission' in request.path or 'admission' in path %}active{% endif %}" href="/admission">
             ADMISSION
           </a>
@@ -109,16 +116,7 @@
           </a>
         </li>
       </ul>
-      <div class="d-flex align-items-center">
-        <div class="dropdown ms-2">
-          <button class="btn btn-sm btn-gold text-dark font-weight-bold dropdown-toggle" type="button" id="loginDropdown" data-bs-toggle="dropdown" aria-expanded="false">
-            <i class="fa-solid fa-right-to-bracket me-1"></i> Login
-          </button>
-          <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="loginDropdown">
-            <li><a class="dropdown-item" href="/admin-dashboard/"><i class="fa-solid fa-lock me-2"></i> Admin Login</a></li>
-          </ul>
-        </div>
-      </div>
+
     </div>
   </div>
 </nav>

@@ -1,0 +1,47 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Results | Shree Jaljala Secondary School{% endblock %}
+
+{% block content %}
+<div class="bg-primary text-white py-4 mb-4" style="background-color: var(--primary-navy) !important;">
+  <div class="container">
+    <h1 class="fw-bold mb-1">Exam Results</h1>
+    <p class="mb-0 text-light opacity-75">Published examination results for students.</p>
+  </div>
+</div>
+
+<div class="container py-4">
+{% if results %}
+  <div class="row g-4">
+    {% for result in results %}
+    <div class="col-md-6 col-lg-4">
+      <div class="custom-card p-3 h-100 d-flex flex-column justify-content-between">
+        <h5 class="fw-bold">{{ result.title }}</h5>
+        <p class="mb-2"><strong></strong>Examination:</strong> {{ result.examination }}</p>
+        <p class="mb-2"><strong></strong>Class:</strong> {{ result.class_name }}</p>
+        <p class="mb-2"><strong></strong>Academic Year:</strong> {{ result.academic_year }}</p>
+        <p class="mb-2"><strong></strong>Published:</strong> {{ result.published_date|date:"F j, Y" }}</p>
+        {% if result.description %}
+        <p class="text-muted small">{{ result.description|truncatewords:20 }}</p>
+        {% endif %}
+        <div class="mt-auto">
+          {% if result.result_file %}
+            <a href="{{ result.result_file.url }}" target="_blank" class="btn btn-gold btn-sm me-2"><i class="fa-solid fa-eye me-1"></i> View</a>
+            <a href="{{ result.result_file.url }}" download class="btn btn-navy btn-sm"><i class="fa-solid fa-download me-1"></i> Download</a>
+          {% else %}
+            <span class="text-muted">No file uploaded</span>
+          {% endif %}
+        </div>
+      </div>
+    </div>
+    {% endfor %}
+  </div>
+{% else %}
+  <div class="text-center py-5">
+    <i class="fa-solid fa-folder-open fa-3x text-muted mb-3"></i>
+    <h5 class="text-secondary">No results have been published yet. Please check back later.</h5>
+  </div>
+{% endif %}
+</div>
+{% endblock %}

@@ -13,6 +13,49 @@ document.addEventListener('DOMContentLoaded', function () {
   
   // Back to top button
 
+    // Sticky Navbar on scroll
+    const navbar = document.querySelector('.navbar-custom');
+    const topBar = document.querySelector('.top-bar');
+    const brandHeader = document.querySelector('.brand-header');
+    const getScrollThreshold = () => {
+      const topBarHeight = topBar ? topBar.offsetHeight : 0;
+      const brandHeight = brandHeader ? brandHeader.offsetHeight : 0;
+      return topBarHeight + brandHeight;
+    };
+    let isSticky = false;
+    const handleScroll = () => {
+      if (!navbar) return;
+      const threshold = getScrollThreshold();
+      if (window.scrollY > threshold && !isSticky) {
+        isSticky = true;
+        navbar.classList.add('sticky');
+        // Force reflow for transition
+        void navbar.offsetWidth;
+        navbar.classList.add('show');
+        // Prevent layout shift by adding top padding equal to navbar height
+        document.body.style.paddingTop = `${navbar.offsetHeight}px`;
+      } else if (window.scrollY <= 0 && isSticky) {
+        isSticky = false;
+        // Hide the animation immediately and restore the original static navbar
+        navbar.classList.remove('show');
+        navbar.classList.remove('sticky');
+        document.body.style.paddingTop = '';
+      }
+    };
+    // Throttle using requestAnimationFrame
+    let ticking = false;
+    window.addEventListener('scroll', function () {
+      if (!ticking) {
+        window.requestAnimationFrame(function () {
+          handleScroll();
+          ticking = false;
+        });
+        ticking = true;
+      }
+    });
+
+    // Back to top button
+
   const backToTopBtn = document.getElementById('back-to-top');
   if (backToTopBtn) {
     window.addEventListener('scroll', function () {
