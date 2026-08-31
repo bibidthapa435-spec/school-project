@@ -2,7 +2,7 @@ services:
   - type: web
     name: jaljala-school-website
     env: python
-    buildCommand: pip install -r requirements.txt && python manage.py collectstatic --noinput
+    buildCommand: pip install -r requirements.txt && python manage.py collectstatic --noinput && python manage.py migrate
     startCommand: gunicorn school_project.wsgi:application
     envVars:
       - key: DJANGO_SETTINGS_MODULE
