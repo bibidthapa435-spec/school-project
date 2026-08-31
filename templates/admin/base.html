@@ -18,7 +18,418 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     
     <!-- Custom Admin CSS -->
-    <link rel="stylesheet" href="/static/css/admin.css">
+    <link rel="stylesheet" href="/static/admin/css/custom_admin.css">
+
+    <!-- Additional Admin Form Styling -->
+    <style>
+        /* Admin Form Styling for Add/Edit Pages */
+        .module {
+            background: var(--admin-card-bg);
+            border: 1px solid var(--admin-sidebar-border);
+            border-radius: 8px;
+            padding: 20px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+            margin-bottom: 20px;
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+            padding-bottom: 1.5rem;
+            border-bottom: 1px solid #e9ecef;
+        }
+
+        .form-row:last-child {
+            border-bottom: none;
+            margin-bottom: 0;
+            padding-bottom: 0;
+        }
+
+        .form-row label {
+            display: block;
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: var(--admin-text);
+            margin-bottom: 0.4rem;
+        }
+
+        .form-row label::after {
+            content: '';
+        }
+
+        .form-row label.required::after {
+            content: ' *';
+            color: #ef4444;
+        }
+
+        .form-row input[type="text"],
+        .form-row input[type="email"],
+        .form-row input[type="url"],
+        .form-row input[type="number"],
+        .form-row input[type="tel"],
+        .form-row input[type="date"],
+        .form-row input[type="datetime"],
+        .form-row input[type="time"],
+        .form-row input[type="datetime-local"],
+        .form-row select,
+        .form-row textarea {
+            width: 100%;
+            padding: 0.7rem 0.9rem;
+            border: 1px solid var(--admin-sidebar-border);
+            border-radius: 10px;
+            font-size: 0.9rem;
+            color: var(--admin-text);
+            background: var(--admin-card-bg);
+            transition: border-color 0.2s ease, box-shadow 0.2s ease;
+            margin: 0;
+        }
+
+        .form-row input:focus,
+        .form-row select:focus,
+        .form-row textarea:focus {
+            outline: none;
+            border-color: var(--admin-accent);
+            box-shadow: 0 0 0 3px rgba(212, 175, 55, 0.1);
+        }
+
+        .form-row textarea {
+            min-height: 100px;
+            resize: vertical;
+        }
+
+        .form-row input[type="file"] {
+            width: 100%;
+            padding: 0.6rem 0.9rem;
+            border: 1px dashed var(--admin-sidebar-border);
+            border-radius: 10px;
+            background: var(--admin-bg);
+            cursor: pointer;
+            font-size: 0.85rem;
+            color: var(--admin-muted);
+        }
+
+        .form-row input[type="file"]:hover {
+            border-color: var(--admin-accent);
+            background: #fffbeb;
+        }
+
+        /* Enhanced Date/Time Picker Styling */
+        .datetime-picker {
+            position: relative;
+        }
+
+        .datetime-picker:focus {
+            border-color: var(--admin-accent) !important;
+            box-shadow: 0 0 0 3px rgba(212, 175, 55, 0.1) !important;
+        }
+
+        .datetime-picker::-webkit-calendar-picker-indicator {
+            cursor: pointer;
+            filter: invert(0.5);
+            opacity: 0.6;
+            transition: all 0.2s ease;
+        }
+
+        .datetime-picker::-webkit-calendar-picker-indicator:hover {
+            filter: invert(0.3);
+            opacity: 1;
+        }
+
+        .schedule-help {
+            background: #fffbeb;
+            border: 1px solid #fcd34d;
+            border-radius: 8px;
+            padding: 1rem;
+            margin-bottom: 1rem;
+            font-size: 0.85rem;
+            color: #92400e;
+        }
+
+        .schedule-help strong {
+            display: block;
+            margin-bottom: 0.5rem;
+            color: #78350f;
+        }
+
+        .schedule-help ul {
+            margin: 0.5rem 0 0 1.5rem;
+            padding: 0;
+        }
+
+        .schedule-help li {
+            margin-bottom: 0.25rem;
+        }
+
+        .form-row .help,
+        .form-row .help-text {
+            font-size: 0.78rem;
+            color: var(--admin-muted);
+            margin-top: 0.4rem;
+            line-height: 1.4;
+        }
+
+        .form-row .errorlist {
+            list-style: none;
+            padding: 0;
+            margin: 0.4rem 0 0;
+        }
+
+        .form-row .errorlist li {
+            font-size: 0.8rem;
+            color: #ef4444;
+            margin-bottom: 0.2rem;
+        }
+
+        .form-row .errorlist li::before {
+            content: '⚠ ';
+        }
+
+        .submit-row {
+            display: flex;
+            gap: 0.75rem;
+            margin-top: 1.5rem;
+            padding-top: 1.5rem;
+            border-top: 1px solid #e9ecef;
+            flex-wrap: wrap;
+        }
+
+        .submit-row input[type="submit"] {
+            padding: 0.7rem 1.25rem;
+            border-radius: 10px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            border: none;
+            cursor: pointer;
+            transition: background 0.2s ease, transform 0.2s ease;
+        }
+
+        .submit-row input[type="submit"]:hover {
+            transform: translateY(-1px);
+        }
+
+        .submit-row input.default,
+        .submit-row input[type="submit"].default {
+            background: var(--admin-primary);
+            color: white;
+        }
+
+        .submit-row input.default:hover,
+        .submit-row input[type="submit"].default:hover {
+            background: var(--admin-sidebar-hover);
+        }
+
+        .submit-row input[type="submit"]:not(.default) {
+            background: var(--admin-bg);
+            color: var(--admin-text);
+            border: 1px solid var(--admin-sidebar-border);
+        }
+
+        .submit-row input[type="submit"]:not(.default):hover {
+            background: #e2e8f0;
+        }
+
+        .module h2 {
+            font-size: 1.2rem;
+            font-weight: 700;
+            color: var(--admin-text);
+            margin-bottom: 1rem;
+            padding-bottom: 0.5rem;
+            border-bottom: 2px solid #e9ecef;
+        }
+
+        .inline-group {
+            background: var(--admin-bg);
+            border: 1px solid var(--admin-sidebar-border);
+            border-radius: 8px;
+            padding: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        .inline-group .module {
+            background: var(--admin-card-bg);
+            border: 1px solid var(--admin-sidebar-border);
+            border-radius: 10px;
+            padding: 1rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .readonly {
+            background: var(--admin-bg);
+            padding: 0.7rem 0.9rem;
+            border-radius: 10px;
+            color: var(--admin-muted);
+            font-size: 0.9rem;
+        }
+
+        .vCheckboxLabel {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: var(--admin-text);
+            margin-bottom: 0.4rem;
+        }
+
+        #content h1 {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--admin-text);
+            margin-bottom: 1.5rem;
+        }
+
+        .object-tools {
+            display: flex;
+            gap: 0.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .object-tools a {
+            padding: 0.5rem 1rem;
+            background: var(--admin-bg);
+            border: 1px solid var(--admin-sidebar-border);
+            border-radius: 8px;
+            color: var(--admin-text);
+            text-decoration: none;
+            font-size: 0.85rem;
+            transition: background 0.2s ease;
+        }
+
+        .object-tools a:hover {
+            background: #e2e8f0;
+        }
+    </style>
+
+    <!-- JavaScript for Enhanced Date/Time Picker -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Enhanced datetime picker functionality
+            const datetimePickers = document.querySelectorAll('input[type="datetime-local"]');
+
+            datetimePickers.forEach(function(picker) {
+                // Add enhanced styling and behavior
+                picker.setAttribute('title', 'Click to open date and time picker');
+
+                // Set min date to current date if it's a start date field
+                if (picker.name && picker.name.includes('start')) {
+                    const now = new Date();
+                    const localNow = new Date(now.getTime() - (now.getTimezoneOffset() * 60000));
+                    picker.min = localNow.toISOString().slice(0, 16);
+                }
+
+                // Ensure end date is after start date
+                picker.addEventListener('change', function() {
+                    const form = this.closest('form');
+                    if (form) {
+                        const startDateInput = form.querySelector('input[name*="start_date"]');
+                        const endDateInput = form.querySelector('input[name*="end_date"]');
+
+                        if (startDateInput && endDateInput) {
+                            if (this === startDateInput && startDateInput.value) {
+                                endDateInput.min = startDateInput.value;
+                            }
+                            if (this === endDateInput && startDateInput.value && endDateInput.value) {
+                                if (new Date(endDateInput.value) <= new Date(startDateInput.value)) {
+                                    alert('End date must be after start date');
+                                    endDateInput.value = '';
+                                }
+                            }
+                        }
+                    }
+                });
+            });
+
+            // Add quick-set buttons for common time ranges
+            const scheduleFieldset = document.querySelector('fieldset:has(input[name*="start_date"])');
+            if (scheduleFieldset) {
+                const quickSetDiv = document.createElement('div');
+                quickSetDiv.className = 'schedule-help';
+                quickSetDiv.innerHTML = `
+                    <strong><i class="fa-solid fa-clock me-2"></i>Quick Schedule Options:</strong>
+                    <button type="button" class="btn btn-sm btn-outline-primary me-2 mb-2" onclick="setSchedule('today')">
+                        <i class="fa-solid fa-calendar-day me-1"></i> Today Only
+                    </button>
+                    <button type="button" class="btn btn-sm btn-outline-primary me-2 mb-2" onclick="setSchedule('week')">
+                        <i class="fa-solid fa-calendar-week me-1"></i> This Week
+                    </button>
+                    <button type="button" class="btn btn-sm btn-outline-primary me-2 mb-2" onclick="setSchedule('month')">
+                        <i class="fa-solid fa-calendar-alt me-1"></i> This Month
+                    </button>
+                    <button type="button" class="btn btn-sm btn-outline-secondary mb-2" onclick="clearSchedule()">
+                        <i class="fa-solid fa-times me-1"></i> Clear Schedule
+                    </button>
+                    <ul>
+                        <li><strong>Start Date:</strong> When the popup should begin showing</li>
+                        <li><strong>End Date:</strong> When the popup should stop showing</li>
+                        <li><strong>Leave blank:</strong> Popup shows indefinitely when active</li>
+                    </ul>
+                `;
+
+                // Insert before the form row containing start_date
+                const startRow = scheduleFieldset.querySelector('input[name*="start_date"]')?.closest('.form-row');
+                if (startRow) {
+                    scheduleFieldset.insertBefore(quickSetDiv, startRow);
+                }
+
+                // Make the functions globally available
+                window.setSchedule = function(range) {
+                    const form = document.querySelector('form');
+                    if (!form) return;
+
+                    const startDateInput = form.querySelector('input[name*="start_date"]');
+                    const endDateInput = form.querySelector('input[name*="end_date"]');
+
+                    if (!startDateInput || !endDateInput) return;
+
+                    const now = new Date();
+                    const localNow = new Date(now.getTime() - (now.getTimezoneOffset() * 60000));
+                    const today = localNow.toISOString().slice(0, 16);
+
+                    let startDate = today;
+                    let endDate = today;
+
+                    switch(range) {
+                        case 'today':
+                            // Start now, end at midnight tonight
+                            endDate = localNow.toISOString().slice(0, 10) + 'T23:59';
+                            break;
+                        case 'week':
+                            // Start now, end in 7 days
+                            const weekEnd = new Date(now.getTime() + (7 * 24 * 60 * 60 * 1000));
+                            const localWeekEnd = new Date(weekEnd.getTime() - (weekEnd.getTimezoneOffset() * 60000));
+                            endDate = localWeekEnd.toISOString().slice(0, 16);
+                            break;
+                        case 'month':
+                            // Start now, end in 30 days
+                            const monthEnd = new Date(now.getTime() + (30 * 24 * 60 * 60 * 1000));
+                            const localMonthEnd = new Date(monthEnd.getTime() - (monthEnd.getTimezoneOffset() * 60000));
+                            endDate = localMonthEnd.toISOString().slice(0, 16);
+                            break;
+                    }
+
+                    startDateInput.value = startDate;
+                    endDateInput.value = endDate;
+
+                    // Trigger change events
+                    startDateInput.dispatchEvent(new Event('change'));
+                    endDateInput.dispatchEvent(new Event('change'));
+                };
+
+                window.clearSchedule = function() {
+                    const form = document.querySelector('form');
+                    if (!form) return;
+
+                    const startDateInput = form.querySelector('input[name*="start_date"]');
+                    const endDateInput = form.querySelector('input[name*="end_date"]');
+
+                    if (startDateInput) startDateInput.value = '';
+                    if (endDateInput) endDateInput.value = '';
+                };
+            }
+        });
+    </script>
     
     <style>
         :root {

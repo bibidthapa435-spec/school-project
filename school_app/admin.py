@@ -2,8 +2,22 @@ from django.apps import apps
 from django.contrib import admin
 from django.contrib.auth.admin import GroupAdmin as DjangoGroupAdmin, UserAdmin as DjangoUserAdmin
 from django.contrib.auth.models import Group, User
+from django.forms import DateTimeInput, TextInput
 from django.urls import NoReverseMatch, reverse
 from django.utils.html import format_html
+from django.db import models
+
+# Custom DateTime Widget with better UX
+class CustomDateTimeInput(DateTimeInput):
+    def __init__(self, attrs=None):
+        default_attrs = {
+            'type': 'datetime-local',
+            'class': 'form-control datetime-picker',
+            'style': 'width: 100%; padding: 0.7rem 0.9rem; border: 1px solid #e2e8f0; border-radius: 10px; font-size: 0.9rem;'
+        }
+        if attrs:
+            default_attrs.update(attrs)
+        super().__init__(attrs=default_attrs)
 
 from .models import (
     AdmissionApplication,
@@ -265,10 +279,16 @@ class PopupNoticeAdmin(StatusBaseAdmin):
     list_filter = ('is_active', 'status', 'created_at', 'start_date', 'end_date')
     search_fields = ('title', 'subtitle', 'message')
     date_hierarchy = 'created_at'
+
+    # Use better date/time widgets
+    formfield_overrides = {
+        models.DateTimeField: {'widget': CustomDateTimeInput},
+    }
+
     fieldsets = (
         (None, {'fields': ('title', 'status', 'display_order')}),
         ('Popup Content', {'fields': ('subtitle', 'image', 'message', 'button_text', 'button_url', 'is_active')}),
-        ('Schedule', {'fields': ('start_date', 'end_date')}),
+        ('Schedule', {'fields': ('start_date', 'end_date'), 'description': 'Set the start and end date/time for when this popup should be displayed. Leave blank for always active when enabled.'}),
     )
 
     def preview(self, obj):

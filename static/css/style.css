@@ -1,12 +1,15 @@
-/* Jaljala Secondary School Main Stylesheet */
+﻿/* Jaljala Secondary School Main Stylesheet */
 :root {
-  --primary-navy: #0b2545;
-  --secondary-navy: #134074;
+  --primary-navy: #14315B;
+  --secondary-navy: #14315B;
+  --accent-coral: #E8734A;
+  --accent-coral-hover: #D6612F;
   --accent-gold: #d4af37;
   --accent-gold-hover: #b89628;
-  --light-bg: #f8f9fa;
-  --dark-text: #1d2d44;
-  --muted-text: #6c757d;
+  --footer-dark: #0D2340;
+  --light-bg: #FAF8F4;
+  --dark-text: #1F2733;
+  --muted-text: #6B7280;
   --card-shadow: 0 6px 18px rgba(11, 37, 69, 0.08);
   --card-hover-shadow: 0 12px 28px rgba(11, 37, 69, 0.16);
   --transition-speed: 0.3s ease;
@@ -14,8 +17,8 @@
 
 body {
   font-family: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-  color: var(--dark-text);
-  background: linear-gradient(180deg, #fcfdff 0%, #f6f9fc 100%);
+  color: #1F2733;
+  background: #FAF8F4;
   overflow-x: hidden;
   line-height: 1.6;
   scroll-behavior: smooth;
@@ -63,26 +66,32 @@ blockquote {
 
 /* Top Bar */
 .top-bar {
-  background-color: var(--primary-navy);
+  background-color: var(--footer-dark);
   color: #ffffff;
   font-size: 0.875rem;
   padding: 8px 0;
-  border-bottom: 2px solid var(--accent-gold);
+  border-bottom: 2px solid var(--accent-coral);
 }
 
 .top-bar a {
-  color: #e2e8f0;
+  color: rgba(255, 255, 255, 0.75);
   text-decoration: none;
   transition: color var(--transition-speed);
 }
 
 .top-bar a:hover {
-  color: var(--accent-gold);
+  color: var(--accent-coral);
 }
 
 .top-bar .social-icons a {
   margin-right: 12px;
   font-size: 0.95rem;
+  color: rgba(255, 255, 255, 0.75);
+  transition: color 0.25s ease;
+}
+
+.top-bar .social-icons a:hover {
+  color: var(--accent-coral);
 }
 
 /* Main Brand Header */
@@ -112,7 +121,7 @@ blockquote {
 
 /* Sticky Navbar */
 .navbar-custom {
-  background-color: var(--secondary-navy) !important;
+  background-color: #14315B !important;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12);
   transition: all 0.3s ease;
 }
@@ -123,19 +132,43 @@ blockquote {
 }
 
 .navbar-custom .nav-link {
-  color: #ffffff !important;
-  font-weight: 600;
+  color: rgba(255, 255, 255, 0.85) !important;
+  font-weight: 500;
   font-size: 0.95rem;
   padding: 12px 18px !important;
   text-transform: uppercase;
   letter-spacing: 0.5px;
-  transition: all var(--transition-speed);
+  transition: color 0.25s ease;
+  position: relative;
+}
+
+.navbar-custom .nav-link::after {
+  content: '';
+  position: absolute;
+  bottom: 6px;
+  left: 0;
+  width: 0;
+  height: 2px;
+  background-color: #E8734A;
+  transition: width 0.25s ease;
 }
 
 .navbar-custom .nav-link:hover,
 .navbar-custom .nav-link.active {
-  color: var(--accent-gold) !important;
-  background-color: rgba(255, 255, 255, 0.06);
+  color: #ffffff !important;
+  background-color: transparent;
+}
+
+.navbar-custom .nav-link:hover::after,
+.navbar-custom .nav-link.active::after {
+  width: 80%;
+}
+
+/* Ensure nav icon aligns properly beside text */
+.navbar-custom .nav-link i {
+  display: inline-flex;
+  vertical-align: middle;
+  margin-right: 6px;
 }
 
 .navbar-custom .dropdown-menu {
@@ -150,8 +183,33 @@ blockquote {
 .navbar-custom .dropdown-item {
   font-weight: 500;
   padding: 10px 20px;
-  color: var(--dark-text);
-  transition: background var(--transition-speed);
+  color: #1F2733;
+  transition: background-color 0.25s ease, color 0.25s ease;
+}
+
+.navbar-custom .dropdown-item:hover {
+  background-color: rgba(232, 115, 74, 0.1);
+  color: #E8734A;
+}
+
+/* Navbar CTA Button */
+.navbar-custom .btn-apply,
+.navbar-custom .nav-cta-btn {
+  background-color: #E8734A;
+  color: #ffffff;
+  font-weight: 600;
+  padding: 8px 20px;
+  border-radius: 6px;
+  border: none;
+  transition: background-color 0.25s ease, transform 0.25s ease;
+}
+
+.navbar-custom .btn-apply:hover,
+.navbar-custom .nav-cta-btn:hover {
+  background-color: #D6612F;
+  color: #ffffff;
+  transform: translateY(-2px);
+}kground var(--transition-speed);
 }
 
 /* Sticky Navbar Animation */
@@ -196,17 +254,9 @@ blockquote {
   white-space: nowrap;
 }
 
-/* Hero Carousel */
+/* Hero Carousel - basic styling only, detailed styles in home.css */
 .hero-carousel .carousel-item {
-  height: 520px;
-  min-height: 420px;
   background-color: var(--primary-navy);
-}
-
-.hero-carousel .carousel-item img {
-  height: 100%;
-  width: 100%;
-  object-fit: cover;
 }
 
 .hero-overlay {
@@ -435,47 +485,49 @@ blockquote {
 
 /* Buttons */
 .btn-gold {
-  background-color: var(--accent-gold);
-  color: var(--primary-navy);
+  background-color: #E8734A;
+  color: #ffffff;
   font-weight: 700;
   border: none;
   padding: 12px 26px;
   border-radius: 6px;
-  transition: all var(--transition-speed);
+  transition: all 0.25s ease;
 }
 
 .btn-gold:hover {
-  background-color: var(--accent-gold-hover);
+  background-color: #D6612F;
   color: #ffffff;
+  transform: translateY(-2px);
 }
 
 .btn-navy {
-  background-color: var(--primary-navy);
+  background-color: #14315B;
   color: #ffffff;
   font-weight: 700;
   border: none;
   padding: 12px 26px;
   border-radius: 6px;
-  transition: all var(--transition-speed);
+  transition: all 0.25s ease;
 }
 
 .btn-navy:hover {
-  background-color: var(--secondary-navy);
-  color: var(--accent-gold);
+  background-color: #0D2340;
+  color: #E8734A;
 }
 
 /* Footer */
 footer {
-  background-color: var(--primary-navy);
-  color: #d1d5db;
+  background-color: #0D2340;
+  color: rgba(255, 255, 255, 0.65);
   padding-top: 60px;
   padding-bottom: 25px;
-  border-top: 4px solid var(--accent-gold);
+  border-top: 4px solid #E8734A;
 }
 
 footer h5 {
   color: #ffffff;
-  font-weight: 700;
+  font-weight: 600;
+  font-size: 0.875rem;
   margin-bottom: 22px;
   position: relative;
 }
@@ -487,24 +539,48 @@ footer h5::after {
   bottom: -6px;
   width: 40px;
   height: 3px;
-  background-color: var(--accent-gold);
+  background-color: #E8734A;
 }
 
 footer a {
-  color: #9ca3af;
+  color: rgba(255, 255, 255, 0.65);
   text-decoration: none;
-  transition: color var(--transition-speed);
+  transition: color 0.25s ease, padding-left 0.25s ease;
 }
 
 footer a:hover {
-  color: var(--accent-gold);
+  color: #E8734A;
+  padding-left: 4px;
+}
+
+footer .social-icons a {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  border: 1px solid rgba(255, 255, 255, 0.5);
+  border-radius: 50%;
+  color: rgba(255, 255, 255, 0.75);
+  transition: border-color 0.25s ease, color 0.25s ease;
+}
+
+footer .social-icons a:hover {
+  border-color: #E8734A;
+  color: #E8734A;
+  padding-left: 0;
 }
 
 .footer-bottom {
-  border-top: 1px solid rgba(255, 255, 255, 0.1);
+  border-top: 1px solid rgba(255, 255, 255, 0.15);
   padding-top: 20px;
   margin-top: 40px;
   font-size: 0.875rem;
+}
+
+.footer-bottom a:hover {
+  color: #E8734A;
+  padding-left: 0;
 }
 
 /* Back to Top Button */
@@ -603,6 +679,8 @@ footer a:hover {
   to { opacity: 1; transform: translateY(0); }
 }
 
+
+
 @keyframes preloaderPopIn {
   0% { transform: translateY(10px) scale(0.96); opacity: 0; }
   60% { transform: translateY(-4px) scale(1.01); opacity: 1; }
@@ -673,13 +751,35 @@ footer a:hover {
 
 /* Responsive adjustments */
 @media (max-width: 768px) {
-  .hero-carousel .carousel-item {
-    height: 360px;
-  }
   .hero-caption h1 {
     font-size: 1.8rem;
   }
   .brand-header .school-title {
     font-size: 1.35rem;
   }
+}
+
+/* -- Heading Font: Georgia serif for academic/trustworthy feel -- */
+h1, h2, h3,
+.school-title,
+.section-title h2,
+.hero-caption h1,
+.page-hero h1,
+.hero-slide-title {
+  font-family: Georgia, 'Times New Roman', serif;
+  font-weight: 700;
+  color: #14315B;
+  line-height: 1.3;
+}
+
+p {
+  color: #6B7280;
+  line-height: 1.7;
+}
+
+/* Keep nav links and body text in Inter \*/
+.navbar-custom .nav-link,
+.btn,
+span, small, label, input, .badge {
+  font-family: 'Inter', system-ui, sans-serif;
 }

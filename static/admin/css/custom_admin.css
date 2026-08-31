@@ -1010,6 +1010,832 @@ body:not(.sjss-admin-authenticated) #main {
   box-shadow: var(--sjss-shadow);
 }
 
+/* ── Admin Form Styling ── */
+.admin-form-container {
+  background: var(--sjss-white);
+  border: 1px solid var(--sjss-border);
+  border-radius: var(--sjss-radius);
+  padding: 1.5rem;
+  box-shadow: var(--sjss-shadow);
+  margin-bottom: 1.25rem;
+}
+
+.admin-form-section {
+  margin-bottom: 1.5rem;
+  padding-bottom: 1.5rem;
+  border-bottom: 1px solid var(--sjss-border);
+}
+
+.admin-form-section:last-child {
+  border-bottom: none;
+  margin-bottom: 0;
+  padding-bottom: 0;
+}
+
+.admin-form-section h3 {
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: var(--sjss-text);
+  margin-bottom: 1rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.admin-form-section h3 i {
+  color: var(--sjss-blue);
+}
+
+.admin-form-row {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
+
+.admin-form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+}
+
+.admin-form-group label {
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--sjss-text);
+}
+
+.admin-form-group label::after {
+  content: '';
+}
+
+.admin-form-group input[type="text"],
+.admin-form-group input[type="number"],
+.admin-form-group select,
+.admin-form-group textarea {
+  width: 100%;
+  padding: 0.7rem 0.9rem;
+  border: 1px solid var(--sjss-border);
+  border-radius: 10px;
+  font-size: 0.9rem;
+  color: var(--sjss-text);
+  background: var(--sjss-white);
+  transition: border-color var(--sjss-transition), box-shadow var(--sjss-transition);
+}
+
+.admin-form-group input:focus,
+.admin-form-group select:focus,
+.admin-form-group textarea:focus {
+  outline: none;
+  border-color: var(--sjss-blue);
+  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+}
+
+.admin-form-group textarea {
+  min-height: 100px;
+  resize: vertical;
+}
+
+.admin-form-group input[type="file"] {
+  width: 100%;
+  padding: 0.6rem 0.9rem;
+  border: 1px dashed var(--sjss-border);
+  border-radius: 10px;
+  background: var(--sjss-bg);
+  cursor: pointer;
+  font-size: 0.85rem;
+  color: var(--sjss-muted);
+}
+
+.admin-form-group input[type="file"]:hover {
+  border-color: var(--sjss-blue);
+  background: #eff6ff;
+}
+
+.admin-form-group .file-upload-area {
+  padding: 1.5rem;
+  border: 2px dashed var(--sjss-border);
+  border-radius: 12px;
+  background: var(--sjss-bg);
+  text-align: center;
+  cursor: pointer;
+  transition: border-color var(--sjss-transition), background var(--sjss-transition);
+}
+
+.admin-form-group .file-upload-area:hover {
+  border-color: var(--sjss-blue);
+  background: #eff6ff;
+}
+
+.admin-form-group .file-upload-area i {
+  font-size: 2rem;
+  color: var(--sjss-blue);
+  margin-bottom: 0.5rem;
+}
+
+.admin-form-group .file-upload-area p {
+  margin: 0;
+  font-size: 0.85rem;
+  color: var(--sjss-muted);
+}
+
+.admin-form-group .file-upload-area small {
+  display: block;
+  margin-top: 0.25rem;
+  font-size: 0.75rem;
+  color: var(--sjss-muted);
+}
+
+.admin-form-actions {
+  display: flex;
+  gap: 0.75rem;
+  margin-top: 1.5rem;
+  flex-wrap: wrap;
+}
+
+.admin-form-actions .btn {
+  padding: 0.7rem 1.25rem;
+  border-radius: 10px;
+  font-size: 0.9rem;
+  font-weight: 600;
+}
+
+.admin-form-actions .btn-primary {
+  background: var(--sjss-navy);
+  color: var(--sjss-white);
+  border: none;
+}
+
+.admin-form-actions .btn-primary:hover {
+  background: var(--sjss-navy-light);
+}
+
+.admin-form-actions .btn-secondary {
+  background: var(--sjss-bg);
+  color: var(--sjss-text);
+  border: 1px solid var(--sjss-border);
+}
+
+.admin-form-actions .btn-secondary:hover {
+  background: #e2e8f0;
+}
+
+/* Status Toggle */
+.admin-status-toggle {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.admin-status-toggle .toggle-switch {
+  position: relative;
+  width: 50px;
+  height: 26px;
+  background: #cbd5e1;
+  border-radius: 13px;
+  cursor: pointer;
+  transition: background var(--sjss-transition);
+}
+
+.admin-status-toggle .toggle-switch.active {
+  background: #22c55e;
+}
+
+.admin-status-toggle .toggle-switch::after {
+  content: '';
+  position: absolute;
+  top: 3px;
+  left: 3px;
+  width: 20px;
+  height: 20px;
+  background: white;
+  border-radius: 50%;
+  transition: transform var(--sjss-transition);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.admin-status-toggle .toggle-switch.active::after {
+  transform: translateX(24px);
+}
+
+.admin-status-toggle span {
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--sjss-text);
+}
+
+/* Help Text */
+.admin-help-text {
+  font-size: 0.78rem;
+  color: var(--sjss-muted);
+  margin-top: 0.25rem;
+  line-height: 1.4;
+}
+
+/* Required Field Indicator */
+.admin-form-group label.required::after {
+  content: ' *';
+  color: #ef4444;
+}
+
+/* Error States */
+.admin-form-group.has-error input,
+.admin-form-group.has-error select,
+.admin-form-group.has-error textarea {
+  border-color: #ef4444;
+  background: #fef2f2;
+}
+
+.admin-form-group.has-error .admin-help-text {
+  color: #ef4444;
+}
+
+/* Character Counter */
+.admin-char-counter {
+  font-size: 0.75rem;
+  color: var(--sjss-muted);
+  text-align: right;
+  margin-top: 0.25rem;
+}
+
+.admin-char-counter.warning {
+  color: #f59e0b;
+}
+
+.admin-char-counter.error {
+  color: #ef4444;
+}
+
+/* ── Django Admin Change Form Styling ── */
+/* Target Django admin form structure */
+body.sjss-admin-authenticated .change-form,
+body.sjss-admin-authenticated .add-form {
+  background: var(--sjss-white);
+  border-radius: var(--sjss-radius);
+  border: 1px solid var(--sjss-border);
+  padding: 1.5rem;
+  box-shadow: var(--sjss-shadow);
+}
+
+/* Django admin form rows */
+body.sjss-admin-authenticated .form-row {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+  padding-bottom: 1.5rem;
+  border-bottom: 1px solid var(--sjss-border);
+}
+
+body.sjss-admin-authenticated .form-row:last-child {
+  border-bottom: none;
+  margin-bottom: 0;
+  padding-bottom: 0;
+}
+
+/* Django admin field boxes */
+body.sjss-admin-authenticated .field-box {
+  padding: 0;
+}
+
+/* Django admin labels */
+body.sjss-admin-authenticated .form-row label {
+  display: block;
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--sjss-text);
+  margin-bottom: 0.4rem;
+}
+
+body.sjss-admin-authenticated .form-row label::after {
+  content: '';
+}
+
+/* Django admin required field indicator */
+body.sjss-admin-authenticated .form-row label.required::after {
+  content: ' *';
+  color: #ef4444;
+}
+
+/* Django admin inputs */
+body.sjss-admin-authenticated .form-row input[type="text"],
+body.sjss-admin-authenticated .form-row input[type="email"],
+body.sjss-admin-authenticated .form-row input[type="url"],
+body.sjss-admin-authenticated .form-row input[type="number"],
+body.sjss-admin-authenticated .form-row input[type="tel"],
+body.sjss-admin-authenticated .form-row input[type="date"],
+body.sjss-admin-authenticated .form-row input[type="datetime"],
+body.sjss-admin-authenticated .form-row input[type="time"],
+body.sjss-admin-authenticated .form-row select,
+body.sjss-admin-authenticated .form-row textarea {
+  width: 100%;
+  padding: 0.7rem 0.9rem;
+  border: 1px solid var(--sjss-border);
+  border-radius: 10px;
+  font-size: 0.9rem;
+  color: var(--sjss-text);
+  background: var(--sjss-white);
+  transition: border-color var(--sjss-transition), box-shadow var(--sjss-transition);
+  margin: 0;
+}
+
+body.sjss-admin-authenticated .form-row input:focus,
+body.sjss-admin-authenticated .form-row select:focus,
+body.sjss-admin-authenticated .form-row textarea:focus {
+  outline: none;
+  border-color: var(--sjss-blue);
+  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+}
+
+/* Django admin textarea */
+body.sjss-admin-authenticated .form-row textarea {
+  min-height: 100px;
+  resize: vertical;
+}
+
+/* Django admin file inputs */
+body.sjss-admin-authenticated .form-row input[type="file"] {
+  width: 100%;
+  padding: 0.6rem 0.9rem;
+  border: 1px dashed var(--sjss-border);
+  border-radius: 10px;
+  background: var(--sjss-bg);
+  cursor: pointer;
+  font-size: 0.85rem;
+  color: var(--sjss-muted);
+}
+
+body.sjss-admin-authenticated .form-row input[type="file"]:hover {
+  border-color: var(--sjss-blue);
+  background: #eff6ff;
+}
+
+/* Django admin checkboxes and radio buttons */
+body.sjss-admin-authenticated .form-row input[type="checkbox"],
+body.sjss-admin-authenticated .form-row input[type="radio"] {
+  width: auto;
+  margin-right: 0.5rem;
+}
+
+body.sjss-admin-authenticated .form-row input[type="checkbox"] + label,
+body.sjss-admin-authenticated .form-row input[type="radio"] + label {
+  display: inline;
+  margin-bottom: 0;
+}
+
+/* Django admin help text */
+body.sjss-admin-authenticated .form-row .help,
+body.sjss-admin-authenticated .form-row .help-text {
+  font-size: 0.78rem;
+  color: var(--sjss-muted);
+  margin-top: 0.4rem;
+  line-height: 1.4;
+}
+
+/* Django admin error messages */
+body.sjss-admin-authenticated .form-row .errorlist {
+  list-style: none;
+  padding: 0;
+  margin: 0.4rem 0 0;
+}
+
+body.sjss-admin-authenticated .form-row .errorlist li {
+  font-size: 0.8rem;
+  color: #ef4444;
+  margin-bottom: 0.2rem;
+}
+
+body.sjss-admin-authenticated .form-row .errorlist li::before {
+  content: '⚠ ';
+}
+
+/* Django admin submit buttons */
+body.sjss-admin-authenticated .submit-row {
+  display: flex;
+  gap: 0.75rem;
+  margin-top: 1.5rem;
+  padding-top: 1.5rem;
+  border-top: 1px solid var(--sjss-border);
+  flex-wrap: wrap;
+}
+
+body.sjss-admin-authenticated .submit-row input[type="submit"] {
+  padding: 0.7rem 1.25rem;
+  border-radius: 10px;
+  font-size: 0.9rem;
+  font-weight: 600;
+  border: none;
+  cursor: pointer;
+  transition: background var(--sjss-transition), transform var(--sjss-transition);
+}
+
+body.sjss-admin-authenticated .submit-row input[type="submit"]:hover {
+  transform: translateY(-1px);
+}
+
+body.sjss-admin-authenticated .submit-row input.default,
+body.sjss-admin-authenticated .submit-row input[type="submit"].default {
+  background: var(--sjss-navy);
+  color: var(--sjss-white);
+}
+
+body.sjss-admin-authenticated .submit-row input.default:hover,
+body.sjss-admin-authenticated .submit-row input[type="submit"].default:hover {
+  background: var(--sjss-navy-light);
+}
+
+body.sjss-admin-authenticated .submit-row input[type="submit"]:not(.default) {
+  background: var(--sjss-bg);
+  color: var(--sjss-text);
+  border: 1px solid var(--sjss-border);
+}
+
+body.sjss-admin-authenticated .submit-row input[type="submit"]:not(.default):hover {
+  background: #e2e8f0;
+}
+
+/* Django admin module headers */
+body.sjss-admin-authenticated #content h1 {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--sjss-text);
+  margin-bottom: 1.5rem;
+}
+
+body.sjss-admin-authenticated .module h2 {
+  font-size: 1.2rem;
+  font-weight: 700;
+  color: var(--sjss-text);
+  margin-bottom: 1rem;
+  padding-bottom: 0.5rem;
+  border-bottom: 2px solid var(--sjss-border);
+}
+
+/* Django admin inline forms */
+body.sjss-admin-authenticated .inline-group {
+  background: var(--sjss-bg);
+  border: 1px solid var(--sjss-border);
+  border-radius: var(--sjss-radius);
+  padding: 1rem;
+  margin-bottom: 1rem;
+}
+
+body.sjss-admin-authenticated .inline-group .module {
+  background: var(--sjss-white);
+  border: 1px solid var(--sjss-border);
+  border-radius: 10px;
+  padding: 1rem;
+  margin-bottom: 0.5rem;
+}
+
+/* Django admin readonly fields */
+body.sjss-admin-authenticated .readonly {
+  background: var(--sjss-bg);
+  padding: 0.7rem 0.9rem;
+  border-radius: 10px;
+  color: var(--sjss-muted);
+  font-size: 0.9rem;
+}
+
+/* Django admin foreign key widgets */
+body.sjss-admin-authenticated .related-widget-wrapper {
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
+}
+
+body.sjss-admin-authenticated .related-widget-wrapper a {
+  padding: 0.5rem 0.75rem;
+  background: var(--sjss-bg);
+  border: 1px solid var(--sjss-border);
+  border-radius: 8px;
+  color: var(--sjss-text);
+  text-decoration: none;
+  font-size: 0.85rem;
+  transition: background var(--sjss-transition);
+}
+
+body.sjss-admin-authenticated .related-widget-wrapper a:hover {
+  background: #e2e8f0;
+}
+
+/* Django admin date/time widgets */
+body.sjss-admin-authenticated .datetimeshortcuts {
+  display: flex;
+  gap: 0.5rem;
+  margin-top: 0.5rem;
+}
+
+body.sjss-admin-authenticated .datetimeshortcuts a {
+  font-size: 0.75rem;
+  color: var(--sjss-blue);
+  text-decoration: none;
+}
+
+body.sjss-admin-authenticated .datetimeshortcuts a:hover {
+  text-decoration: underline;
+}
+
+/* Django admin vertical tabs */
+body.sjss-admin-authenticated .tabs {
+  display: flex;
+  gap: 0.5rem;
+  margin-bottom: 1rem;
+  border-bottom: 1px solid var(--sjss-border);
+}
+
+body.sjss-admin-authenticated .tabs a {
+  padding: 0.5rem 1rem;
+  background: var(--sjss-bg);
+  border: 1px solid var(--sjss-border);
+  border-bottom: none;
+  border-radius: 8px 8px 0 0;
+  color: var(--sjss-text);
+  text-decoration: none;
+  font-size: 0.85rem;
+  transition: background var(--sjss-transition);
+}
+
+body.sjss-admin-authenticated .tabs a.active,
+body.sjss-admin-authenticated .tabs a:hover {
+  background: var(--sjss-white);
+  border-bottom: 1px solid var(--sjss-white);
+  margin-bottom: -1px;
+}
+
+/* Django admin fieldsets */
+body.sjss-admin-authenticated fieldset {
+  border: 1px solid var(--sjss-border);
+  border-radius: var(--sjss-radius);
+  padding: 1.5rem;
+  margin-bottom: 1.5rem;
+}
+
+body.sjss-admin-authenticated fieldset legend {
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--sjss-text);
+  padding: 0 0.5rem;
+}
+
+/* ── Additional Django Admin Form Styling ── */
+/* Target standard Django admin forms that might not have our custom body class */
+#content .form-row {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+  padding-bottom: 1.5rem;
+  border-bottom: 1px solid var(--sjss-border);
+}
+
+#content .form-row:last-child {
+  border-bottom: none;
+  margin-bottom: 0;
+  padding-bottom: 0;
+}
+
+#content .field-box {
+  padding: 0;
+}
+
+#content .form-row label {
+  display: block;
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--sjss-text);
+  margin-bottom: 0.4rem;
+}
+
+#content .form-row label::after {
+  content: '';
+}
+
+#content .form-row label.required::after {
+  content: ' *';
+  color: #ef4444;
+}
+
+#content .form-row input[type="text"],
+#content .form-row input[type="email"],
+#content .form-row input[type="url"],
+#content .form-row input[type="number"],
+#content .form-row input[type="tel"],
+#content .form-row input[type="date"],
+#content .form-row input[type="datetime"],
+#content .form-row input[type="time"],
+#content .form-row select,
+#content .form-row textarea {
+  width: 100%;
+  padding: 0.7rem 0.9rem;
+  border: 1px solid var(--sjss-border);
+  border-radius: 10px;
+  font-size: 0.9rem;
+  color: var(--sjss-text);
+  background: var(--sjss-white);
+  transition: border-color var(--sjss-transition), box-shadow var(--sjss-transition);
+  margin: 0;
+}
+
+#content .form-row input:focus,
+#content .form-row select:focus,
+#content .form-row textarea:focus {
+  outline: none;
+  border-color: var(--sjss-blue);
+  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+}
+
+#content .form-row textarea {
+  min-height: 100px;
+  resize: vertical;
+}
+
+#content .form-row input[type="file"] {
+  width: 100%;
+  padding: 0.6rem 0.9rem;
+  border: 1px dashed var(--sjss-border);
+  border-radius: 10px;
+  background: var(--sjss-bg);
+  cursor: pointer;
+  font-size: 0.85rem;
+  color: var(--sjss-muted);
+}
+
+#content .form-row input[type="file"]:hover {
+  border-color: var(--sjss-blue);
+  background: #eff6ff;
+}
+
+#content .form-row .help,
+#content .form-row .help-text {
+  font-size: 0.78rem;
+  color: var(--sjss-muted);
+  margin-top: 0.4rem;
+  line-height: 1.4;
+}
+
+#content .form-row .errorlist {
+  list-style: none;
+  padding: 0;
+  margin: 0.4rem 0 0;
+}
+
+#content .form-row .errorlist li {
+  font-size: 0.8rem;
+  color: #ef4444;
+  margin-bottom: 0.2rem;
+}
+
+#content .form-row .errorlist li::before {
+  content: '⚠ ';
+}
+
+#content .submit-row {
+  display: flex;
+  gap: 0.75rem;
+  margin-top: 1.5rem;
+  padding-top: 1.5rem;
+  border-top: 1px solid var(--sjss-border);
+  flex-wrap: wrap;
+}
+
+#content .submit-row input[type="submit"] {
+  padding: 0.7rem 1.25rem;
+  border-radius: 10px;
+  font-size: 0.9rem;
+  font-weight: 600;
+  border: none;
+  cursor: pointer;
+  transition: background var(--sjss-transition), transform var(--sjss-transition);
+}
+
+#content .submit-row input[type="submit"]:hover {
+  transform: translateY(-1px);
+}
+
+#content .submit-row input.default,
+#content .submit-row input[type="submit"].default {
+  background: var(--sjss-navy);
+  color: var(--sjss-white);
+}
+
+#content .submit-row input.default:hover,
+#content .submit-row input[type="submit"].default:hover {
+  background: var(--sjss-navy-light);
+}
+
+#content .submit-row input[type="submit"]:not(.default) {
+  background: var(--sjss-bg);
+  color: var(--sjss-text);
+  border: 1px solid var(--sjss-border);
+}
+
+#content .submit-row input[type="submit"]:not(.default):hover {
+  background: #e2e8f0;
+}
+
+/* Style the module container for add/edit forms */
+.module {
+  background: var(--sjss-white);
+  border: 1px solid var(--sjss-border);
+  border-radius: var(--sjss-radius);
+  padding: 1.5rem;
+  box-shadow: var(--sjss-shadow);
+  margin-bottom: 1.25rem;
+}
+
+.module h2 {
+  font-size: 1.2rem;
+  font-weight: 700;
+  color: var(--sjss-text);
+  margin-bottom: 1rem;
+  padding-bottom: 0.5rem;
+  border-bottom: 2px solid var(--sjss-border);
+}
+
+/* Style inline related objects */
+.inline-group {
+  background: var(--sjss-bg);
+  border: 1px solid var(--sjss-border);
+  border-radius: var(--sjss-radius);
+  padding: 1rem;
+  margin-bottom: 1rem;
+}
+
+.inline-group .module {
+  background: var(--sjss-white);
+  border: 1px solid var(--sjss-border);
+  border-radius: 10px;
+  padding: 1rem;
+  margin-bottom: 0.5rem;
+}
+
+/* Style readonly fields */
+.readonly {
+  background: var(--sjss-bg);
+  padding: 0.7rem 0.9rem;
+  border-radius: 10px;
+  color: var(--sjss-muted);
+  font-size: 0.9rem;
+}
+
+/* Ensure proper styling for checkboxes and radio buttons */
+.vCheckboxLabel {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--sjss-text);
+  margin-bottom: 0.4rem;
+}
+
+/* Style the add/edit page title */
+#content h1 {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--sjss-text);
+  margin-bottom: 1.5rem;
+}
+
+/* Style breadcrumbs */
+.breadcrumbs {
+  font-size: 0.85rem;
+  color: var(--sjss-muted);
+  margin-bottom: 1rem;
+}
+
+.breadcrumbs a {
+  color: var(--sjss-blue);
+  text-decoration: none;
+}
+
+.breadcrumbs a:hover {
+  text-decoration: underline;
+}
+
+/* Style object tools */
+.object-tools {
+  display: flex;
+  gap: 0.5rem;
+  margin-bottom: 1rem;
+}
+
+.object-tools a {
+  padding: 0.5rem 1rem;
+  background: var(--sjss-bg);
+  border: 1px solid var(--sjss-border);
+  border-radius: 8px;
+  color: var(--sjss-text);
+  text-decoration: none;
+  font-size: 0.85rem;
+  transition: background var(--sjss-transition);
+}
+
+.object-tools a:hover {
+  background: #e2e8f0;
+}
+
 #changelist,
 .change-form,
 .delete-confirmation {

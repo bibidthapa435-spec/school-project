@@ -19,21 +19,17 @@
         <img src="{% if slider.image %}{{ slider.image.url }}{% else %}/media/sliders/fifthphoto.jpg{% endif %}" alt="{{ slider.title }}" class="d-block w-100" onerror="this.onerror=null; this.src='/media/sliders/fifthphoto.jpg';">
         <div class="hero-overlay" style="background-color: {{ slider.overlay_color|default:'#0b1b2b' }}; opacity: {{ slider.overlay_opacity|default:0.5 }};"></div>
         <div class="container hero-caption-wrapper">
-          <div class="hero-overlay d-flex align-items-center">
-            <div class="container">
-              <div class="hero-caption">
-                <span class="badge bg-warning text-dark px-3 py-2 fs-6 mb-3 font-weight-bold">
-                  {{ slider.subtitle|default:"Affiliated by Government of Nepal" }}
-                </span>
-                <h1>{{ slider.title }}</h1>
-                <p>{{ slider.description }}</p>
-                {% if slider.button_text %}
-                  <a href="{{ slider.button_url }}" class="btn btn-gold btn-lg shadow-sm">
-                    {{ slider.button_text }} <i class="fa-solid fa-arrow-right me-1"></i>
-                  </a>
-                {% endif %}
-              </div>
-            </div>
+          <div class="hero-caption">
+            <span class="badge bg-warning text-dark px-3 py-2 fs-6 mb-3 font-weight-bold">
+              {{ slider.subtitle|default:"Affiliated by Government of Nepal" }}
+            </span>
+            <h1>{{ slider.title }}</h1>
+            <p>{{ slider.description }}</p>
+            {% if slider.button_text %}
+              <a href="{{ slider.button_url }}" class="btn btn-gold btn-lg shadow-sm">
+                {{ slider.button_text }} <i class="fa-solid fa-arrow-right me-1"></i>
+              </a>
+            {% endif %}
           </div>
         </div>
       </div>

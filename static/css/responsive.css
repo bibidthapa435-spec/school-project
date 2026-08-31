@@ -1,6 +1,6 @@
-﻿/*
+/*
  * ============================================================
- *  Shree Jaljala Secondary School — Responsive CSS
+ *  Shree Jaljala Secondary School � Responsive CSS
  *  Pure mobile/tablet overrides only.
  *  Desktop layout is UNTOUCHED.
  *
@@ -12,21 +12,21 @@
  * ============================================================
  *
  *  Breakpoints used:
- *    <= 991px  — tablets / small laptops (collapsed navbar)
- *    <= 767px  — phones in portrait
- *    <= 575px  — small phones
- *    <= 380px  — very small phones (320px range)
+ *    <= 991px  � tablets / small laptops (collapsed navbar)
+ *    <= 767px  � phones in portrait
+ *    <= 575px  � small phones
+ *    <= 380px  � very small phones (320px range)
  * ============================================================
  */
 
-/* ─────────────────────────────────────────────────────────────
+/* -------------------------------------------------------------
    GLOBAL: prevent horizontal overflow on ALL screen sizes
-   ───────────────────────────────────────────────────────────── */
+   ------------------------------------------------------------- */
 *, *::before, *::after {
   box-sizing: border-box;
 }
 
-/* NOTE: overflow-x must NOT be set on <html> — doing so creates a new
+/* NOTE: overflow-x must NOT be set on <html> � doing so creates a new
    scroll container that clips position:absolute dropdown menus.
    overflow-x:hidden on body alone (also in style.css) prevents horizontal
    scroll without clipping the navbar dropdown. */
@@ -53,11 +53,7 @@ iframe {
    ============================================================= */
 @media (max-width: 991.98px) {
 
-  /* Hero */
-  .hero-carousel .carousel-item {
-    height: 400px;
-    min-height: 320px;
-  }
+  /* Hero - sizing handled in home.css for full-size images */
 
   .hero-caption h1 {
     font-size: 2rem;
@@ -75,7 +71,7 @@ iframe {
 
   /* Navbar: style the collapsed mobile panel */
   .navbar-custom .navbar-collapse {
-    background-color: var(--secondary-navy);
+    background-color: #14315B;
     padding: 10px 15px 15px;
     border-radius: 0 0 8px 8px;
     border-top: 1px solid rgba(255,255,255,0.1);
@@ -101,14 +97,14 @@ iframe {
   }
 
   .navbar-custom .dropdown-item {
-    color: #e2e8f0 !important;
+    color: rgba(255,255,255,0.75) !important;
     font-size: 0.875rem;
     padding: 8px 14px;
   }
 
   .navbar-custom .dropdown-item:hover {
-    background-color: rgba(212,175,55,0.15) !important;
-    color: var(--accent-gold) !important;
+    background-color: rgba(232,115,74,0.15) !important;
+    color: #E8734A !important;
   }
 
   /* Login button row inside mobile nav */
@@ -148,14 +144,9 @@ iframe {
     padding-bottom: 2.5rem !important;
   }
 
-  /* Hero Carousel */
-  .hero-carousel .carousel-item {
-    height: 300px;
-    min-height: 260px;
-  }
+  /* Hero Carousel - sizing handled in home.css for full-size images */
 
   .hero-caption {
-    text-align: center;
     padding: 0 10px;
   }
 
@@ -338,11 +329,7 @@ iframe {
    ============================================================= */
 @media (max-width: 575.98px) {
 
-  /* Hero */
-  .hero-carousel .carousel-item {
-    height: 260px;
-    min-height: 220px;
-  }
+  /* Hero - sizing handled in home.css for full-size images */
 
   .hero-caption h1 {
     font-size: 1.25rem;
@@ -447,11 +434,7 @@ iframe {
    ============================================================= */
 @media (max-width: 380px) {
 
-  /* Hero */
-  .hero-carousel .carousel-item {
-    height: 230px;
-    min-height: 200px;
-  }
+  /* Hero - sizing handled in home.css for full-size images */
 
   .hero-caption h1 {
     font-size: 1.1rem;
@@ -519,10 +502,7 @@ iframe {
    ============================================================= */
 @media (max-height: 500px) and (orientation: landscape) {
 
-  .hero-carousel .carousel-item {
-    height: 220px;
-    min-height: 180px;
-  }
+  /* Hero - sizing handled in home.css for full-size images */
 
   .hero-caption h1 {
     font-size: 1.1rem;
@@ -550,11 +530,11 @@ iframe {
 
 
 /* =============================================================
-   ONLINE ADMISSION CTA — brand-header responsive positioning
+   ONLINE ADMISSION CTA � brand-header responsive positioning
    ============================================================= */
 
 /*
- * Desktop (>= 992px): no rules needed — the button sits naturally
+ * Desktop (>= 992px): no rules needed � the button sits naturally
  * on the far right of the brand-header flex row, vertically centered.
  * The parent .container already uses justify-content-between.
  */

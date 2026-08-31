@@ -87,4 +87,84 @@
         <p class="text-muted mb-0">No notices found matching your criteria.</p>
     {% endif %}
 </div>
+
+<!-- Sample Form Styling Demo -->
+<div class="admin-form-container">
+    <div class="admin-form-section">
+        <h3><i class="fa-solid fa-file-pen me-2"></i>Notice Details</h3>
+        <div class="admin-form-row">
+            <div class="admin-form-group">
+                <label class="required">Title</label>
+                <input type="text" placeholder="Enter notice title">
+                <p class="admin-help-text">Enter a clear, descriptive title for the notice</p>
+            </div>
+            <div class="admin-form-group">
+                <label>Status</label>
+                <select>
+                    <option value="">Select status</option>
+                    <option value="active">Active</option>
+                    <option value="inactive">Inactive</option>
+                </select>
+            </div>
+        </div>
+        <div class="admin-form-row">
+            <div class="admin-form-group">
+                <label>Display Order</label>
+                <input type="number" placeholder="0" value="0">
+                <p class="admin-help-text">Lower numbers appear first</p>
+            </div>
+            <div class="admin-form-group">
+                <label>Category</label>
+                <select>
+                    <option value="">General Announcement</option>
+                    <option value="admission">Admission</option>
+                    <option value="exam">Exam</option>
+                    <option value="holiday">Holiday</option>
+                </select>
+            </div>
+        </div>
+    </div>
+
+    <div class="admin-form-section">
+        <h3><i class="fa-solid fa-align-left me-2"></i>Notice Content</h3>
+        <div class="admin-form-row">
+            <div class="admin-form-group">
+                <label>Category Display</label>
+                <input type="text" placeholder="Category display name">
+            </div>
+        </div>
+        <div class="admin-form-row">
+            <div class="admin-form-group">
+                <label class="required">Description</label>
+                <textarea placeholder="Enter notice description"></textarea>
+                <p class="admin-help-text">Provide detailed information about the notice</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="admin-form-section">
+        <h3><i class="fa-solid fa-paperclip me-2"></i>Attachments</h3>
+        <div class="admin-form-row">
+            <div class="admin-form-group">
+                <label>Image</label>
+                <input type="file" accept="image/*">
+                <p class="admin-help-text">Upload an image for the notice (optional)</p>
+            </div>
+            <div class="admin-form-group">
+                <label>PDF Attachment</label>
+                <input type="file" accept=".pdf">
+                <p class="admin-help-text">Upload PDF document (optional)</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="admin-form-actions">
+        <button type="submit" class="btn btn-primary">
+            <i class="fa-solid fa-save me-2"></i>Save Notice
+        </button>
+        <button type="button" class="btn btn-secondary">
+            <i class="fa-solid fa-times me-2"></i>Cancel
+        </button>
+    </div>
+</div>
 {% endblock %}

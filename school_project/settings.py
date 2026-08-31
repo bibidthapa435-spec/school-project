@@ -81,11 +81,14 @@ TEMPLATES = [
 WSGI_APPLICATION = 'school_project.wsgi.application'
 
 DATABASES = {
-    "default": dj_database_url.config(
-        default='sqlite:///db.sqlite3',
-        conn_max_age=600,
-        conn_health_checks=True
-    )
+    'default': {
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': 'school_db',
+        'USER': 'postgres',
+        'PASSWORD': 'xiaomi',
+        'HOST': 'localhost',
+        'PORT': '5432',
+    }
 }
 
 AUTH_PASSWORD_VALIDATORS = []
