@@ -26,7 +26,7 @@
 <div class="admin-card">
     <h3><i class="fa-solid fa-bolt me-2"></i>Quick Actions</h3>
     <div class="d-flex gap-2 flex-wrap">
-        <a href="/admission/" class="action-btn action-btn-primary" target="_blank">
+        <a href="/admission/" class="action-btn action-btn-primary">
             <i class="fa-solid fa-plus"></i> New Admission
         </a>
         <a href="{% url 'admin_admissions' %}" class="action-btn action-btn-accent">
@@ -66,7 +66,7 @@
                             </td>
                             <td>{{ admission.created_at|date:"M d, Y" }}</td>
                             <td>
-                                <a href="/admin/school_app/admissionapplication/{{ admission.id }}/change/" class="btn btn-sm btn-outline-primary" target="_blank">
+                                <a href="/admin/school_app/admissionapplication/{{ admission.id }}/change/" class="btn btn-sm btn-outline-primary">
                                     <i class="fa-solid fa-eye"></i> View
                                 </a>
                             </td>

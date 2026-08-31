@@ -1,3 +1,6 @@
+import os
+
+from django.http import FileResponse, Http404
 from django.shortcuts import render, redirect, get_object_or_404
 from django.db import models
 from django.contrib import messages
@@ -375,50 +378,29 @@ def teacher_detail(request, slug):
 
     if not teacher:
 
-        teacher = {
-            'name': 'Teacher not found',
-            'position': 'N/A',
-            'photo': {
-                'url': '/static/images/logo.jpg'
-            },
-            'slug': slug,
-            'biography': (
-                'No biography is available for this teacher.'
-            ),
-        }
-
-        other_teachers = list(
-            Teacher.objects.filter(status=True)
-            .order_by(
-                'display_order',
-                '-created_at'
-            )[:4]
+        messages.error(
+            request,
+            'The requested teacher profile could not be found.'
         )
 
-    else:
+        return redirect('teachers')
+
+    other_teachers = list(
+        Teacher.objects.filter(status=True)
+        .exclude(slug=slug)
+        .order_by(
+            'display_order',
+            '-created_at'
+        )[:4]
+    )
+
+    for other_teacher in other_teachers:
 
         setattr(
-            teacher,
+            other_teacher,
             'name',
-            getattr(teacher, 'title', None)
+            getattr(other_teacher, 'title', None)
         )
-
-        other_teachers = list(
-            Teacher.objects.filter(status=True)
-            .exclude(slug=slug)
-            .order_by(
-                'display_order',
-                '-created_at'
-            )[:4]
-        )
-
-        for other_teacher in other_teachers:
-
-            setattr(
-                other_teacher,
-                'name',
-                getattr(other_teacher, 'title', None)
-            )
 
     return render(
         request,
@@ -467,48 +449,26 @@ def program_detail(request, slug):
 
     if not program:
 
-        program = {
-            'name': 'Program not found',
-            'description': (
-                'The requested program could not be found.'
-            ),
-            'slug': slug,
-            'duration': 'N/A',
-            'fee': 'N/A',
-            'image': {
-                'url': (
-                    '/static/images/image/firstphoto.jpg'
-                )
-            },
-            'eligibility': 'N/A',
-        }
-
-        other_programs = list(
-            Program.objects.filter(status=True)
-            .order_by('display_order')[:4]
+        messages.error(
+            request,
+            'The requested program could not be found.'
         )
 
-    else:
+        return redirect('programs')
+
+    other_programs = list(
+        Program.objects.filter(status=True)
+        .exclude(slug=slug)
+        .order_by('display_order')[:4]
+    )
+
+    for other_program in other_programs:
 
         setattr(
-            program,
+            other_program,
             'name',
-            getattr(program, 'title', None)
+            getattr(other_program, 'title', None)
         )
-
-        other_programs = list(
-            Program.objects.filter(status=True)
-            .exclude(slug=slug)
-            .order_by('display_order')[:4]
-        )
-
-        for other_program in other_programs:
-
-            setattr(
-                other_program,
-                'name',
-                getattr(other_program, 'title', None)
-            )
 
     return render(
         request,
@@ -551,6 +511,24 @@ def downloads(request):
             'downloads': list(downloads_list),
             'selected_cat': selected_cat,
         })
+    )
+
+
+def download_resource_file(request, slug):
+    """Force the browser to download a resource file as an attachment."""
+
+    resource = get_object_or_404(DownloadResource, slug=slug, status=True)
+
+    if not resource.file:
+        raise Http404('No file uploaded for this resource.')
+
+    if not resource.file.storage.exists(resource.file.name):
+        raise Http404('File not found on the server.')
+
+    return FileResponse(
+        resource.file.open('rb'),
+        as_attachment=True,
+        filename=os.path.basename(resource.file.name),
     )
 
 

@@ -16,7 +16,7 @@
   <div class="carousel-inner">
     {% for slider in sliders %}
       <div class="carousel-item {% if forloop.first %}active{% endif %}">
-        <img src="{{ slider.image.url|default:'/media/slider/slide_2.jpg' }}" alt="{{ slider.title }}" class="d-block w-100" onerror="this.onerror=null; this.src='/media/slider/slide_2.jpg';">
+        <img src="{% if slider.image %}{{ slider.image.url }}{% else %}/media/sliders/fifthphoto.jpg{% endif %}" alt="{{ slider.title }}" class="d-block w-100" onerror="this.onerror=null; this.src='/media/sliders/fifthphoto.jpg';">
         <div class="hero-overlay" style="background-color: {{ slider.overlay_color|default:'#0b1b2b' }}; opacity: {{ slider.overlay_opacity|default:0.5 }};"></div>
         <div class="container hero-caption-wrapper">
           <div class="hero-overlay d-flex align-items-center">
@@ -136,8 +136,8 @@
     <div class="custom-card p-4 p-md-5 rounded-4">
       <div class="row align-items-center g-4">
         <div class="col-md-4 text-center" data-aos="fade-right">
-          <img src="{{ principal.photo.url|default:'/media/teachers/govinda shrestha.jpg' }}" alt="{{ principal.name }}" class="img-fluid rounded-circle shadow" style="width: 200px; height: 200px; object-fit: cover; border: 5px solid var(--accent-gold);">
-          <h5 class="fw-bold mt-3 text-navy mb-1" style="color: #0b2545;">{{ principal.name }}</h5>
+          <img src="{% if principal.photo %}{{ principal.photo.url }}{% else %}/media/teachers/govinda shrestha.jpg{% endif %}" alt="{{ principal.title }}" class="img-fluid rounded-circle shadow" style="width: 200px; height: 200px; object-fit: cover; border: 5px solid var(--accent-gold);">
+          <h5 class="fw-bold mt-3 text-navy mb-1" style="color: #0b2545;">{{ principal.title }}</h5>
           <p class="text-muted small mb-0">{{ principal.position }}</p>
           <span class="badge bg-secondary mt-1">{{ principal.qualification }}</span>
         </div>
@@ -208,10 +208,10 @@
         <div class="col-lg-4 col-md-6" data-aos="flip-left" data-aos-delay="100">
           <div class="card custom-card h-100">
             <div class="card-img-wrapper">
-              <img src="{{ program.image.url|default:'/media/programs/image 1.jpg' }}" alt="{{ program.name }}" class="card-img-top">
+              <img src="{% if program.image %}{{ program.image.url }}{% else %}/media/programs/image 1.jpg{% endif %}" alt="{{ program.title }}" class="card-img-top">
             </div>
             <div class="card-body d-flex flex-column">
-              <h5 class="card-title fw-bold text-navy" style="color: #0b2545;">{{ program.name }}</h5>
+              <h5 class="card-title fw-bold text-navy" style="color: #0b2545;">{{ program.title }}</h5>
               <div class="d-flex justify-content-between text-muted small mb-2">
                 <span><i class="fa-regular fa-clock text-warning me-1"></i> {{ program.duration }}</span>
                 <span class="badge bg-success">{{ program.fee }}</span>
@@ -287,8 +287,8 @@
         {% for teacher in teachers %}
         <div class="col-lg-3 col-md-4 col-sm-6" data-aos="flip-left" data-aos-delay="100">
           <div class="card custom-card teacher-card h-100">
-            <img src="{{ teacher.photo.url|default:'/media/teachers/govinda shrestha.jpg' }}" alt="{{ teacher.name }}" class="teacher-photo">
-            <h6 class="fw-bold mb-1 text-navy" style="color: #0b2545;">{{ teacher.name }}</h6>
+            <img src="{% if teacher.photo %}{{ teacher.photo.url }}{% else %}/media/teachers/govinda shrestha.jpg{% endif %}" alt="{{ teacher.title }}" class="teacher-photo">
+            <h6 class="fw-bold mb-1 text-navy" style="color: #0b2545;">{{ teacher.title }}</h6>
             <p class="text-primary small mb-1 fw-semibold">{{ teacher.position }}</p>
             <p class="text-muted small mb-2">{{ teacher.qualification }}</p>
             <a href="/teachers/{{ teacher.slug }}" class="btn btn-sm btn-outline-secondary mt-auto">
@@ -320,10 +320,10 @@
       {% if gallery_items %}
         {% for item in gallery_items %}
         <div class="col-lg-3 col-md-4 col-6">
-          <a href="#" class="gallery-lightbox-trigger" data-img="{{ item.image.url }}" data-title="{{ item.title }}">
+          <a href="#" class="gallery-lightbox-trigger" data-img="{% if item.image %}{{ item.image.url }}{% endif %}" data-title="{{ item.title }}">
             <div class="card custom-card overflow-hidden">
               <div class="card-img-wrapper" style="height: 180px;">
-                <img src="{{ item.image.url }}" alt="{{ item.title }}" class="img-fluid w-100 h-100 object-fit-cover">
+                <img src="{% if item.image %}{{ item.image.url }}{% else %}/media/teachers/govinda shrestha.jpg{% endif %}" alt="{{ item.title }}" class="img-fluid w-100 h-100 object-fit-cover">
               </div>
               <div class="card-body p-2 text-center bg-white">
                 <small class="fw-bold text-dark d-block text-truncate">{{ item.title }}</small>

@@ -261,7 +261,6 @@ def admin_dashboard_recent_activity():
 
 def _sample_notices():
     from types import SimpleNamespace
-    from datetime import datetime
 
     samples = [
         ('School Re-opens After Summer Vacation', 'Aug 15, 2026', True, True),
@@ -273,7 +272,7 @@ def _sample_notices():
     return [
         SimpleNamespace(
             title=title,
-            created_at=datetime(2026, 8, 15),
+            created_at=timezone.now(),
             status=active,
             is_new=is_new,
             pk=None,

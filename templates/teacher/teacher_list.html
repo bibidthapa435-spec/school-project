@@ -4,7 +4,7 @@
 {% block title %}Faculty & Teachers | Shree Jaljala Secondary School{% endblock %}
 
 {% block content %}
-<div class="bg-primary text-white py-4 mb-4" style="background-color: var(--primary-navy) !important;">
+<div class="bg-primary text-white py-4 mb-4" style="background-color: var(--primary-navy) !important;" data-aos="fade-up">
   <div class="container">
     <h1 class="fw-bold mb-1">Our Dedicated Faculty & Staff</h1>
     <p class="mb-0 text-light opacity-75">Meet the qualified teachers and administration team behind Shree Jaljala Secondary School.</p>
@@ -29,11 +29,11 @@
   <div class="row g-4">
     {% if teachers %}
       {% for teacher in teachers %}
-      <div class="col-lg-3 col-md-4 col-sm-6">
+      <div class="col-lg-3 col-md-4 col-sm-6" data-aos="zoom-in" data-aos-delay="{% cycle '0' '100' '200' '300' %}">
         <div class="card custom-card teacher-card h-100 d-flex flex-column justify-content-between">
           <div>
-            <img src="{{ teacher.photo.url|default:'/media/teachers/govinda shrestha.jpg' }}" alt="{{ teacher.name }}" class="teacher-photo">
-            <h5 class="fw-bold mb-1 text-navy" style="color: #0b2545;">{{ teacher.name }}</h5>
+            <img src="{% if teacher.photo %}{{ teacher.photo.url }}{% else %}/media/teachers/govinda shrestha.jpg{% endif %}" alt="{{ teacher.title }}" class="teacher-photo">
+            <h5 class="fw-bold mb-1 text-navy" style="color: #0b2545;">{{ teacher.title }}</h5>
             <p class="text-primary small mb-1 fw-semibold">{{ teacher.position }}</p>
             <p class="text-muted small mb-2">{{ teacher.qualification }}</p>
             <span class="badge bg-light text-dark border mb-3 text-wrap">{{ teacher.department_display|default:teacher.department }}</span>
@@ -47,7 +47,7 @@
       </div>
       {% endfor %}
     {% else %}
-      <div class="col-12 text-center py-5">
+      <div class="col-12 text-center py-5" data-aos="fade-up">
         <i class="fa-solid fa-user-slash fa-3x text-muted mb-3"></i>
         <h5 class="text-secondary">No faculty members found in this department.</h5>
         <a href="/teachers" class="btn btn-navy mt-2">View All Staff</a>

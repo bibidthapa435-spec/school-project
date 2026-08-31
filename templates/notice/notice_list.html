@@ -4,7 +4,7 @@
 {% block title %}Notices & Announcements | Shree Jaljala Secondary School{% endblock %}
 
 {% block content %}
-<div class="bg-primary text-white py-4 mb-4" style="background-color: var(--primary-navy) !important;">
+<div class="bg-primary text-white py-4 mb-4" style="background-color: var(--primary-navy) !important;" data-aos="fade-up">
   <div class="container">
     <h1 class="fw-bold mb-1">Notice Board & Announcements</h1>
     <p class="mb-0 text-light opacity-75">Stay updated with academic notices, exam routines, admissions, and event schedules.</p>
@@ -13,7 +13,7 @@
 
 <div class="container py-4">
   <!-- Search & Category Filter Form -->
-  <div class="card custom-card p-3 mb-4">
+  <div class="card custom-card p-3 mb-4" data-aos="fade-up">
     <form method="GET" action="/notices" class="row g-3 align-items-center">
       <div class="col-md-5">
         <div class="input-group">
@@ -45,7 +45,7 @@
   <div class="row g-4">
     {% if page_obj or notices %}
       {% for notice in page_obj|default:notices %}
-      <div class="col-md-6 col-lg-4">
+      <div class="col-md-6 col-lg-4" data-aos="zoom-in" data-aos-delay="{% cycle '0' '100' '200' %}">
         <div class="notice-item h-100 d-flex flex-column justify-content-between">
           <div>
             {% if notice.image %}
@@ -68,7 +68,7 @@
       </div>
       {% endfor %}
     {% else %}
-      <div class="col-12 text-center py-5">
+      <div class="col-12 text-center py-5" data-aos="fade-up">
         <i class="fa-solid fa-folder-open fa-3x text-muted mb-3"></i>
         <h5 class="text-secondary">No notices found matching your search criteria.</h5>
         <a href="/notices" class="btn btn-outline-primary mt-2">View All Notices</a>

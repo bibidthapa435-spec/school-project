@@ -47,7 +47,7 @@ class SiteSettings(models.Model):
     def logo_url(self):
         if self.logo and hasattr(self.logo, 'url'):
             return self.logo.url
-        return '/static/images/logo.jpg'
+        return '/static/images/image/tilogo.png'
 
     @property
     def favicon_url(self):

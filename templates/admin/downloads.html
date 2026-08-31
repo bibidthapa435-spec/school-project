@@ -33,7 +33,7 @@
 <div class="admin-card">
     <h3><i class="fa-solid fa-bolt me-2"></i>Quick Actions</h3>
     <div class="d-flex gap-2 flex-wrap">
-        <a href="/admin/school_app/downloadresource/add/" class="action-btn action-btn-primary" target="_blank">
+        <a href="/admin/school_app/downloadresource/add/" class="action-btn action-btn-primary">
             <i class="fa-solid fa-plus"></i> Add Download
         </a>
         <a href="{% url 'admin_downloads' %}" class="action-btn action-btn-accent">
@@ -73,10 +73,10 @@
                             <td>{{ download.display_order }}</td>
                             <td>{{ download.created_at|date:"M d, Y" }}</td>
                             <td>
-                                <a href="/admin/school_app/downloadresource/{{ download.id }}/change/" class="btn btn-sm btn-outline-primary" target="_blank">
+                                <a href="/admin/school_app/downloadresource/{{ download.id }}/change/" class="btn btn-sm btn-outline-primary">
                                     <i class="fa-solid fa-edit"></i> Edit
                                 </a>
-                                <a href="/admin/school_app/downloadresource/{{ download.id }}/delete/" class="btn btn-sm btn-outline-danger" target="_blank">
+                                <a href="/admin/school_app/downloadresource/{{ download.id }}/delete/" class="btn btn-sm btn-outline-danger">
                                     <i class="fa-solid fa-trash"></i> Delete
                                 </a>
                             </td>

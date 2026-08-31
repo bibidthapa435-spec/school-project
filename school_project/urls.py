@@ -29,6 +29,11 @@ urlpatterns = [
     path('programs/<slug:slug>/', views.program_detail, name='program_detail'),
 
     path('downloads/', views.downloads, name='downloads'),
+    path(
+        'downloads/<slug:slug>/file/',
+        views.download_resource_file,
+        name='download_resource_file'
+    ),
 
     path('admission/', views.admission, name='admission'),
 

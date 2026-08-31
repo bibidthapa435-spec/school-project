@@ -4,7 +4,7 @@
 {% block title %}Principal's Message | Shree Jaljala Secondary School{% endblock %}
 
 {% block content %}
-<div class="page-hero mb-4">
+<div class="page-hero mb-4" data-aos="fade-up">
   <div class="container">
     <div class="eyebrow"><i class="fa-solid fa-chalkboard-user"></i> Leadership Message</div>
     <h1 class="fw-bold mb-1">Message from the Principal</h1>
@@ -15,10 +15,10 @@
 <div class="container py-4">
   <div class="card custom-card p-4 p-md-5">
     <div class="row g-4 align-items-center mb-4">
-      <div class="col-md-3 text-center">
+      <div class="col-md-3 text-center" data-aos="zoom-in">
         {% if principal %}
-          <img src="{{ principal.photo.url|default:'/media/teachers/govinda shrestha.jpg' }}" alt="{{ principal.name }}" class="img-fluid rounded-circle shadow mb-2" style="width: 180px; height: 180px; object-fit: cover; border: 4px solid var(--accent-gold);">
-          <h5 class="fw-bold text-navy mb-0" style="color: #0b2545;">{{ principal.name }}</h5>
+          <img src="{% if principal.photo %}{{ principal.photo.url }}{% else %}/media/teachers/govinda shrestha.jpg{% endif %}" alt="{{ principal.title }}" class="img-fluid rounded-circle shadow mb-2" style="width: 180px; height: 180px; object-fit: cover; border: 4px solid var(--accent-gold);">
+          <h5 class="fw-bold text-navy mb-0" style="color: #0b2545;">{{ principal.title }}</h5>
           <small class="text-muted d-block">{{ principal.position }}</small>
           <span class="badge bg-secondary mt-1">{{ principal.qualification }}</span>
         {% else %}
@@ -29,7 +29,7 @@
           </small>
         {% endif %}
       </div>
-      <div class="col-md-9">
+      <div class="col-md-9" data-aos="fade-left">
         <h3 class="fw-bold text-navy" style="color: #0b2545;">"Educating Hearts and Minds for a Brighter Tomorrow"</h3>
         <p class="text-muted">Greetings to all parents, guardians, students, and community members.</p>
         <hr>

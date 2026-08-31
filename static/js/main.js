@@ -1,15 +1,9 @@
 // Main JavaScript for Jaljala Secondary School Portal
 document.addEventListener('DOMContentLoaded', function () {
 
-  // Initialize AOS (Animate on Scroll)
-  if (typeof AOS !== 'undefined') {
-    AOS.init({
-      duration: 800,
-      easing: 'ease-in-out',
-      once: true,
-      offset: 80
-    });
-  }
+  // Initialize AOS (Animate on Scroll) — deferred to the bottom of this
+  // handler (see initScrollAnimations) so it can coordinate with the
+  // preloader splash.
   
   // Back to top button
 
@@ -213,4 +207,43 @@ document.addEventListener('DOMContentLoaded', function () {
 
   // Initialize gallery animation on page load
   initGalleryAnimation();
+
+  // ===== AOS (Animate on Scroll) initialization =====
+  // Deferred until after the preloader splash (if shown) so the entrance
+  // animations are actually visible on reload/first visit instead of
+  // finishing behind the splash screen.
+  const prefersReducedMotionGlobal = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  function initScrollAnimations() {
+    // If the AOS library failed to load (offline/CDN blocked) or the user
+    // prefers reduced motion, reveal all animated content immediately
+    // instead of leaving it permanently invisible.
+    if (prefersReducedMotionGlobal || typeof AOS === 'undefined') {
+      document.querySelectorAll('[data-aos]').forEach(el => {
+        el.classList.add('aos-animate');
+      });
+      return;
+    }
+
+    AOS.init({
+      duration: 800,
+      easing: 'ease-in-out',
+      once: true,
+      offset: 80
+    });
+
+    // Recalculate trigger positions once images/fonts finish loading so
+    // scroll animations fire at the correct position after a reload
+    // (browsers often restore the previous scroll position on reload).
+    window.addEventListener('load', () => AOS.refresh());
+  }
+
+  const preloaderForAos = document.getElementById('school-preloader');
+  if (preloaderForAos && preloaderForAos.style.display === 'flex') {
+    // Splash screen is active: start entrance animations as it fades out
+    // (matches the 1850ms fade-out timer in the preloader logic above).
+    setTimeout(initScrollAnimations, 1850);
+  } else {
+    initScrollAnimations();
+  }
 });

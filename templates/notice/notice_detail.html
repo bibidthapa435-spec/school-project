@@ -4,7 +4,7 @@
 {% block title %}{{ notice.title }} | Shree Jaljala Secondary School{% endblock %}
 
 {% block content %}
-<div class="bg-primary text-white py-4 mb-4" style="background-color: var(--primary-navy) !important;">
+<div class="bg-primary text-white py-4 mb-4" style="background-color: var(--primary-navy) !important;" data-aos="fade-up">
   <div class="container">
     <nav aria-label="breadcrumb">
       <ol class="breadcrumb mb-2 text-white opacity-75 small">
@@ -22,7 +22,7 @@
 
 <div class="container py-4">
   <div class="row g-4">
-    <div class="col-lg-8">
+    <div class="col-lg-8" data-aos="fade-right">
       <div class="card custom-card p-4">
         {% if notice.image %}
           <div class="text-center mb-4">
@@ -59,7 +59,7 @@
     </div>
 
     <!-- Sidebar Recent Notices -->
-    <div class="col-lg-4">
+    <div class="col-lg-4" data-aos="fade-left">
       <div class="card custom-card p-4 mb-4">
         <h5 class="fw-bold text-navy mb-3" style="color: #0b2545;">Recent Notices</h5>
         <div class="d-flex flex-column gap-3">

@@ -26,7 +26,7 @@
 <div class="admin-card">
     <h3><i class="fa-solid fa-bolt me-2"></i>Quick Actions</h3>
     <div class="d-flex gap-2 flex-wrap">
-        <a href="/contact/" class="action-btn action-btn-primary" target="_blank">
+        <a href="/contact/" class="action-btn action-btn-primary">
             <i class="fa-solid fa-envelope"></i> Send Test Message
         </a>
         <a href="{% url 'admin_messages' %}" class="action-btn action-btn-accent">
@@ -64,7 +64,7 @@
                             </td>
                             <td>{{ message.created_at|date:"M d, Y" }}</td>
                             <td>
-                                <a href="/admin/school_app/contactmessage/{{ message.id }}/change/" class="btn btn-sm btn-outline-primary" target="_blank">
+                                <a href="/admin/school_app/contactmessage/{{ message.id }}/change/" class="btn btn-sm btn-outline-primary">
                                     <i class="fa-solid fa-eye"></i> View
                                 </a>
                             </td>

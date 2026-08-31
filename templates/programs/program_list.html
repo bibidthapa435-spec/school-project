@@ -4,7 +4,7 @@
 {% block title %}Academic Programs | Shree Jaljala Secondary School{% endblock %}
 
 {% block content %}
-<div class="bg-primary text-white py-4 mb-4" style="background-color: var(--primary-navy) !important;">
+<div class="bg-primary text-white py-4 mb-4" style="background-color: var(--primary-navy) !important;" data-aos="fade-up">
   <div class="container">
     <h1 class="fw-bold mb-1">Academic Programs (Class Nursery to Class 10)</h1>
     <p class="mb-0 text-light opacity-75">Quality public school education structured for Early Childhood, Primary, Basic Level, and Secondary SEE Level.</p>
@@ -15,14 +15,14 @@
   <div class="row g-4">
     {% if programs %}
       {% for program in programs %}
-      <div class="col-lg-6">
+      <div class="col-lg-6" data-aos="fade-up" data-aos-delay="{% cycle '0' '100' %}">
         <div class="card custom-card h-100 p-3">
           <div class="row g-3 align-items-center">
             <div class="col-md-5">
-              <img src="{{ program.image.url|default:'/media/programs/image 1.jpg' }}" alt="{{ program.name }}" class="img-fluid rounded-3 w-100 object-fit-cover" style="height: 180px;">
+              <img src="{% if program.image %}{{ program.image.url }}{% else %}/media/programs/image 1.jpg{% endif %}" alt="{{ program.title }}" class="img-fluid rounded-3 w-100 object-fit-cover" style="height: 180px;">
             </div>
             <div class="col-md-7 d-flex flex-column h-100">
-              <h5 class="fw-bold text-navy mb-2" style="color: #0b2545;">{{ program.name }}</h5>
+              <h5 class="fw-bold text-navy mb-2" style="color: #0b2545;">{{ program.title }}</h5>
               <div class="small text-muted mb-2">
                 <span class="me-3"><i class="fa-regular fa-clock text-warning me-1"></i> {{ program.duration }}</span>
                 <span class="badge bg-success">{{ program.fee }}</span>
