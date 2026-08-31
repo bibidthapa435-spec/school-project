@@ -5,9 +5,9 @@ from django.db import migrations, models
 
 class Migration(migrations.Migration):
 
-    dependencies = [
-        ('school_app', '0002_sitesettings'),
-    ]
+  dependencies = [
+    ('school_app', '0001_initial'),
+]
 
     operations = [
         migrations.AddField(
