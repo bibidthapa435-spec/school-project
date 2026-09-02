@@ -7,46 +7,75 @@ document.addEventListener('DOMContentLoaded', function () {
   
   // Back to top button
 
-    // Sticky Navbar on scroll
-    const navbar = document.querySelector('.navbar-custom');
+    // Sticky Navbar - becomes fixed when scrolled past, always stays visible
+    const navbar = document.querySelector('#mainNav') || document.querySelector('nav.navbar-custom') || document.querySelector('.navbar-custom');
     const topBar = document.querySelector('.top-bar');
     const brandHeader = document.querySelector('.brand-header');
-    const getScrollThreshold = () => {
-      const topBarHeight = topBar ? topBar.offsetHeight : 0;
-      const brandHeight = brandHeader ? brandHeader.offsetHeight : 0;
-      return topBarHeight + brandHeight;
-    };
-    let isSticky = false;
-    const handleScroll = () => {
-      if (!navbar) return;
-      const threshold = getScrollThreshold();
-      if (window.scrollY > threshold && !isSticky) {
+
+    if (navbar) {
+      // Store the navbar's original height for body padding (prevents layout jump)
+      const navbarHeight = navbar.offsetHeight;
+      document.documentElement.style.setProperty('--navbar-height', navbarHeight + 'px');
+
+      let isSticky = false;
+      let ticking = false;
+
+      // Calculate the scroll threshold (top bar + brand header height)
+      const getScrollThreshold = () => {
+        const topBarHeight = topBar ? topBar.offsetHeight : 0;
+        const brandHeight = brandHeader ? brandHeader.offsetHeight : 0;
+        return topBarHeight + brandHeight;
+      };
+
+      // Activate sticky mode - navbar becomes fixed at top with animation
+      const activateSticky = () => {
+        if (isSticky) return;
         isSticky = true;
-        navbar.classList.add('sticky');
-        // Force reflow for transition
-        void navbar.offsetWidth;
-        navbar.classList.add('show');
-        // Prevent layout shift by adding top padding equal to navbar height
-        document.body.style.paddingTop = `${navbar.offsetHeight}px`;
-      } else if (window.scrollY <= 0 && isSticky) {
+        navbar.classList.add('is-sticky');
+        document.body.classList.add('sticky-nav-active');
+      };
+
+      // Deactivate sticky mode - navbar returns to original normal position
+      const deactivateSticky = () => {
+        if (!isSticky) return;
         isSticky = false;
-        // Hide the animation immediately and restore the original static navbar
-        navbar.classList.remove('show');
-        navbar.classList.remove('sticky');
-        document.body.style.paddingTop = '';
-      }
-    };
-    // Throttle using requestAnimationFrame
-    let ticking = false;
-    window.addEventListener('scroll', function () {
-      if (!ticking) {
-        window.requestAnimationFrame(function () {
-          handleScroll();
-          ticking = false;
-        });
-        ticking = true;
-      }
-    });
+        navbar.classList.remove('is-sticky');
+        document.body.classList.remove('sticky-nav-active');
+      };
+
+      // Scroll handler - simple threshold check, no direction detection
+      const handleScroll = () => {
+        const currentScrollY = window.scrollY;
+        const threshold = getScrollThreshold();
+
+        if (currentScrollY > threshold) {
+          // Past the original navbar position - make it sticky
+          activateSticky();
+        } else {
+          // Back at the top - restore to normal position
+          deactivateSticky();
+        }
+      };
+
+      // Throttled scroll listener using requestAnimationFrame
+      window.addEventListener('scroll', function () {
+        if (!ticking) {
+          window.requestAnimationFrame(function () {
+            handleScroll();
+            ticking = false;
+          });
+          ticking = true;
+        }
+      }, { passive: true });
+
+      // Handle resize to update navbar height
+      window.addEventListener('resize', function () {
+        if (isSticky) {
+          const newHeight = navbar.offsetHeight;
+          document.documentElement.style.setProperty('--navbar-height', newHeight + 'px');
+        }
+      });
+    }
 
     // Back to top button
 

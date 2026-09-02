@@ -123,12 +123,39 @@ blockquote {
 .navbar-custom {
   background-color: #14315B !important;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12);
-  transition: all 0.3s ease;
+  transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.4s ease, box-shadow 0.3s ease;
 }
 
 .navbar-custom.sticky-top {
   top: 0;
   z-index: 1030;
+}
+
+/* Sticky Navbar - Fixed position when scrolling */
+.navbar-custom.is-sticky {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 9999;
+  animation: stickySlideDown 0.9s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+/* Slide-down + fade-in animation when navbar becomes sticky */
+@keyframes stickySlideDown {
+  from {
+    transform: translateY(-100%);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+/* Add space to body when navbar is sticky to prevent content jump */
+body.sticky-nav-active {
+  padding-top: var(--navbar-height, 56px);
 }
 
 .navbar-custom .nav-link {
@@ -178,6 +205,24 @@ blockquote {
   padding: 8px 0;
   min-width: 240px;
   white-space: nowrap;
+  display: block;
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.25s ease, visibility 0.25s ease, transform 0.25s ease;
+  transform: translateY(8px);
+  pointer-events: none;
+}
+
+@media (min-width: 992px) {
+  .navbar-custom .nav-item.dropdown:hover > .dropdown-menu,
+  .navbar-custom .nav-item.dropdown:focus-within > .dropdown-menu,
+  .navbar-custom .nav-item.dropdown.show > .dropdown-menu {
+    display: block;
+    opacity: 1;
+    visibility: visible;
+    transform: translateY(0);
+    pointer-events: auto;
+  }
 }
 
 .navbar-custom .dropdown-item {
@@ -209,29 +254,31 @@ blockquote {
   background-color: #D6612F;
   color: #ffffff;
   transform: translateY(-2px);
-}kground var(--transition-speed);
 }
 
 /* Sticky Navbar Animation */
 .navbar-custom.sticky {
   position: fixed;
-  top: -80px; /* start slightly above viewport */
+  top: 0;
   left: 0;
   right: 0;
   opacity: 0;
-  transition: top 0.5s ease-in-out, opacity 0.5s ease-in-out, box-shadow 0.3s ease-in-out;
-  z-index: 1030;
+  transform: translateY(-100%);
+  transition: transform 500ms ease-out, opacity 500ms ease-out;
+  z-index: 99999; /* ensure navbar sits above all content */
 }
 
 .navbar-custom.sticky.show {
-  top: 0;
   opacity: 1;
+  transform: translateY(0);
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+  transition: transform 500ms ease-out, opacity 500ms ease-out, box-shadow 500ms ease-out;
 }
 
-.navbar-custom .dropdown-item:hover {
-  background-color: var(--light-bg);
-  color: var(--secondary-navy);
+/* When sticky, ensure dropdowns float above other elements */
+.navbar-custom.sticky .dropdown-menu {
+  z-index: 100000;
+  pointer-events: auto;
 }
 
 /* Notice Ticker Marquee */

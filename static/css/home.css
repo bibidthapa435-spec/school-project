@@ -67,7 +67,7 @@
 }
 
 .hero-caption {
-  color: white;
+  color: #ffffff !important;
   text-shadow: 0 2px 15px rgba(0, 0, 0, 0.8), 0 0 30px rgba(0, 0, 0, 0.6);
   max-width: 700px;
   padding: 2.5rem 3rem;
@@ -77,17 +77,27 @@
   border-radius: 0 12px 12px 0;
 }
 
+.hero-caption > * {
+  color: #ffffff !important;
+}
+
 .hero-caption h1 {
   font-size: 2.5rem;
   font-weight: 700;
   margin-bottom: 1rem;
   line-height: 1.2;
+  color: #ffffff !important;
 }
 
 .hero-caption p {
   font-size: 1.2rem;
   margin-bottom: 1.5rem;
   line-height: 1.6;
+  color: #ffffff !important;
+}
+
+.hero-caption .badge {
+  color: #ffffff !important;
 }
 
 .carousel-overlay {
