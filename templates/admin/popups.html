@@ -51,7 +51,7 @@
                     <tr>
                         <th>Preview</th>
                         <th>Title</th>
-                        <th>Currently Active</th>
+                        <th>Schedule Status</th>
                         <th>Status</th>
                         <th>Display Order</th>
                         <th>Created</th>
@@ -68,11 +68,31 @@
                                     <span class="text-muted">No image</span>
                                 {% endif %}
                             </td>
-                            <td>{{ popup.title }}</td>
                             <td>
-                                <span class="status-badge {% if popup.is_currently_active %}status-active{% else %}status-inactive{% endif %}">
-                                    {% if popup.is_currently_active %}Yes{% else %}No{% endif %}
-                                </span>
+                                <strong>{{ popup.title }}</strong>
+                                {% if popup.start_date or popup.end_date %}
+                                    <br>
+                                    <small class="text-muted">
+                                        {% if popup.start_date %}
+                                            <i class="fa-solid fa-play"></i> {{ popup.start_date|date:"M d, Y H:i" }}
+                                        {% endif %}
+                                        {% if popup.start_date and popup.end_date %} → {% endif %}
+                                        {% if popup.end_date %}
+                                            <i class="fa-solid fa-stop"></i> {{ popup.end_date|date:"M d, Y H:i" }}
+                                        {% endif %}
+                                    </small>
+                                {% endif %}
+                            </td>
+                            <td>
+                                {% if popup.is_currently_active %}
+                                    <span class="status-badge status-active"><i class="fa-solid fa-check-circle"></i> Active Now</span>
+                                {% elif popup.start_date and popup.start_date > now %}
+                                    <span class="status-badge" style="background: #fef3c7; color: #d97706;"><i class="fa-solid fa-clock"></i> Scheduled</span>
+                                {% elif popup.end_date and popup.end_date < now %}
+                                    <span class="status-badge status-inactive"><i class="fa-solid fa-times-circle"></i> Expired</span>
+                                {% else %}
+                                    <span class="status-badge status-inactive"><i class="fa-solid fa-pause-circle"></i> Inactive</span>
+                                {% endif %}
                             </td>
                             <td>
                                 <span class="status-badge {% if popup.status %}status-active{% else %}status-inactive{% endif %}">
@@ -98,4 +118,66 @@
         <p class="text-muted mb-0">No popup notices found matching your criteria.</p>
     {% endif %}
 </div>
+<!-- Quick Help Section -->
+<div class="admin-card">
+    <h3><i class="fa-solid fa-question-circle me-2"></i>How to Add Date & Time to Popup Notices</h3>
+    <div class="row">
+        <div class="col-md-4">
+            <div class="help-step">
+                <div class="help-step-number">1</div>
+                <h5>Click "Add Popup Notice"</h5>
+                <p>Go to the Django admin to create a new popup notice with your content.</p>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="help-step">
+                <div class="help-step-number">2</div>
+                <h5>Set Schedule Dates</h5>
+                <p>In the Schedule section, click the <strong>"Now"</strong> button to instantly set the current date and time, or use the date picker to select a specific date.</p>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="help-step">
+                <div class="help-step-number">3</div>
+                <h5>Leave Blank for No Limit</h5>
+                <p>Leave <strong>Start Date</strong> blank to show immediately, or leave <strong>End Date</strong> blank to show indefinitely.</p>
+            </div>
+        </div>
+    </div>
+    <div class="alert alert-info mt-3 mb-0">
+        <i class="fa-solid fa-info-circle me-2"></i>
+        <strong>Tip:</strong> The popup will only be visible to visitors when it's active AND the current date/time is between the start and end dates you set.
+    </div>
+</div>
+
+<style>
+.help-step {
+    text-align: center;
+    padding: 1.5rem;
+    background: #f8fafc;
+    border-radius: 10px;
+    height: 100%;
+}
+.help-step-number {
+    width: 40px;
+    height: 40px;
+    background: #1e40af;
+    color: white;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: bold;
+    margin: 0 auto 1rem;
+}
+.help-step h5 {
+    color: #1e293b;
+    margin-bottom: 0.5rem;
+}
+.help-step p {
+    color: #64748b;
+    font-size: 0.9rem;
+    margin-bottom: 0;
+}
+</style>
 {% endblock %}

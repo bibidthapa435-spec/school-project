@@ -18,6 +18,29 @@ class CustomDateTimeInput(DateTimeInput):
         if attrs:
             default_attrs.update(attrs)
         super().__init__(attrs=default_attrs)
+    
+    def format_value(self, value):
+        """Format datetime value for datetime-local input (YYYY-MM-DDTHH:MM format)"""
+        if value is None:
+            return ''
+        # If value is a string (may be localized), try to parse common formats
+        if isinstance(value, str):
+            from datetime import datetime
+            for fmt in ('%Y-%m-%dT%H:%M', '%Y-%m-%d %H:%M:%S', '%Y-%m-%d %H:%M', '%m/%d/%Y %I:%M %p'):
+                try:
+                    value = datetime.strptime(value, fmt)
+                    break
+                except Exception:
+                    continue
+            else:
+                # Fallback: return empty so the input stays blank instead of invalid string
+                return ''
+
+        # Convert to local time and format for datetime-local input
+        from django.utils import timezone
+        if hasattr(value, 'tzinfo') and value.tzinfo is not None:
+            value = timezone.localtime(value)
+        return value.strftime('%Y-%m-%dT%H:%M')
 
 from .models import (
     AdmissionApplication,
@@ -31,6 +54,95 @@ from .models import (
     Slider,
     Teacher,
 )
+
+from django import forms
+from django.utils import timezone
+from django.utils.dateparse import parse_datetime
+
+
+class PopupNoticeForm(forms.ModelForm):
+    class Meta:
+        model = PopupNotice
+        fields = '__all__'
+
+    # Simple preset schedule selector (not stored on model)
+    schedule_preset = forms.ChoiceField(
+        required=False,
+        choices=(
+            ('', 'Select schedule'),
+            ('always', 'Always (no dates)'),
+            ('today', 'Today Only'),
+            ('week', 'This Week'),
+            ('month', 'This Month'),
+            ('custom', 'Custom Range'),
+        ),
+        widget=forms.Select(attrs={'class': 'form-control'}),
+        help_text='Choose a quick schedule option or pick a custom range.'
+    )
+
+    def __init__(self, *args, **kwargs):
+        # Normalize QueryDict list values (from duplicated inputs or widgets)
+        data = None
+        if 'data' in kwargs and kwargs['data'] is not None:
+            try:
+                qd = kwargs['data']
+                # QueryDict can be immutable; make a copy
+                qd_copy = qd.copy()
+                for key in ('start_date', 'end_date'):
+                    values = qd_copy.getlist(key)
+                    if values and len(values) > 1:
+                        # prefer non-empty first value
+                        qd_copy.setlist(key, [v for v in values if v is not None and v != ''][:1])
+                kwargs['data'] = qd_copy
+            except Exception:
+                pass
+        super().__init__(*args, **kwargs)
+        # expose the preset field at form rendering time
+        if 'schedule_preset' in self.fields:
+            self.fields['schedule_preset'].initial = ''
+
+    def _parse_datetime_input(self, value):
+        if value in (None, ''):
+            return None
+        # If it's already a datetime object, return it
+        import datetime
+        if isinstance(value, datetime.datetime):
+            return value
+
+        # Try django's ISO parser first
+        dt = parse_datetime(str(value))
+        if dt:
+            return dt
+
+        # Try several common formats
+        for fmt in ('%Y-%m-%dT%H:%M', '%Y-%m-%d %H:%M:%S', '%Y-%m-%d %H:%M', '%m/%d/%Y %I:%M %p', '%m/%d/%Y %H:%M'):
+            try:
+                return datetime.datetime.strptime(str(value), fmt)
+            except Exception:
+                continue
+
+        # Last resort: return None so validation will catch it
+        return None
+
+    def clean_start_date(self):
+        val = self.cleaned_data.get('start_date')
+        parsed = self._parse_datetime_input(val)
+        if parsed is None and val not in (None, ''):
+            raise forms.ValidationError('Invalid start date format.')
+        # If timezone-aware handling is desired, make naive -> aware in current timezone
+        if parsed is not None and timezone.is_naive(parsed):
+            parsed = timezone.make_aware(parsed, timezone.get_current_timezone())
+        return parsed
+
+    def clean_end_date(self):
+        val = self.cleaned_data.get('end_date')
+        parsed = self._parse_datetime_input(val)
+        if parsed is None and val not in (None, ''):
+            raise forms.ValidationError('Invalid end date format.')
+        if parsed is not None and timezone.is_naive(parsed):
+            parsed = timezone.make_aware(parsed, timezone.get_current_timezone())
+        return parsed
+
 
 
 admin.site.site_header = 'Shree Jaljala Secondary School'
@@ -275,7 +387,7 @@ class ContactMessageAdmin(AdminCSSMixin, admin.ModelAdmin):
 
 @admin.register(PopupNotice)
 class PopupNoticeAdmin(StatusBaseAdmin):
-    list_display = ('title', 'is_active', 'status', 'display_order', 'created_at', 'preview')
+    list_display = ('title', 'is_active', 'status', 'schedule_status', 'display_order', 'created_at', 'preview')
     list_filter = ('is_active', 'status', 'created_at', 'start_date', 'end_date')
     search_fields = ('title', 'subtitle', 'message')
     date_hierarchy = 'created_at'
@@ -284,11 +396,16 @@ class PopupNoticeAdmin(StatusBaseAdmin):
     formfield_overrides = {
         models.DateTimeField: {'widget': CustomDateTimeInput},
     }
+    form = PopupNoticeForm
 
     fieldsets = (
         (None, {'fields': ('title', 'status', 'display_order')}),
         ('Popup Content', {'fields': ('subtitle', 'image', 'message', 'button_text', 'button_url', 'is_active')}),
-        ('Schedule', {'fields': ('start_date', 'end_date'), 'description': 'Set the start and end date/time for when this popup should be displayed. Leave blank for always active when enabled.'}),
+        ('Schedule', {
+            'fields': ('schedule_preset', 'start_date', 'end_date'),
+            'description': 'Choose a quick schedule from the preset selector, or pick a custom start/end range below.',
+            'classes': ('wide',)
+        }),
     )
 
     def preview(self, obj):
@@ -298,6 +415,45 @@ class PopupNoticeAdmin(StatusBaseAdmin):
                 return format_html('<img src="{}" style="height:60px; object-fit:cover; border-radius:6px;" />', url)
         return '-'
     preview.short_description = 'Preview'
+
+    def schedule_status(self, obj):
+        """Display the current schedule status of the popup"""
+        from django.utils import timezone
+        now = timezone.now()
+        
+        if not obj.is_active:
+            return format_html('<span style="color: #999;">{}</span>', '⏸ Disabled')
+        
+        if obj.start_date and obj.start_date > now:
+            return format_html('<span style="color: #f59e0b;">⏳ Starts {}</span>', 
+                             timezone.localtime(obj.start_date).strftime('%b %d, %Y %I:%M %p'))
+        
+        if obj.end_date and obj.end_date < now:
+            return format_html('<span style="color: #ef4444;">⏹ Ended {}</span>', 
+                             timezone.localtime(obj.end_date).strftime('%b %d, %Y %I:%M %p'))
+        
+        return format_html('<span style="color: #10b981;">{}</span>', '▶ Active Now')
+    schedule_status.short_description = 'Schedule Status'
+
+    class Media:
+        css = {
+            'all': ('admin/css/custom_admin.css',)
+        }
+        js = ('admin/js/popup_admin.js',)
+
+    def save_model(self, request, obj, form, change):
+        # Log incoming POST values for debugging date parsing issues
+        import logging
+        logger = logging.getLogger('school_app.popup_admin')
+        # getlist to see if multiple values were submitted
+        start_list = request.POST.getlist('start_date')
+        end_list = request.POST.getlist('end_date')
+        start_value = request.POST.get('start_date')
+        end_value = request.POST.get('end_date')
+        logger.debug('PopupNotice save_model POST start_date list=%s value=%s', start_list, start_value)
+        logger.debug('PopupNotice save_model POST end_date list=%s value=%s', end_list, end_value)
+
+        super().save_model(request, obj, form, change)
 
 
 @admin.register(Slider) 

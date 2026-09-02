@@ -20,10 +20,10 @@ def popup_notices(request):
         status=True,
         is_active=True
     ).filter(
-        # Filter by start_date if set
+        # Filter by start_date: show if no start_date set OR start_date has passed
         models.Q(start_date__isnull=True) | models.Q(start_date__lte=now)
     ).filter(
-        # Filter by end_date if set
+        # Filter by end_date: show if no end_date set OR end_date is in the future
         models.Q(end_date__isnull=True) | models.Q(end_date__gte=now)
     ).order_by('display_order', '-created_at')
     

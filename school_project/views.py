@@ -1481,6 +1481,7 @@ def admin_popups(request):
         'active_filter': active_filter,
         'search_query': search_query,
         'page_title': 'Popup Notices',
+        'now': timezone.now(),
     }
 
     return render(
