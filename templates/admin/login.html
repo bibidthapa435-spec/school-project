@@ -21,7 +21,11 @@
     display: none !important;
   }
   /* Make main region centered for login */
+  body.login .admin-layout {
+    min-height: 100vh;
+  }
   body.login .admin-main-content {
+    width: 100%;
     margin-left: 0 !important;
     display: flex;
     align-items: center;
@@ -29,6 +33,12 @@
     min-height: 100vh;
     padding: 2rem !important;
     background: transparent !important;
+  }
+  body.login .sjss-login-shell {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
   }
   /* Constrain login logo */
   .sjss-login-logo {
