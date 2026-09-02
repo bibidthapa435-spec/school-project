@@ -752,7 +752,8 @@
 </head>
 <body>
     <div class="admin-layout">
-        <!-- Sidebar -->
+        <!-- Sidebar (only show for authenticated users) -->
+        {% if request.user.is_authenticated %}
         <aside class="admin-sidebar" id="adminSidebar">
             <div class="admin-sidebar-header">
                 <h5>Admin Dashboard</h5>
@@ -820,9 +821,11 @@
                 </a>
             </div>
         </aside>
+        {% endif %}
         
         <!-- Main Content -->
         <main class="admin-main-content">
+            {% if request.user.is_authenticated %}
             <div class="admin-header">
                 <div class="d-flex align-items-center gap-3">
                     <button class="mobile-menu-toggle" id="mobileMenuToggle">
@@ -848,7 +851,8 @@
                     {% endfor %}
                 </div>
             {% endif %}
-            
+            {% endif %}
+
             {% block content %}{% endblock %}
         </main>
     </div>
@@ -857,23 +861,26 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
     
     <script>
-        // Mobile menu toggle
-        document.getElementById('mobileMenuToggle').addEventListener('click', function() {
-            document.getElementById('adminSidebar').classList.toggle('show');
-        });
-        
-        // Close sidebar when clicking outside on mobile
-        document.addEventListener('click', function(event) {
-            const sidebar = document.getElementById('adminSidebar');
+        // Mobile menu toggle (guarded for pages without the elements, like login)
+        (function(){
             const toggle = document.getElementById('mobileMenuToggle');
-            
-            if (window.innerWidth <= 992 && 
-                !sidebar.contains(event.target) && 
-                !toggle.contains(event.target) &&
-                sidebar.classList.contains('show')) {
-                sidebar.classList.remove('show');
+            const sidebar = document.getElementById('adminSidebar');
+            if (toggle && sidebar) {
+                toggle.addEventListener('click', function() {
+                    sidebar.classList.toggle('show');
+                });
+
+                // Close sidebar when clicking outside on mobile
+                document.addEventListener('click', function(event) {
+                    if (window.innerWidth <= 992 && 
+                        !sidebar.contains(event.target) && 
+                        !toggle.contains(event.target) &&
+                        sidebar.classList.contains('show')) {
+                        sidebar.classList.remove('show');
+                    }
+                });
             }
-        });
+        })();
     </script>
 </body>
 </html>
