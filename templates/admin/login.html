@@ -7,6 +7,40 @@
 
 {% block pretitle %}{% endblock %}
 
+{% block extrahead %}
+{{ block.super }}
+<style>
+  /* Hide admin chrome on the login page only */
+  body.login .admin-sidebar,
+  body.login .admin-header,
+  body.login .admin-sidebar-footer,
+  body.login .admin-sidebar-header,
+  body.login .admin-sidebar-nav,
+  body.login .alert-container,
+  body.login .admin-main-content > .admin-header {
+    display: none !important;
+  }
+  /* Make main region centered for login */
+  body.login .admin-main-content {
+    margin-left: 0 !important;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 100vh;
+    padding: 2rem !important;
+    background: transparent !important;
+  }
+  /* Constrain login logo */
+  .sjss-login-logo {
+    width: 84px;
+    height: 84px;
+    object-fit: cover;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+  }
+</style>
+{% endblock %}
+
 {% block content %}
 <div class="sjss-login-shell">
   <div class="sjss-login-card">
