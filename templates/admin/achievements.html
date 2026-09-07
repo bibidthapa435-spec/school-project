@@ -1,0 +1,96 @@
+{% extends 'admin/base.html' %}
+
+{% block content %}
+<!-- Filters -->
+<div class="admin-card">
+    <h3><i class="fa-solid fa-filter me-2"></i>Filter Achievements</h3>
+    <form method="GET" class="row g-3">
+        <div class="col-md-3">
+            <input type="text" name="q" class="form-control" placeholder="Search achievements..." value="{{ search_query }}">
+        </div>
+        <div class="col-md-3">
+            <select name="status" class="form-select">
+                <option value="">All Status</option>
+                <option value="active" {% if status_filter == 'active' %}selected{% endif %}>Active</option>
+                <option value="inactive" {% if status_filter == 'inactive' %}selected{% endif %}>Inactive</option>
+            </select>
+        </div>
+        <div class="col-md-3">
+            <select name="type" class="form-select">
+                <option value="">All Types</option>
+                {% for type_value, type_label in achievement_types %}
+                    <option value="{{ type_value }}" {% if type_filter == type_value %}selected{% endif %}>{{ type_label }}</option>
+                {% endfor %}
+            </select>
+        </div>
+        <div class="col-md-3">
+            <button type="submit" class="btn btn-primary w-100">Apply Filters</button>
+        </div>
+    </form>
+</div>
+
+<!-- Quick Actions -->
+<div class="admin-card">
+    <h3><i class="fa-solid fa-bolt me-2"></i>Quick Actions</h3>
+    <div class="d-flex gap-2 flex-wrap">
+        <a href="/admin/school_app/achievement/add/" class="action-btn action-btn-primary">
+            <i class="fa-solid fa-plus"></i> Add Achievement
+        </a>
+        <a href="{% url 'admin_achievements' %}" class="action-btn action-btn-accent">
+            <i class="fa-solid fa-rotate-right"></i> Reset Filters
+        </a>
+    </div>
+</div>
+
+<!-- Achievements List -->
+<div class="admin-card">
+    <h3><i class="fa-solid fa-trophy me-2"></i>All Achievements ({{ achievements|length }})</h3>
+    {% if achievements %}
+        <div class="table-responsive">
+            <table class="data-table">
+                <thead>
+                    <tr>
+                        <th>Title</th>
+                        <th>Type</th>
+                        <th>Student Name</th>
+                        <th>Event</th>
+                        <th>Date</th>
+                        <th>Status</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for achievement in achievements %}
+                        <tr>
+                            <td>{{ achievement.title }}</td>
+                            <td>
+                                <span class="badge" style="background:#d4af37;color:#fff;">
+                                    {{ achievement.achievement_type_display|default:achievement.achievement_type }}
+                                </span>
+                            </td>
+                            <td>{{ achievement.student_name|default:"-" }}</td>
+                            <td>{{ achievement.event_name|default:"-" }}</td>
+                            <td>{{ achievement.achievement_date|date:"M d, Y"|default:"-" }}</td>
+                            <td>
+                                <span class="status-badge {% if achievement.status %}status-active{% else %}status-inactive{% endif %}">
+                                    {% if achievement.status %}Active{% else %}Inactive{% endif %}
+                                </span>
+                            </td>
+                            <td>
+                                <a href="/admin/school_app/achievement/{{ achievement.id }}/change/" class="btn btn-sm btn-outline-primary">
+                                    <i class="fa-solid fa-edit"></i> Edit
+                                </a>
+                                <a href="/admin/school_app/achievement/{{ achievement.id }}/delete/" class="btn btn-sm btn-outline-danger">
+                                    <i class="fa-solid fa-trash"></i> Delete
+                                </a>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    {% else %}
+        <p class="text-muted mb-0">No achievements found matching your criteria. <a href="/admin/school_app/achievement/add/">Add your first achievement</a>.</p>
+    {% endif %}
+</div>
+{% endblock %}

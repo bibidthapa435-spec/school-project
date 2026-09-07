@@ -43,6 +43,7 @@ class CustomDateTimeInput(DateTimeInput):
         return value.strftime('%Y-%m-%dT%H:%M')
 
 from .models import (
+    Achievement,
     AdmissionApplication,
     ContactMessage,
     DownloadResource,
@@ -465,6 +466,28 @@ class SliderAdmin(StatusBaseAdmin):
     fieldsets = (
         (None, {'fields': ('title', 'status', 'display_order')}),
         ('Slider Content', {'fields': ('subtitle', 'description', 'button_text', 'button_url', 'image', 'overlay_color', 'overlay_opacity')}),
+    )
+
+    def preview(self, obj):
+        if obj and getattr(obj, 'image', None):
+            url = getattr(obj.image, 'url', '')
+            if url:
+                return format_html('<img src="{}" style="height:60px; object-fit:cover; border-radius:6px;" />', url)
+        return '-'
+    preview.short_description = 'Preview'
+
+
+@admin.register(Achievement)
+class AchievementAdmin(StatusBaseAdmin):
+    list_display = ('title', 'achievement_type_display', 'student_name', 'rank_or_position', 'achievement_date', 'status', 'display_order', 'preview')
+    list_filter = ('status', 'achievement_type', 'achievement_date')
+    search_fields = ('title', 'student_name', 'event_name', 'description', 'rank_or_position', 'location')
+    date_hierarchy = 'achievement_date'
+    fieldsets = (
+        (None, {'fields': ('title', 'status', 'display_order')}),
+        ('Achievement Type', {'fields': ('achievement_type',)}),
+        ('People & Details', {'fields': ('student_name', 'rank_or_position', 'event_name', 'location', 'description')}),
+        ('Media & Date', {'fields': ('image', 'achievement_date')}),
     )
 
     def preview(self, obj):

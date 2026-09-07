@@ -268,4 +268,45 @@ class Slider(BaseSlugModel):
     overlay_opacity = models.FloatField(default=0.5)
 
 
+class Achievement(BaseSlugModel):
+    ACHIEVEMENT_TYPE_CHOICES = [
+        ('student', 'Student Achievement'),
+        ('school', 'School / College Achievement'),
+    ]
+
+    achievement_type = models.CharField(
+        max_length=20,
+        choices=ACHIEVEMENT_TYPE_CHOICES,
+        default='student'
+    )
+    achievement_type_display = models.CharField(max_length=255, blank=True)
+    student_name = models.CharField(max_length=255, blank=True)
+    description = models.TextField(blank=True)
+    image = models.ImageField(upload_to='achievements/', blank=True, null=True)
+    achievement_date = models.DateField(blank=True, null=True)
+    rank_or_position = models.CharField(max_length=255, blank=True)
+    event_name = models.CharField(max_length=255, blank=True)
+    location = models.CharField(max_length=255, blank=True)
+
+    class Meta:
+        ordering = ['display_order', '-achievement_date', '-created_at']
+        verbose_name = 'Achievement'
+        verbose_name_plural = 'Achievements'
+
+    def save(self, *args, **kwargs):
+        if not self.achievement_type_display:
+            self.achievement_type_display = dict(self.ACHIEVEMENT_TYPE_CHOICES).get(
+                self.achievement_type, self.achievement_type
+            )
+        if not self.title:
+            if self.achievement_type == 'student' and self.student_name:
+                base = f"{self.student_name}"
+                if self.rank_or_position:
+                    base += f" - {self.rank_or_position}"
+                self.title = base
+            elif self.event_name:
+                self.title = self.event_name
+        super().save(*args, **kwargs)
+
+
 

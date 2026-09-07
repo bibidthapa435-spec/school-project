@@ -38,36 +38,40 @@
       </label>
     </div>
 
+    {% admin_dashboard_analytics_data as analytics %}
+    {{ analytics.chart_data|json_script:"chart-data" }}
     <div class="analytics-chart-wrap">
-      <canvas id="visitors-chart" aria-label="Website visitors line chart" role="img"></canvas>
+      <canvas id="visitors-chart" aria-label="Website visitors line chart" role="img" data-chart-data=""></canvas>
     </div>
 
     <div class="analytics-mini-grid">
       <article class="analytics-mini-card">
         <span class="mini-label">Visitors</span>
-        <span class="mini-value">2,458</span>
-        <span class="mini-change up"><i class="fa-solid fa-arrow-trend-up"></i> +12.4%</span>
+        <span class="mini-value">{{ analytics.visitors }}</span>
+        <span class="mini-change up"><i class="fa-solid fa-arrow-trend-up"></i> +0%</span>
       </article>
       <article class="analytics-mini-card">
         <span class="mini-label">Page Views</span>
-        <span class="mini-value">6,892</span>
-        <span class="mini-change up"><i class="fa-solid fa-arrow-trend-up"></i> +8.7%</span>
+        <span class="mini-value">{{ analytics.page_views }}</span>
+        <span class="mini-change up"><i class="fa-solid fa-arrow-trend-up"></i> +0%</span>
       </article>
       <article class="analytics-mini-card">
         <span class="mini-label">Avg. Session</span>
-        <span class="mini-value">02:45</span>
-        <span class="mini-change up"><i class="fa-solid fa-arrow-trend-up"></i> +3.2%</span>
+        <span class="mini-value">{{ analytics.avg_session }}</span>
+        <span class="mini-change up"><i class="fa-solid fa-arrow-trend-up"></i> +0%</span>
       </article>
       <article class="analytics-mini-card">
         <span class="mini-label">Bounce Rate</span>
-        <span class="mini-value">32.1%</span>
-        <span class="mini-change down"><i class="fa-solid fa-arrow-trend-down"></i> -2.1%</span>
+        <span class="mini-value">{{ analytics.bounce_rate }}</span>
+        <span class="mini-change down"><i class="fa-solid fa-arrow-trend-down"></i> -0%</span>
       </article>
     </div>
   </section>
 
   <div class="dashboard-two-col">
     {% admin_dashboard_recent_notices %}
+
+    {% admin_dashboard_recent_achievements %}
 
     <section class="dashboard-card dashboard-quick-actions">
       <div class="dashboard-card-header">

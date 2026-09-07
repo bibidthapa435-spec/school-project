@@ -1,0 +1,229 @@
+﻿{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Achievements - {{ settings.school_name|default:'Shree Jaljala Secondary School' }}{% endblock %}
+
+{% block content %}
+<!-- Page Header -->
+<section class="page-header">
+  <div class="container">
+    <h1 class="page-title">Our Achievements</h1>
+    <p class="page-subtitle">Celebrating Excellence and Success</p>
+  </div>
+</section>
+
+<!-- Achievement Filter Section -->
+<section class="achievement-filter-section py-4 bg-light">
+  <div class="container">
+    <div class="row">
+      <div class="col-12">
+        <div class="d-flex flex-wrap gap-2 justify-content-center">
+          <a href="{% url 'achievements' %}" class="btn {% if not selected_type %}btn-primary{% else %}btn-outline-primary{% endif %}">
+            All Achievements
+          </a>
+          {% for type_code, type_name in achievement_types %}
+            <a href="{% url 'achievements' %}?type={{ type_code }}" class="btn {% if selected_type == type_code %}btn-primary{% else %}btn-outline-primary{% endif %}">
+              {{ type_name }}
+            </a>
+          {% endfor %}
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Achievements Grid Section -->
+<section class="achievements-section py-5">
+  <div class="container">
+    {% if achievements %}
+      <div class="row g-4">
+        {% for achievement in achievements %}
+          <div class="col-md-6 col-lg-4">
+            <div class="achievement-card h-100 shadow-sm">
+              {% if achievement.image %}
+                <div class="achievement-image-wrapper">
+                  <img src="{{ achievement.image.url }}" alt="{{ achievement.title }}" class="achievement-image">
+                  <div class="achievement-badge">
+                    <i class="fa-solid fa-trophy text-warning"></i>
+                  </div>
+                </div>
+              {% else %}
+                <div class="achievement-image-wrapper bg-gradient-primary">
+                  <div class="achievement-placeholder">
+                    <i class="fa-solid fa-trophy fa-3x text-white opacity-50"></i>
+                  </div>
+                  <div class="achievement-badge">
+                    <i class="fa-solid fa-trophy text-warning"></i>
+                  </div>
+                </div>
+              {% endif %}
+
+              <div class="achievement-card-body p-4">
+                <div class="achievement-type-badge mb-2">
+                  <span class="badge bg-primary">{{ achievement.achievement_type_display }}</span>
+                </div>
+
+                <h3 class="achievement-title h5 mb-2">
+                  <a href="{% url 'achievement_detail' achievement.slug %}" class="text-decoration-none text-dark">
+                    {{ achievement.title }}
+                  </a>
+                </h3>
+
+                {% if achievement.student_name %}
+                  <p class="achievement-student mb-2">
+                    <i class="fa-solid fa-user-graduate text-primary me-1"></i>
+                    <strong>{{ achievement.student_name }}</strong>
+                  </p>
+                {% endif %}
+
+                {% if achievement.rank_or_position %}
+                  <p class="achievement-rank mb-2">
+                    <i class="fa-solid fa-medal text-warning me-1"></i>
+                    {{ achievement.rank_or_position }}
+                  </p>
+                {% endif %}
+
+                {% if achievement.event_name %}
+                  <p class="achievement-event mb-2 text-muted">
+                    <i class="fa-solid fa-calendar-check me-1"></i>
+                    {{ achievement.event_name }}
+                  </p>
+                {% endif %}
+
+                {% if achievement.achievement_date %}
+                  <p class="achievement-date text-muted small">
+                    <i class="fa-solid fa-calendar me-1"></i>
+                    {{ achievement.achievement_date|date:"F d, Y" }}
+                  </p>
+                {% endif %}
+
+                <a href="{% url 'achievement_detail' achievement.slug %}" class="btn btn-sm btn-outline-primary mt-3">
+                  Read More <i class="fa-solid fa-arrow-right ms-1"></i>
+                </a>
+              </div>
+            </div>
+          </div>
+        {% endfor %}
+      </div>
+    {% else %}
+      <div class="text-center py-5">
+        <i class="fa-solid fa-trophy fa-4x text-muted mb-3"></i>
+        <h3 class="text-muted">No Achievements Found</h3>
+        <p class="text-muted">Check back later for updates on our achievements.</p>
+      </div>
+    {% endif %}
+  </div>
+</section>
+
+<style>
+.page-header {
+  background: linear-gradient(135deg, #1e3a8a 0%, #3b82f6 100%);
+  color: white;
+  padding: 60px 0;
+  text-align: center;
+}
+
+.page-title {
+  font-size: 2.5rem;
+  font-weight: 700;
+  margin-bottom: 10px;
+}
+
+.page-subtitle {
+  font-size: 1.1rem;
+  opacity: 0.9;
+}
+
+.achievement-card {
+  background: white;
+  border-radius: 12px;
+  overflow: hidden;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  border: 1px solid #e5e7eb;
+}
+
+.achievement-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15) !important;
+}
+
+.achievement-image-wrapper {
+  position: relative;
+  height: 200px;
+  overflow: hidden;
+}
+
+.achievement-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.3s ease;
+}
+
+.achievement-card:hover .achievement-image {
+  transform: scale(1.05);
+}
+
+.achievement-placeholder {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  background: linear-gradient(135deg, #1e3a8a 0%, #3b82f6 100%);
+}
+
+.achievement-badge {
+  position: absolute;
+  top: 15px;
+  right: 15px;
+  background: white;
+  width: 45px;
+  height: 45px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+  font-size: 1.2rem;
+}
+
+.achievement-type-badge .badge {
+  font-size: 0.75rem;
+  padding: 5px 12px;
+  border-radius: 20px;
+  font-weight: 600;
+}
+
+.achievement-title a {
+  transition: color 0.2s ease;
+}
+
+.achievement-title a:hover {
+  color: #3b82f6 !important;
+}
+
+.achievement-student {
+  font-size: 0.95rem;
+  color: #374151;
+}
+
+.achievement-rank {
+  font-size: 0.9rem;
+  color: #f59e0b;
+  font-weight: 600;
+}
+
+.achievement-event {
+  font-size: 0.85rem;
+}
+
+.achievement-date {
+  font-size: 0.8rem;
+  margin-bottom: 0;
+}
+
+.bg-gradient-primary {
+  background: linear-gradient(135deg, #1e3a8a 0%, #3b82f6 100%);
+}
+</style>
+{% endblock %}

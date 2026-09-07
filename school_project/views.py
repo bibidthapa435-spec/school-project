@@ -20,6 +20,7 @@ from school_project.data import (
 )
 
 from school_app.models import (
+    Achievement,
     Notice,
     GalleryPhoto,
     Teacher,
@@ -140,6 +141,11 @@ def home(request):
         .order_by('display_order', '-created_at')[:8]
     )
 
+    achievements_qs = list(
+        Achievement.objects.filter(status=True)
+        .order_by('display_order', '-achievement_date', '-created_at')[:4]
+    )
+
     context = get_base_context({
         'sliders': sliders,
         'principal': principal,
@@ -147,6 +153,7 @@ def home(request):
         'notices': notices_qs,
         'teachers': teachers_qs,
         'gallery_items': gallery_items,
+        'achievements': achievements_qs,
         'testimonials': school_data.get('testimonials', []),
     })
 
@@ -408,6 +415,72 @@ def teacher_detail(request, slug):
         get_base_context({
             'teacher': teacher,
             'other_teachers': other_teachers,
+        })
+    )
+
+
+# ============================================================
+# ACHIEVEMENTS
+# ============================================================
+
+def achievements(request):
+    selected_type = request.GET.get('type', '')
+
+    achievements_list = Achievement.objects.filter(
+        status=True
+    ).order_by(
+        'display_order',
+        '-achievement_date',
+        '-created_at'
+    )
+
+    if selected_type:
+        achievements_list = achievements_list.filter(
+            achievement_type=selected_type
+        )
+
+    achievements_list = list(achievements_list)
+
+    return render(
+        request,
+        'achievement/achievement_list.html',
+        get_base_context({
+            'achievements': achievements_list,
+            'achievement_types': Achievement.ACHIEVEMENT_TYPE_CHOICES,
+            'selected_type': selected_type,
+        })
+    )
+
+
+def achievement_detail(request, slug):
+    achievement = Achievement.objects.filter(
+        slug=slug,
+        status=True
+    ).first()
+
+    if not achievement:
+        messages.error(
+            request,
+            'The requested achievement could not be found.'
+        )
+        return redirect('achievements')
+
+    other_achievements = list(
+        Achievement.objects.filter(status=True)
+        .exclude(slug=slug)
+        .order_by(
+            'display_order',
+            '-achievement_date',
+            '-created_at'
+        )[:4]
+    )
+
+    return render(
+        request,
+        'achievement/achievement_detail.html',
+        get_base_context({
+            'achievement': achievement,
+            'other_achievements': other_achievements,
         })
     )
 
@@ -1636,3 +1709,77 @@ def admin_users(request):
         return redirect('/')
 
     return redirect('/admin/auth/user/')
+
+
+# ============================================================
+# ADMIN ACHIEVEMENTS
+# ============================================================
+
+@login_required(login_url='/admin/')
+def admin_achievements(request):
+
+    if not request.user.is_staff:
+        return redirect('/')
+
+    status_filter = request.GET.get(
+        'status',
+        ''
+    )
+
+    type_filter = request.GET.get(
+        'type',
+        ''
+    )
+
+    search_query = request.GET.get(
+        'q',
+        ''
+    )
+
+    achievements_qs = Achievement.objects.all()
+
+    if status_filter:
+
+        achievements_qs = achievements_qs.filter(
+            status=status_filter == 'active'
+        )
+
+    if type_filter:
+
+        achievements_qs = achievements_qs.filter(
+            achievement_type=type_filter
+        )
+
+    if search_query:
+
+        achievements_qs = achievements_qs.filter(
+            models.Q(title__icontains=search_query)
+            |
+            models.Q(student_name__icontains=search_query)
+            |
+            models.Q(event_name__icontains=search_query)
+            |
+            models.Q(description__icontains=search_query)
+            |
+            models.Q(rank_or_position__icontains=search_query)
+        )
+
+    achievements_qs = achievements_qs.order_by(
+        '-achievement_date',
+        '-created_at'
+    )
+
+    context = {
+        'achievements': achievements_qs,
+        'status_filter': status_filter,
+        'type_filter': type_filter,
+        'search_query': search_query,
+        'achievement_types': Achievement.ACHIEVEMENT_TYPE_CHOICES,
+        'page_title': 'Achievements',
+    }
+
+    return render(
+        request,
+        'admin/achievements.html',
+        context
+    )

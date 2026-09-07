@@ -171,35 +171,35 @@
 {% endif %}
 
 <!-- School Statistics Section -->
-<section class="py-5" style="background-color: var(--primary-navy);" data-aos="zoom-in">
+<section class="py-5 stats-section" data-aos="zoom-in">
   <div class="container">
     <div class="row g-4 text-center">
       <div class="col-md-3 col-6" data-aos="zoom-in" data-aos-delay="100">
-        <div class="stat-box">
-          <i class="fa-solid fa-user-graduate fa-2x mb-2 text-warning"></i>
+        <div class="stat-item">
+          <div class="stat-icon"><i class="fa-solid fa-user-graduate"></i></div>
           <div class="stat-number" data-count="550" data-suffix="+">550+</div>
           <div class="stat-label">Enrolled Students</div>
         </div>
       </div>
       <div class="col-md-3 col-6" data-aos="zoom-in" data-aos-delay="200">
-        <div class="stat-box">
-          <i class="fa-solid fa-chalkboard-user fa-2x mb-2 text-warning"></i>
+        <div class="stat-item">
+          <div class="stat-icon"><i class="fa-solid fa-chalkboard-user"></i></div>
           <div class="stat-number" data-count="16" data-suffix="+">16+</div>
           <div class="stat-label">Qualified Teachers</div>
         </div>
       </div>
       <div class="col-md-3 col-6" data-aos="zoom-in" data-aos-delay="300">
-        <div class="stat-box">
-          <i class="fa-solid fa-award fa-2x mb-2 text-warning"></i>
+        <div class="stat-item">
+          <div class="stat-icon"><i class="fa-solid fa-award"></i></div>
           <div class="stat-number" data-count="100" data-suffix="%">100%</div>
           <div class="stat-label">SEE Pass Rate</div>
         </div>
       </div>
       <div class="col-md-3 col-6" data-aos="zoom-in" data-aos-delay="400">
-        <div class="stat-box">
-          <i class="fa-solid fa-landmark fa-2x mb-2 text-warning"></i>
+        <div class="stat-item">
+          <div class="stat-icon"><i class="fa-solid fa-landmark"></i></div>
           <div class="stat-number" data-count="38" data-suffix=" Yrs">38 Yrs</div>
-          <div class="stat-label text-light">Estd. 2045 B.S.</div>
+          <div class="stat-label">Estd. 2045 B.S.</div>
         </div>
       </div>
     </div>
@@ -263,14 +263,15 @@
       {% if notices %}
         {% for notice in notices %}
         <div class="col-md-6 col-lg-4" data-aos="fade-up" data-aos-delay="100">
-          <div class="notice-item h-100 d-flex flex-column justify-content-between">
+          <div class="notice-card h-100 d-flex flex-column justify-content-between">
             <div>
               <div class="d-flex justify-content-between align-items-center mb-2">
-                <span class="badge bg-primary text-capitalize">{{ notice.category_display|default:notice.category }}</span>
+                <span class="badge badge-modern badge-gold text-capitalize">{{ notice.category_display|default:notice.category }}</span>
+                <small class="text-muted"><i class="fa-regular fa-calendar me-1"></i> {{ notice.created_at|date:"M d, Y" }}</small>
               </div>
-              <h5 class="fw-bold text-dark fs-6">{{ notice.title }}</h5>
-              <p class="text-secondary small mb-3">
-                {{ notice.description }}
+              <h5 class="notice-title fw-bold mb-2">{{ notice.title }}</h5>
+              <p class="notice-excerpt text-secondary small mb-3">
+                {{ notice.description|truncatewords:20 }}
               </p>
             </div>
             <div>
@@ -320,6 +321,56 @@
   </div>
 </section>
 
+<!-- Achievements Section -->
+<section class="py-5 bg-light">
+  <div class="container">
+    <div class="section-title" data-aos="fade-up">
+      <h2>Our Achievements</h2>
+      <p class="text-muted">Celebrating student accomplishments and school excellence.</p>
+      <div class="divider"></div>
+    </div>
+
+    <div class="row g-4">
+      {% if achievements %}
+        {% for achievement in achievements %}
+        <div class="col-lg-3 col-md-6" data-aos="fade-up" data-aos-delay="{% cycle '0' '100' '200' '300' %}">
+          <div class="achievement-item-home">
+            <div class="achievement-icon">
+              {% if achievement.achievement_type == 'student' %}
+                <i class="fa-solid fa-user-graduate"></i>
+              {% else %}
+                <i class="fa-solid fa-trophy"></i>
+              {% endif %}
+            </div>
+            <h6>{{ achievement.title }}</h6>
+            <div class="achievement-meta">
+              {% if achievement.rank_or_position %}
+                <span><i class="fa-solid fa-medal"></i> {{ achievement.rank_or_position }}</span>
+              {% endif %}
+              {% if achievement.event_name %}
+                <span class="ms-2"><i class="fa-solid fa-award"></i> {{ achievement.event_name }}</span>
+              {% endif %}
+            </div>
+            {% if achievement.achievement_date %}
+              <p class="text-muted small mb-2"><i class="fa-regular fa-calendar"></i> {{ achievement.achievement_date|date:"M Y" }}</p>
+            {% endif %}
+            <p>{{ achievement.description|truncatewords:12 }}</p>
+            <a href="/achievements/{{ achievement.slug }}" class="btn btn-sm btn-outline-primary">
+              Read More <i class="fa-solid fa-arrow-right ms-1"></i>
+            </a>
+          </div>
+        </div>
+        {% endfor %}
+      {% endif %}
+    </div>
+    <div class="text-center mt-4" data-aos="fade-up">
+      <a href="/achievements" class="btn btn-gold px-4">
+        View All Achievements <i class="fa-solid fa-arrow-right ms-1"></i>
+      </a>
+    </div>
+  </div>
+</section>
+
 <!-- Photo Gallery Preview Section -->
 <section class="py-5 bg-light">
   <div class="container">
@@ -332,15 +383,13 @@
     <div class="row g-3">
       {% if gallery_items %}
         {% for item in gallery_items %}
-        <div class="col-lg-3 col-md-4 col-6">
-          <a href="#" class="gallery-lightbox-trigger" data-img="{% if item.image %}{{ item.image.url }}{% endif %}" data-title="{{ item.title }}">
-            <div class="card custom-card overflow-hidden">
-              <div class="card-img-wrapper" style="height: 180px;">
-                <img src="{% if item.image %}{{ item.image.url }}{% else %}/media/teachers/govinda shrestha.jpg{% endif %}" alt="{{ item.title }}" class="img-fluid w-100 h-100 object-fit-cover">
-              </div>
-              <div class="card-body p-2 text-center bg-white">
-                <small class="fw-bold text-dark d-block text-truncate">{{ item.title }}</small>
-              </div>
+        <div class="col-lg-3 col-md-4 col-6" data-aos="zoom-in" data-aos-delay="100">
+          <a href="#" class="gallery-lightbox-trigger gallery-item" data-img="{% if item.image %}{{ item.image.url }}{% endif %}" data-title="{{ item.title }}">
+            <div class="img-hover-zoom shadow-sm">
+              <img src="{% if item.image %}{{ item.image.url }}{% else %}/media/teachers/govinda shrestha.jpg{% endif %}" alt="{{ item.title }}" class="img-fluid w-100" style="height: 180px; object-fit: cover;">
+            </div>
+            <div class="text-center mt-2">
+              <small class="fw-bold text-dark d-block text-truncate">{{ item.title }}</small>
             </div>
           </a>
         </div>

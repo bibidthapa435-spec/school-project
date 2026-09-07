@@ -45,13 +45,11 @@ def admin_dashboard_metric_cards():
     active_notices = notice_qs.filter(status=True).count() if notice_qs is not None else 0
 
     student_count = get_model_count('school_app', 'AdmissionApplication')
-    if student_count == 0:
-        student_count = 349
 
     return [
         {
             'label': 'Total Notices',
-            'count': get_model_count('school_app', 'Notice') or 25,
+            'count': get_model_count('school_app', 'Notice'),
             'description': 'Active notices',
             'url': safe_reverse('admin:school_app_notice_changelist'),
             'icon': 'fa-solid fa-file-lines',
@@ -59,7 +57,7 @@ def admin_dashboard_metric_cards():
         },
         {
             'label': 'Total Teachers',
-            'count': get_model_count('school_app', 'Teacher') or 18,
+            'count': get_model_count('school_app', 'Teacher'),
             'description': 'Registered teachers',
             'url': safe_reverse('admin:school_app_teacher_changelist'),
             'icon': 'fa-solid fa-chalkboard-user',
@@ -75,15 +73,23 @@ def admin_dashboard_metric_cards():
         },
         {
             'label': 'Gallery Images',
-            'count': get_model_count('school_app', 'GalleryPhoto') or 126,
+            'count': get_model_count('school_app', 'GalleryPhoto'),
             'description': 'Total images',
             'url': safe_reverse('admin:school_app_galleryphoto_changelist'),
             'icon': 'fa-solid fa-image',
             'icon_bg': 'stat-icon--indigo',
         },
         {
+            'label': 'Achievements',
+            'count': get_model_count('school_app', 'Achievement'),
+            'description': 'Student & school achievements',
+            'url': safe_reverse('admin:school_app_achievement_changelist'),
+            'icon': 'fa-solid fa-trophy',
+            'icon_bg': 'stat-icon--gold',
+        },
+        {
             'label': 'Total Users',
-            'count': User.objects.count() or 7,
+            'count': User.objects.count(),
             'description': 'System users',
             'url': safe_reverse('admin:auth_user_changelist'),
             'icon': 'fa-solid fa-users',
@@ -124,6 +130,12 @@ def admin_dashboard_quick_actions():
             'icon': 'fa-solid fa-user-plus',
             'url': safe_reverse('admin:school_app_admissionapplication_add'),
             'color': 'quick-action--teal',
+        },
+        {
+            'label': 'Add Achievement',
+            'icon': 'fa-solid fa-trophy',
+            'url': safe_reverse('admin:school_app_achievement_add'),
+            'color': 'quick-action--gold',
         },
         {
             'label': 'Add Page',
@@ -169,6 +181,12 @@ def admin_sidebar_nav_items():
             'match': safe_reverse('admin:school_app_teacher_changelist'),
         },
         {
+            'label': 'Achievements',
+            'icon': 'fa-solid fa-trophy',
+            'url': safe_reverse('admin:school_app_achievement_changelist'),
+            'match': safe_reverse('admin:school_app_achievement_changelist'),
+        },
+        {
             'label': 'Students',
             'icon': 'fa-solid fa-user-graduate',
             'url': safe_reverse('admin:school_app_admissionapplication_changelist'),
@@ -207,15 +225,40 @@ def admin_sidebar_nav_items():
     ]
 
 
+@register.simple_tag
+def admin_dashboard_analytics_data():
+    """Returns analytics data for the dashboard chart and mini cards."""
+    return {
+        'visitors': 0,
+        'page_views': 0,
+        'avg_session': '00:00',
+        'bounce_rate': '0%',
+        'chart_data': {
+            'month': {
+                'labels': ['Aug 1', 'Aug 5', 'Aug 9', 'Aug 13', 'Aug 17', 'Aug 21', 'Aug 25', 'Aug 29'],
+                'visitors': [0, 0, 0, 0, 0, 0, 0, 0],
+                'page_views': [0, 0, 0, 0, 0, 0, 0, 0],
+            },
+            'week': {
+                'labels': ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
+                'visitors': [0, 0, 0, 0, 0, 0, 0],
+                'page_views': [0, 0, 0, 0, 0, 0, 0],
+            },
+            'year': {
+                'labels': ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
+                'visitors': [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+                'page_views': [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+            },
+        },
+    }
+
+
 @register.inclusion_tag('admin/includes/recent_notices.html')
 def admin_dashboard_recent_notices():
     notice_model = get_model_queryset('school_app', 'Notice')
     notices = []
     if notice_model is not None:
         notices = list(notice_model.order_by('-created_at')[:5])
-
-    if not notices:
-        notices = _sample_notices()
 
     week_ago = timezone.now() - timedelta(days=7)
     for notice in notices:
@@ -237,12 +280,22 @@ def admin_dashboard_recent_gallery():
     if gallery_model is not None:
         photos = list(gallery_model.filter(status=True).order_by('-created_at')[:5])
 
-    if not photos:
-        photos = _sample_gallery_photos()
-
     return {
         'photos': photos,
         'view_all_url': safe_reverse('admin:school_app_galleryphoto_changelist'),
+    }
+
+
+@register.inclusion_tag('admin/includes/recent_achievements.html')
+def admin_dashboard_recent_achievements():
+    achievement_model = get_model_queryset('school_app', 'Achievement')
+    achievements = []
+    if achievement_model is not None:
+        achievements = list(achievement_model.filter(status=True).order_by('-achievement_date', '-created_at')[:5])
+
+    return {
+        'achievements': achievements,
+        'view_all_url': safe_reverse('admin:school_app_achievement_changelist'),
     }
 
 
@@ -259,44 +312,3 @@ def admin_dashboard_recent_activity():
     }
 
 
-def _sample_notices():
-    from types import SimpleNamespace
-
-    samples = [
-        ('School Re-opens After Summer Vacation', 'Aug 15, 2026', True, True),
-        ('SEE Result 2081 Published', 'Jun 28, 2026', True, False),
-        ('Parent-Teacher Meeting', 'May 10, 2026', False, True),
-        ('Basketball Competition – Inter House', 'Apr 22, 2026', True, False),
-        ('Admission Open for Grade 11', 'Mar 01, 2026', True, True),
-    ]
-    return [
-        SimpleNamespace(
-            title=title,
-            created_at=timezone.now(),
-            status=active,
-            is_new=is_new,
-            pk=None,
-            display_date=date,
-        )
-        for title, date, active, is_new in samples
-    ]
-
-
-def _sample_gallery_photos():
-    from types import SimpleNamespace
-
-    samples = [
-        ('Students', '/media/gallery/firstphoto.jpg'),
-        ('School Building', '/media/gallery/school gate.jpg'),
-        ('Sports Activities', '/media/gallery/fourthphoto.jpg'),
-        ('Teachers', '/media/gallery/mayor.jpg'),
-        ('School Programs', '/media/gallery/fifthphoto.jpg'),
-    ]
-    return [
-        SimpleNamespace(
-            title=title,
-            image=SimpleNamespace(url=url),
-            pk=None,
-        )
-        for title, url in samples
-    ]

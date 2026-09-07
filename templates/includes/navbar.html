@@ -54,15 +54,15 @@
     <a class="navbar-brand d-lg-none font-weight-bold text-white" href="/">
       Jaljala Secondary School
     </a>
-    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#mainNavbar" aria-controls="mainNavbar" aria-expanded="false" aria-label="Toggle navigation">
+    <button class="navbar-toggler border-0" type="button" data-bs-toggle="collapse" data-bs-target="#mainNavbar" aria-controls="mainNavbar" aria-expanded="false" aria-label="Toggle navigation">
       <span class="navbar-toggler-icon"></span>
     </button>
 
     <div class="collapse navbar-collapse" id="mainNavbar">
       <ul class="navbar-nav me-auto mb-2 mb-lg-0">
         <li class="nav-item">
-          <a class="nav-link {% if request.path == '/' or path == '/' %}active{% endif %}" href="/" data-preloader-home="true">
-            <i class="fa-solid fa-house me-1"></i> HOME
+          <a class="nav-link {% if request.path == '/' or path == '/' %}active{% endif %}" href="/">
+            HOME
           </a>
         </li>
         <li class="nav-item dropdown">
@@ -77,12 +77,17 @@
         </li>
         <li class="nav-item">
           <a class="nav-link {% if 'program' in request.path or 'program' in path %}active{% endif %}" href="/programs">
-            PROGRAMS (NURSERY - CLASS 10)
+            PROGRAM
           </a>
         </li>
         <li class="nav-item">
           <a class="nav-link {% if 'teacher' in request.path or 'teacher' in path %}active{% endif %}" href="/teachers">
             TEACHERS
+          </a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link {% if 'achievement' in request.path or 'achievement' in path %}active{% endif %}" href="/achievements">
+            ACHIEVEMENTS
           </a>
         </li>
         <li class="nav-item">

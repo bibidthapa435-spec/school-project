@@ -38,23 +38,26 @@ function initAnalyticsChart() {
   }
 
   var periodSelect = document.getElementById('analytics-period');
-  var datasets = {
-    month: {
-      labels: ['Aug 1', 'Aug 5', 'Aug 9', 'Aug 13', 'Aug 17', 'Aug 21', 'Aug 25', 'Aug 29'],
-      visitors: [180, 220, 195, 260, 310, 285, 340, 368],
-      pageViews: [420, 510, 480, 620, 710, 680, 790, 845],
-    },
-    week: {
-      labels: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
-      visitors: [320, 380, 410, 395, 450, 280, 224],
-      pageViews: [890, 920, 980, 950, 1100, 640, 412],
-    },
-    year: {
-      labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
-      visitors: [1200, 1350, 1480, 1620, 1890, 2100, 1980, 2458, 0, 0, 0, 0],
-      pageViews: [3200, 3600, 3900, 4200, 4800, 5400, 5100, 6892, 0, 0, 0, 0],
-    },
-  };
+
+  // Get chart data from the json_script output
+  var chartDataEl = document.getElementById('chart-data');
+  var datasets = {};
+
+  try {
+    datasets = chartDataEl ? JSON.parse(chartDataEl.textContent) : { month: { labels: [], visitors: [], page_views: [] } };
+  } catch (e) {
+    // Fallback to empty data
+    datasets = {
+      month: { labels: [], visitors: [], page_views: [] },
+      week: { labels: [], visitors: [], page_views: [] },
+      year: { labels: [], visitors: [], page_views: [] },
+    };
+  }
+
+  // Ensure datasets has the required structure
+  if (!datasets.month) datasets.month = { labels: [], visitors: [], page_views: [] };
+  if (!datasets.week) datasets.week = { labels: [], visitors: [], page_views: [] };
+  if (!datasets.year) datasets.year = { labels: [], visitors: [], page_views: [] };
 
   var chart = new Chart(canvas, {
     type: 'line',
@@ -131,7 +134,7 @@ function buildChartData(periodData) {
       },
       {
         label: 'Page Views',
-        data: periodData.pageViews,
+        data: periodData.page_views || periodData.pageViews || [],
         borderColor: '#7dd3fc',
         backgroundColor: 'rgba(125, 211, 252, 0.08)',
         borderWidth: 2.5,

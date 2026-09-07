@@ -25,6 +25,9 @@ urlpatterns = [
     path('teachers/', views.teachers, name='teachers'),
     path('teachers/<slug:slug>/', views.teacher_detail, name='teacher_detail'),
 
+    path('achievements/', views.achievements, name='achievements'),
+    path('achievements/<slug:slug>/', views.achievement_detail, name='achievement_detail'),
+
     path('programs/', views.programs, name='programs'),
     path('programs/<slug:slug>/', views.program_detail, name='program_detail'),
 
@@ -125,6 +128,13 @@ urlpatterns = [
         'admin-dashboard/users/',
         views.admin_users,
         name='admin_users'
+    ),
+
+    # Achievements
+    path(
+        'admin-dashboard/achievements/',
+        views.admin_achievements,
+        name='admin_achievements'
     ),
 
     # Results

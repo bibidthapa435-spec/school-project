@@ -450,6 +450,7 @@ body {
 .stat-icon--sky { background: #e0f2fe; color: #0284c7; }
 .stat-icon--indigo { background: #e0e7ff; color: #4f46e5; }
 .stat-icon--teal { background: #ccfbf1; color: #0d9488; }
+.stat-icon--gold { background: #fef3c7; color: #d97706; }
 
 .stat-value {
   margin: 0;
@@ -749,6 +750,7 @@ body {
 .quick-action--indigo .quick-action-icon { background: #e0e7ff; color: #4f46e5; }
 .quick-action--teal .quick-action-icon { background: #ccfbf1; color: #0d9488; }
 .quick-action--slate .quick-action-icon { background: #f1f5f9; color: #475569; }
+.quick-action--gold .quick-action-icon { background: #fef3c7; color: #d97706; }
 
 /* ── Gallery Grid ── */
 .gallery-grid {
