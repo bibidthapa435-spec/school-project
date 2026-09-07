@@ -1,0 +1,46 @@
+<section class="dashboard-card dashboard-achievements">
+  <div class="dashboard-card-header">
+    <div>
+      <h2>Recent Achievements</h2>
+      <p>Latest student and school achievements</p>
+    </div>
+    <a class="card-link" href="{{ view_all_url }}">View all achievements →</a>
+  </div>
+
+  <ul class="achievement-list">
+    {% for achievement in achievements %}
+      <li class="achievement-item">
+        <span class="achievement-icon" aria-hidden="true"><i class="fa-solid fa-trophy"></i></span>
+        <div class="achievement-body">
+          <div class="achievement-title-row">
+            {% if achievement.pk %}
+              <a href="{% url 'admin:school_app_achievement_change' achievement.pk %}">{{ achievement.title }}</a>
+            {% else %}
+              <span class="achievement-title">{{ achievement.title }}</span>
+            {% endif %}
+          </div>
+          <div class="achievement-meta">
+            {% if achievement.achievement_type_display %}
+              <span class="badge badge-type">{{ achievement.achievement_type_display }}</span>
+            {% endif %}
+            {% if achievement.student_name %}
+              <span>{{ achievement.student_name }}</span>
+            {% endif %}
+            {% if achievement.achievement_date %}
+              <span>{{ achievement.achievement_date|date:"M d, Y" }}</span>
+            {% else %}
+              <span>{{ achievement.created_at|date:"M d, Y" }}</span>
+            {% endif %}
+            {% if achievement.status %}
+              <span class="badge badge-active">Active</span>
+            {% else %}
+              <span class="badge badge-expired">Inactive</span>
+            {% endif %}
+          </div>
+        </div>
+      </li>
+    {% empty %}
+      <li class="empty-state">No achievements yet.</li>
+    {% endfor %}
+  </ul>
+</section>
