@@ -250,7 +250,11 @@ class NoticeAdmin(StatusBaseAdmin):
         if obj and getattr(obj, 'image', None):
             url = getattr(obj.image, 'url', '')
             if url:
-                return format_html('<img src="{}" style="height:60px; object-fit:cover; border-radius:6px;" />', url)
+                # Use max-height and width:auto so image keeps its aspect ratio
+                return format_html(
+                    '<img src="{}" style="max-height:60px; width:auto; object-fit:contain; border-radius:6px; background:#fff; padding:2px;" />',
+                    url
+                )
         return '-'
     preview.short_description = 'Preview'
 

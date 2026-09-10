@@ -335,29 +335,40 @@
         {% for achievement in achievements %}
         <div class="col-lg-3 col-md-6" data-aos="fade-up" data-aos-delay="{% cycle '0' '100' '200' '300' %}">
           <div class="achievement-item-home">
-            <div class="achievement-icon">
-              {% if achievement.achievement_type == 'student' %}
-                <i class="fa-solid fa-user-graduate"></i>
-              {% else %}
+            {% if achievement.image %}
+              <div class="achievement-img-wrap">
+                <img src="{{ achievement.image.url }}" alt="{{ achievement.title }}" class="achievement-img-home">
+              </div>
+            {% else %}
+              <div class="achievement-img-wrap achievement-img-placeholder">
                 <i class="fa-solid fa-trophy"></i>
-              {% endif %}
-            </div>
-            <h6>{{ achievement.title }}</h6>
-            <div class="achievement-meta">
-              {% if achievement.rank_or_position %}
-                <span><i class="fa-solid fa-medal"></i> {{ achievement.rank_or_position }}</span>
-              {% endif %}
-              {% if achievement.event_name %}
-                <span class="ms-2"><i class="fa-solid fa-award"></i> {{ achievement.event_name }}</span>
-              {% endif %}
-            </div>
-            {% if achievement.achievement_date %}
-              <p class="text-muted small mb-2"><i class="fa-regular fa-calendar"></i> {{ achievement.achievement_date|date:"M Y" }}</p>
+              </div>
             {% endif %}
-            <p>{{ achievement.description|truncatewords:12 }}</p>
-            <a href="/achievements/{{ achievement.slug }}" class="btn btn-sm btn-outline-primary">
-              Read More <i class="fa-solid fa-arrow-right ms-1"></i>
-            </a>
+            <div class="achievement-info">
+              <div class="achievement-icon-badge">
+                {% if achievement.achievement_type == 'student' %}
+                  <i class="fa-solid fa-user-graduate"></i>
+                {% else %}
+                  <i class="fa-solid fa-trophy"></i>
+                {% endif %}
+              </div>
+              <h6>{{ achievement.title }}</h6>
+              <div class="achievement-meta">
+                {% if achievement.rank_or_position %}
+                  <span><i class="fa-solid fa-medal"></i> {{ achievement.rank_or_position }}</span>
+                {% endif %}
+                {% if achievement.event_name %}
+                  <span class="ms-2"><i class="fa-solid fa-award"></i> {{ achievement.event_name }}</span>
+                {% endif %}
+              </div>
+              {% if achievement.achievement_date %}
+                <p class="text-muted small mb-2"><i class="fa-regular fa-calendar"></i> {{ achievement.achievement_date|date:"M Y" }}</p>
+              {% endif %}
+              <p>{{ achievement.description|truncatewords:12 }}</p>
+              <a href="/achievements/{{ achievement.slug }}" class="btn btn-sm btn-outline-primary">
+                Read More <i class="fa-solid fa-arrow-right ms-1"></i>
+              </a>
+            </div>
           </div>
         </div>
         {% endfor %}
@@ -370,6 +381,94 @@
     </div>
   </div>
 </section>
+
+<style>
+.achievement-item-home {
+  background: white;
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  height: 100%;
+}
+
+.achievement-item-home:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+}
+
+.achievement-img-wrap {
+  width: 100%;
+  height: 180px;
+  overflow: hidden;
+  position: relative;
+}
+
+.achievement-img-home {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center top;
+  transition: transform 0.3s ease;
+}
+
+.achievement-item-home:hover .achievement-img-home {
+  transform: scale(1.05);
+}
+
+.achievement-img-placeholder {
+  background: linear-gradient(135deg, #1e3a8a 0%, #3b82f6 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.achievement-img-placeholder i {
+  font-size: 2.5rem;
+  color: rgba(255, 255, 255, 0.7);
+}
+
+.achievement-info {
+  padding: 15px;
+}
+
+.achievement-icon-badge {
+  width: 36px;
+  height: 36px;
+  background: #f0f9ff;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 10px;
+  color: #3b82f6;
+  font-size: 0.9rem;
+}
+
+.achievement-info h6 {
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: #1e3a8a;
+  margin-bottom: 8px;
+}
+
+.achievement-meta {
+  font-size: 0.8rem;
+  color: #6b7280;
+  margin-bottom: 8px;
+}
+
+.achievement-meta span {
+  display: inline-block;
+  margin-right: 8px;
+}
+
+.achievement-info p {
+  font-size: 0.85rem;
+  color: #6b7280;
+  margin-bottom: 12px;
+}
+</style>
 
 <!-- Photo Gallery Preview Section -->
 <section class="py-5 bg-light">

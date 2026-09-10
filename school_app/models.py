@@ -308,5 +308,30 @@ class Achievement(BaseSlugModel):
                 self.title = self.event_name
         super().save(*args, **kwargs)
 
+        # Auto-orient uploaded images based on EXIF (fixes rotated photos from phones)
+        try:
+            if self.image and hasattr(self.image, 'path'):
+                from PIL import Image, ImageOps
+                import os
+
+                image_path = self.image.path
+                if os.path.exists(image_path):
+                    with Image.open(image_path) as img:
+                        # Apply EXIF orientation if present
+                        img = ImageOps.exif_transpose(img)
+
+                        # Optionally resize very large images to a reasonable max width
+                        max_width = 2000
+                        if getattr(img, 'width', 0) > max_width:
+                            wpercent = (max_width / float(img.width))
+                            hsize = int((float(img.height) * float(wpercent)))
+                            img = img.resize((max_width, hsize), Image.LANCZOS)
+
+                        # Save back with reasonable quality
+                        img.save(image_path, optimize=True, quality=85)
+        except Exception:
+            # Never break save on image post-processing errors
+            pass
+
 
 
