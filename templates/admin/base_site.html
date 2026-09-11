@@ -96,14 +96,80 @@
     </div>
   </div>
   <div class="topbar-right">
+    <!-- Global Search -->
+    <div class="global-search">
+      <i class="fa-solid fa-search global-search-icon"></i>
+      <input type="text" id="globalSearch" class="global-search-input" placeholder="Search..." autocomplete="off">
+      <span class="global-search-shortcut">⌘K</span>
+    </div>
+    
     <a href="/" class="btn btn-outline" target="_blank" rel="noopener noreferrer">
       <i class="fa-solid fa-arrow-up-right-from-square"></i>
       View Website
     </a>
-    <button class="topbar-notify" type="button" aria-label="Notifications">
-      <i class="fa-solid fa-bell"></i>
-      <span class="notify-count">3</span>
-    </button>
+    
+    <!-- Theme Toggle -->
+    <div class="theme-toggle" id="themeToggle">
+      <button class="theme-toggle-btn theme-light active" type="button" aria-label="Light mode">
+        <i class="fa-solid fa-sun"></i>
+      </button>
+      <button class="theme-toggle-btn theme-dark" type="button" aria-label="Dark mode">
+        <i class="fa-solid fa-moon"></i>
+      </button>
+    </div>
+    
+    <!-- Notification Center -->
+    <div class="notification-center">
+      <button class="notification-btn" id="notificationBtn" type="button" aria-label="Notifications">
+        <i class="fa-solid fa-bell"></i>
+        <span class="notification-badge">3</span>
+      </button>
+      <div class="notification-dropdown" id="notificationDropdown">
+        <div class="notification-header">
+          <h4>Notifications</h4>
+          <a href="#">Mark all as read</a>
+        </div>
+        <div class="notification-list">
+          <div class="notification-item unread">
+            <div class="notification-item-icon blue">
+              <i class="fa-solid fa-file-signature"></i>
+            </div>
+            <div class="notification-item-content">
+              <div class="notification-item-text">New admission application received</div>
+              <div class="notification-item-time">2 minutes ago</div>
+            </div>
+          </div>
+          <div class="notification-item unread">
+            <div class="notification-item-icon green">
+              <i class="fa-solid fa-envelope"></i>
+            </div>
+            <div class="notification-item-content">
+              <div class="notification-item-text">New contact message from parent</div>
+              <div class="notification-item-time">15 minutes ago</div>
+            </div>
+          </div>
+          <div class="notification-item unread">
+            <div class="notification-item-icon yellow">
+              <i class="fa-solid fa-bullhorn"></i>
+            </div>
+            <div class="notification-item-content">
+              <div class="notification-item-text">Notice published successfully</div>
+              <div class="notification-item-time">1 hour ago</div>
+            </div>
+          </div>
+          <div class="notification-item">
+            <div class="notification-item-icon purple">
+              <i class="fa-solid fa-user-plus"></i>
+            </div>
+            <div class="notification-item-content">
+              <div class="notification-item-text">New teacher account created</div>
+              <div class="notification-item-time">3 hours ago</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    
     <div class="topbar-school">
       <img src="{{ site_settings.logo_url|default:'/static/images/logo.jpg' }}" alt="" class="topbar-logo" onerror="this.onerror=null; this.src='/static/images/logo.jpg';">
       <span>{{ site_settings.school_name|default:'Shree Jaljala Secondary School' }}</span>

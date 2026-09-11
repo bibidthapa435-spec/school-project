@@ -1,0 +1,555 @@
+{% extends "admin/change_form.html" %}
+{% load static %}
+
+{% block extrahead %}
+{{ block.super }}
+<link rel="stylesheet" href="/static/admin/css/custom_admin.css">
+<style>
+    /* Admin Form Styling for Add/Edit Pages */
+    #content {
+        max-width: 1100px;
+        margin: 0 auto;
+        padding: 2rem;
+    }
+
+    /* Form Title */
+    #content h1 {
+        font-size: 1.75rem;
+        font-weight: 800;
+        color: var(--sjss-text);
+        margin-bottom: 0.5rem;
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+    }
+
+    /* Breadcrumbs */
+    .breadcrumbs {
+        background: var(--sjss-white);
+        border: 1px solid var(--sjss-border);
+        border-radius: 50px;
+        padding: 0.6rem 1.25rem;
+        margin-bottom: 1.5rem;
+        font-size: 0.85rem;
+        color: var(--sjss-muted);
+    }
+
+    .breadcrumbs a {
+        color: var(--sjss-blue);
+        text-decoration: none;
+        font-weight: 500;
+    }
+
+    .breadcrumbs a:hover {
+        color: var(--sjss-navy);
+    }
+
+    /* Form Card Container */
+    form {
+        background: var(--sjss-white);
+        border: 1px solid var(--sjss-border);
+        border-radius: var(--sjss-radius-lg);
+        box-shadow: var(--sjss-shadow);
+        overflow: hidden;
+    }
+
+    /* Form Fieldset/Module */
+    fieldset.module,
+    .module {
+        background: var(--sjss-white);
+        border: none;
+        border-radius: 0;
+        padding: 1.75rem;
+        margin-bottom: 0;
+        border-bottom: 1px solid var(--sjss-border);
+        box-shadow: none;
+    }
+
+    fieldset.module:last-child,
+    .module:last-child {
+        border-bottom: none;
+    }
+
+    /* Fieldset Title */
+    fieldset.module h2,
+    .module h2 {
+        font-size: 1.1rem;
+        font-weight: 700;
+        color: var(--sjss-text);
+        margin-bottom: 1.25rem;
+        padding-bottom: 0.75rem;
+        border-bottom: 2px solid var(--sjss-blue);
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+
+    /* Form Rows */
+    .form-row {
+        display: flex;
+        flex-direction: column;
+        gap: 0.5rem;
+        padding: 1rem 0;
+        border-bottom: 1px solid var(--sjss-border);
+        margin-bottom: 0;
+    }
+
+    .form-row:last-child {
+        border-bottom: none;
+        padding-bottom: 0;
+    }
+
+    .form-row:first-child {
+        padding-top: 0;
+    }
+
+    /* Labels */
+    .form-row label {
+        font-size: 0.875rem;
+        font-weight: 600;
+        color: var(--sjss-text);
+        margin-bottom: 0;
+        display: flex;
+        align-items: center;
+        gap: 0.25rem;
+    }
+
+    .form-row label.required::after {
+        content: '*';
+        color: var(--sjss-danger);
+        font-weight: 700;
+        margin-left: 2px;
+    }
+
+    /* Input Fields */
+    .form-row input[type="text"],
+    .form-row input[type="email"],
+    .form-row input[type="url"],
+    .form-row input[type="number"],
+    .form-row input[type="tel"],
+    .form-row input[type="date"],
+    .form-row input[type="datetime"],
+    .form-row input[type="time"],
+    .form-row input[type="datetime-local"],
+    .form-row input[type="password"],
+    .form-row select,
+    .form-row textarea {
+        width: 100%;
+        padding: 0.75rem 1rem;
+        border: 1.5px solid var(--sjss-border);
+        border-radius: 10px;
+        font-size: 0.9rem;
+        color: var(--sjss-text);
+        background: var(--sjss-bg);
+        transition: all var(--sjss-transition);
+        font-family: inherit;
+    }
+
+    .form-row input:focus,
+    .form-row select:focus,
+    .form-row textarea:focus {
+        outline: none;
+        border-color: var(--sjss-blue);
+        box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+        background: var(--sjss-white);
+    }
+
+    .form-row input:hover,
+    .form-row select:hover,
+    .form-row textarea:hover {
+        border-color: var(--sjss-blue);
+    }
+
+    /* Textarea */
+    .form-row textarea {
+        min-height: 120px;
+        resize: vertical;
+        line-height: 1.6;
+    }
+
+    /* Select Dropdown */
+    .form-row select {
+        appearance: none;
+        -webkit-appearance: none;
+        background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%2364748b' d='M6 8L1 3h10z'/%3E%3C/svg%3E");
+        background-repeat: no-repeat;
+        background-position: right 1rem center;
+        padding-right: 2.5rem;
+        cursor: pointer;
+    }
+
+    /* File Input */
+    .form-row input[type="file"] {
+        padding: 0.75rem 1rem;
+        border: 2px dashed var(--sjss-border);
+        border-radius: 10px;
+        background: var(--sjss-bg);
+        cursor: pointer;
+        transition: all var(--sjss-transition);
+    }
+
+    .form-row input[type="file"]:hover {
+        border-color: var(--sjss-blue);
+        background: var(--sjss-blue-light);
+    }
+
+    /* Checkbox & Radio */
+    .form-row input[type="checkbox"],
+    .form-row input[type="radio"] {
+        width: 18px;
+        height: 18px;
+        accent-color: var(--sjss-blue);
+        cursor: pointer;
+    }
+
+    /* Help Text */
+    .form-row .help,
+    .form-row .helptext {
+        font-size: 0.8rem;
+        color: var(--sjss-muted);
+        margin-top: 0.25rem;
+        display: flex;
+        align-items: flex-start;
+        gap: 0.35rem;
+    }
+
+    .form-row .help::before {
+        content: '\f05a';
+        font-family: 'Font Awesome 6 Free';
+        font-weight: 900;
+        font-size: 0.75rem;
+        margin-top: 2px;
+    }
+
+    /* Error Messages */
+    .form-row .errorlist {
+        list-style: none;
+        padding: 0;
+        margin: 0.25rem 0 0 0;
+        display: flex;
+        flex-direction: column;
+        gap: 0.25rem;
+    }
+
+    .form-row .errorlist li {
+        font-size: 0.8rem;
+        color: var(--sjss-danger);
+        background: rgba(239, 68, 68, 0.08);
+        padding: 0.4rem 0.75rem;
+        border-radius: 6px;
+        border-left: 3px solid var(--sjss-danger);
+    }
+
+    .form-row.has-error input,
+    .form-row.has-error select,
+    .form-row.has-error textarea {
+        border-color: var(--sjss-danger);
+    }
+
+    .form-row.has-error input:focus {
+        box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.1);
+    }
+
+    /* Submit Row / Button Bar */
+    .submit-row {
+        background: var(--sjss-bg);
+        border-top: 1px solid var(--sjss-border);
+        padding: 1.25rem 1.75rem;
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+        flex-wrap: wrap;
+        margin: 0;
+        border-radius: 0;
+    }
+
+    /* Submit Buttons */
+    .submit-row input[type="submit"],
+    .submit-row button[type="submit"] {
+        padding: 0.7rem 1.5rem;
+        border-radius: 10px;
+        font-size: 0.9rem;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all var(--sjss-transition);
+        border: none;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+
+    /* Primary Save Button */
+    .submit-row input[name="_save"],
+    .submit-row input.default {
+        background: var(--sjss-gradient-primary);
+        color: white;
+        box-shadow: 0 4px 12px rgba(37, 99, 235, 0.3);
+    }
+
+    .submit-row input[name="_save"]:hover,
+    .submit-row input.default:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 6px 16px rgba(37, 99, 235, 0.4);
+    }
+
+    /* Save & Add Another */
+    .submit-row input[name="_addanother"] {
+        background: var(--sjss-white);
+        color: var(--sjss-text);
+        border: 1.5px solid var(--sjss-border);
+    }
+
+    .submit-row input[name="_addanother"]:hover {
+        background: var(--sjss-bg);
+        border-color: var(--sjss-blue);
+    }
+
+    /* Save & Continue Editing */
+    .submit-row input[name="_continue"] {
+        background: var(--sjss-white);
+        color: var(--sjss-text);
+        border: 1.5px solid var(--sjss-border);
+    }
+
+    .submit-row input[name="_continue"]:hover {
+        background: var(--sjss-bg);
+        border-color: var(--sjss-blue);
+    }
+
+    /* Delete Button */
+    .submit-row a.deletelink,
+    .submit-row .deletelink {
+        background: var(--sjss-danger);
+        color: white;
+        padding: 0.7rem 1.5rem;
+        border-radius: 10px;
+        font-size: 0.9rem;
+        font-weight: 600;
+        text-decoration: none;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        transition: all var(--sjss-transition);
+        margin-left: auto;
+    }
+
+    .submit-row a.deletelink:hover {
+        background: #dc2626;
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(239, 68, 68, 0.3);
+    }
+
+    /* Success/Error Messages in Forms */
+    .messagelist {
+        list-style: none;
+        padding: 0;
+        margin: 0 0 1.5rem 0;
+    }
+
+    .messagelist li {
+        padding: 0.875rem 1.25rem;
+        border-radius: 10px;
+        font-size: 0.9rem;
+        font-weight: 500;
+        margin-bottom: 0.5rem;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+
+    .messagelist li.success {
+        background: rgba(16, 185, 129, 0.1);
+        color: var(--sjss-success);
+        border: 1px solid rgba(16, 185, 129, 0.2);
+    }
+
+    .messagelist li.error {
+        background: rgba(239, 68, 68, 0.1);
+        color: var(--sjss-danger);
+        border: 1px solid rgba(239, 68, 68, 0.2);
+    }
+
+    .messagelist li.warning {
+        background: rgba(245, 158, 11, 0.1);
+        color: var(--sjss-warning);
+        border: 1px solid rgba(245, 158, 11, 0.2);
+    }
+
+    .messagelist li.info {
+        background: rgba(6, 182, 212, 0.1);
+        color: var(--sjss-info);
+        border: 1px solid rgba(6, 182, 212, 0.2);
+    }
+
+    /* Inline Form Groups */
+    .inline-group {
+        background: var(--sjss-white);
+        border: 1px solid var(--sjss-border);
+        border-radius: var(--sjss-radius);
+        overflow: hidden;
+        margin-bottom: 1.5rem;
+    }
+
+    .inline-group h2 {
+        background: var(--sjss-bg);
+        padding: 1rem 1.5rem;
+        font-size: 1rem;
+        font-weight: 700;
+        color: var(--sjss-text);
+        border-bottom: 1px solid var(--sjss-border);
+    }
+
+    .inline-group h3 {
+        background: var(--sjss-bg);
+        padding: 0.75rem 1.5rem;
+        font-size: 0.9rem;
+        font-weight: 600;
+    }
+
+    /* Inline Form Rows */
+    .inline-group .form-row {
+        padding: 0.75rem 1.5rem;
+    }
+
+    /* Date/Time Widgets */
+    .form-row .datetime {
+        display: flex;
+        flex-direction: column;
+        gap: 0.5rem;
+    }
+
+    .form-row .datetime input {
+        width: auto;
+    }
+
+    .form-row .datetime .datetimeshortcuts {
+        font-size: 0.8rem;
+        color: var(--sjss-muted);
+    }
+
+    /* Many-to-Many Widget */
+    .form-row .selector {
+        display: flex;
+        gap: 1rem;
+    }
+
+    .form-row .selector select {
+        flex: 1;
+        min-height: 200px;
+    }
+
+    /* Rich Text Editor (CKEditor/TinyMCE) */
+    .form-row .cke,
+    .form-row .mce-tinymce {
+        border-radius: 10px;
+        overflow: hidden;
+    }
+
+    /* Field Description/Info */
+    .form-row .field-description {
+        font-size: 0.8rem;
+        color: var(--sjss-muted);
+        font-style: italic;
+    }
+
+    /* Required Field Notice */
+    .required-notice {
+        font-size: 0.8rem;
+        color: var(--sjss-muted);
+        margin-bottom: 1rem;
+        display: flex;
+        align-items: center;
+        gap: 0.35rem;
+    }
+
+    .required-notice::before {
+        content: '*';
+        color: var(--sjss-danger);
+        font-weight: 700;
+        font-size: 1rem;
+    }
+
+    /* Responsive Form Layout */
+    @media (max-width: 768px) {
+        #content {
+            padding: 1rem;
+        }
+        
+        fieldset.module,
+        .module {
+            padding: 1rem;
+        }
+        
+        .submit-row {
+            flex-direction: column;
+            align-items: stretch;
+        }
+        
+        .submit-row a.deletelink {
+            margin-left: 0;
+            justify-content: center;
+        }
+        
+        #content h1 {
+            font-size: 1.35rem;
+        }
+    }
+
+    /* Sticky Submit Bar on Scroll */
+    @media (min-width: 992px) {
+        .submit-row {
+            position: sticky;
+            bottom: 0;
+            z-index: 50;
+            box-shadow: 0 -4px 20px rgba(15, 40, 71, 0.08);
+        }
+    }
+
+    /* Collapsible Fieldsets */
+    fieldset.collapsed h2 {
+        cursor: pointer;
+        position: relative;
+    }
+
+    fieldset.collapsed h2::after {
+        content: '\f078';
+        font-family: 'Font Awesome 6 Free';
+        font-weight: 900;
+        position: absolute;
+        right: 0;
+        transition: transform var(--sjss-transition);
+    }
+
+    fieldset.collapsed.collapse-show h2::after {
+        transform: rotate(180deg);
+    }
+
+    /* Tabular Inlines */
+    .inline-group table {
+        width: 100%;
+        border-collapse: collapse;
+    }
+
+    .inline-group table th {
+        background: var(--sjss-bg);
+        padding: 0.75rem 1rem;
+        text-align: left;
+        font-size: 0.8rem;
+        font-weight: 600;
+        color: var(--sjss-muted);
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+        border-bottom: 2px solid var(--sjss-border);
+    }
+
+    .inline-group table td {
+        padding: 0.75rem 1rem;
+        border-bottom: 1px solid var(--sjss-border);
+        font-size: 0.9rem;
+    }
+
+    .inline-group table tr:hover td {
+        background: var(--sjss-bg);
+    }
+</style>
+{% endblock %}

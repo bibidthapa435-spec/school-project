@@ -1,59 +1,139 @@
 {% extends 'admin/base.html' %}
 
 {% block content %}
-<div class="admin-card">
-    <h3><i class="fa-solid fa-gear me-2"></i>Site Settings</h3>
-    <form method="POST" enctype="multipart/form-data">
-        {% csrf_token %}
-        <div class="row">
-            <div class="col-md-6 mb-3">
-                <label for="school_name" class="form-label">School Name</label>
-                <input type="text" class="form-control" id="school_name" name="school_name" value="{{ settings.school_name }}" required>
+<div class="row">
+    <div class="col-lg-8">
+        <div class="chart-container">
+            <div class="section-header">
+                <h3 class="section-title"><i class="fa-solid fa-gear"></i>Site Settings</h3>
             </div>
-            <div class="col-md-6 mb-3">
-                <label for="tagline" class="form-label">Tagline</label>
-                <input type="text" class="form-control" id="tagline" name="tagline" value="{{ settings.tagline }}">
-            </div>
-        </div>
-        <div class="row">
-            <div class="col-md-6 mb-3">
-                <label for="phone" class="form-label">Phone</label>
-                <input type="text" class="form-control" id="phone" name="phone" value="{{ settings.phone }}">
-            </div>
-            <div class="col-md-6 mb-3">
-                <label for="email" class="form-label">Email</label>
-                <input type="email" class="form-control" id="email" name="email" value="{{ settings.email }}">
-            </div>
-        </div>
-        <div class="mb-3">
-            <label for="address" class="form-label">Address</label>
-            <textarea class="form-control" id="address" name="address" rows="3">{{ settings.address }}</textarea>
-        </div>
-        <div class="row">
-            <div class="col-md-6 mb-3">
-                <label for="logo" class="form-label">Logo</label>
-                <input type="file" class="form-control" id="logo" name="logo">
-                {% if settings.logo %}
-                    <div class="mt-2">
-                        <small class="text-muted">Current logo:</small><br>
-                        <img src="{{ settings.logo.url }}" alt="Current Logo" style="max-height: 60px; margin-top: 5px;">
+            <form method="POST" enctype="multipart/form-data" class="settings-form">
+                {% csrf_token %}
+                <div class="row">
+                    <div class="col-md-6 mb-4">
+                        <label for="school_name" class="settings-label">School Name</label>
+                        <input type="text" class="settings-input" id="school_name" name="school_name" value="{{ settings.school_name }}" required>
                     </div>
-                {% endif %}
-            </div>
-            <div class="col-md-6 mb-3">
-                <label for="favicon" class="form-label">Favicon</label>
-                <input type="file" class="form-control" id="favicon" name="favicon">
-                {% if settings.favicon %}
-                    <div class="mt-2">
-                        <small class="text-muted">Current favicon:</small><br>
-                        <img src="{{ settings.favicon.url }}" alt="Current Favicon" style="max-height: 32px; margin-top: 5px;">
+                    <div class="col-md-6 mb-4">
+                        <label for="tagline" class="settings-label">Tagline</label>
+                        <input type="text" class="settings-input" id="tagline" name="tagline" value="{{ settings.tagline }}">
                     </div>
-                {% endif %}
+                </div>
+        <div class="row">
+                    <div class="col-md-6 mb-4">
+                        <label for="phone" class="settings-label">Phone</label>
+                        <input type="text" class="settings-input" id="phone" name="phone" value="{{ settings.phone }}">
+                    </div>
+                    <div class="col-md-6 mb-4">
+                        <label for="email" class="settings-label">Email</label>
+                        <input type="email" class="settings-input" id="email" name="email" value="{{ settings.email }}">
+                    </div>
+                </div>
+                <div class="mb-4">
+                    <label for="address" class="settings-label">Address</label>
+                    <textarea class="settings-input" id="address" name="address" rows="3">{{ settings.address }}</textarea>
+                </div>
+        <div class="row">
+                    <div class="col-md-6 mb-4">
+                        <label for="logo" class="settings-label">Logo</label>
+                        <div class="settings-file-input">
+                            <input type="file" id="logo" name="logo" accept="image/*" onchange="previewImage(this, 'logo-preview')">
+                            <label for="logo" class="settings-file-label">
+                                <i class="fa-solid fa-cloud-upload-alt"></i>
+                                <span>Choose Logo</span>
+                            </label>
+                        </div>
+                        {% if settings.logo %}
+                            <div class="settings-image-preview" id="logo-preview">
+                                <img src="{{ settings.logo.url }}" alt="Current Logo">
+                                <span class="settings-image-label">Current Logo</span>
+                            </div>
+                        {% else %}
+                            <div class="settings-image-preview" id="logo-preview" style="display: none;">
+                                <img src="" alt="Preview">
+                                <span class="settings-image-label">Preview</span>
+                            </div>
+                        {% endif %}
+                    </div>
+                    <div class="col-md-6 mb-4">
+                        <label for="favicon" class="settings-label">Favicon</label>
+                        <div class="settings-file-input">
+                            <input type="file" id="favicon" name="favicon" accept="image/*" onchange="previewImage(this, 'favicon-preview')">
+                            <label for="favicon" class="settings-file-label">
+                                <i class="fa-solid fa-cloud-upload-alt"></i>
+                                <span>Choose Favicon</span>
+                            </label>
+                        </div>
+                        {% if settings.favicon %}
+                            <div class="settings-image-preview" id="favicon-preview">
+                                <img src="{{ settings.favicon.url }}" alt="Current Favicon">
+                                <span class="settings-image-label">Current Favicon</span>
+                            </div>
+                        {% else %}
+                            <div class="settings-image-preview" id="favicon-preview" style="display: none;">
+                                <img src="" alt="Preview">
+                                <span class="settings-image-label">Preview</span>
+                            </div>
+                        {% endif %}
+                    </div>
+                </div>
+                <button type="submit" class="settings-submit-btn">
+                    <i class="fa-solid fa-save me-2"></i>Save Settings
+                </button>
+            </form>
+        </div>
+    </div>
+    <div class="col-lg-4">
+        <div class="chart-container">
+            <div class="section-header">
+                <h3 class="section-title"><i class="fa-solid fa-info-circle"></i>Quick Info</h3>
+            </div>
+            <div class="settings-info">
+                <div class="settings-info-item">
+                    <div class="settings-info-icon"><i class="fa-solid fa-school"></i></div>
+                    <div class="settings-info-content">
+                        <span class="settings-info-label">School Name</span>
+                        <span class="settings-info-value">{{ settings.school_name|default:"Not set" }}</span>
+                    </div>
+                </div>
+                <div class="settings-info-item">
+                    <div class="settings-info-icon"><i class="fa-solid fa-phone"></i></div>
+                    <div class="settings-info-content">
+                        <span class="settings-info-label">Phone</span>
+                        <span class="settings-info-value">{{ settings.phone|default:"Not set" }}</span>
+                    </div>
+                </div>
+                <div class="settings-info-item">
+                    <div class="settings-info-icon"><i class="fa-solid fa-envelope"></i></div>
+                    <div class="settings-info-content">
+                        <span class="settings-info-label">Email</span>
+                        <span class="settings-info-value">{{ settings.email|default:"Not set" }}</span>
+                    </div>
+                </div>
+                <div class="settings-info-item">
+                    <div class="settings-info-icon"><i class="fa-solid fa-location-dot"></i></div>
+                    <div class="settings-info-content">
+                        <span class="settings-info-label">Address</span>
+                        <span class="settings-info-value">{{ settings.address|default:"Not set"|truncatechars:30 }}</span>
+                    </div>
+                </div>
             </div>
         </div>
-        <button type="submit" class="btn btn-primary">
-            <i class="fa-solid fa-save me-2"></i>Save Settings
-        </button>
-    </form>
+    </div>
 </div>
+
+<script>
+function previewImage(input, previewId) {
+    var preview = document.getElementById(previewId);
+    var img = preview.querySelector('img');
+    if (input.files && input.files[0]) {
+        var reader = new FileReader();
+        reader.onload = function(e) {
+            img.src = e.target.result;
+            preview.style.display = 'flex';
+        }
+        reader.readAsDataURL(input.files[0]);
+    }
+}
+</script>
 {% endblock %}

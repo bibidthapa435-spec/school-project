@@ -3,8 +3,40 @@
 
 {% block content %}
 <div class="sjss-dashboard">
+  {% admin_dashboard_metric_cards as metric_cards %}
+
+  <section class="dashboard-summary" aria-label="School operations overview">
+    <div class="summary-main">
+      <span class="summary-kicker">School operations overview</span>
+      <h2>Keep your school website active and current.</h2>
+      <p>Monitor notices, admissions, updates, and published content from one place so your school communications stay organized and timely.</p>
+      <div class="summary-badges">
+        <span class="summary-badge"><i class="fa-solid fa-bullhorn"></i> {{ metric_cards.0.count }} live notices</span>
+        <span class="summary-badge"><i class="fa-solid fa-user-graduate"></i> {{ metric_cards.2.count }} student records</span>
+        <span class="summary-badge"><i class="fa-solid fa-trophy"></i> {{ metric_cards.4.count }} achievements</span>
+      </div>
+    </div>
+
+    <div class="summary-pulse" aria-label="Daily focus">
+      <div class="pulse-box pulse-primary">
+        <span class="pulse-label">Need attention</span>
+        <strong>{{ metric_cards.5.count }}</strong>
+        <small>system users</small>
+      </div>
+      <div class="pulse-box pulse-secondary">
+        <span class="pulse-label">Published</span>
+        <strong>{{ metric_cards.3.count }}</strong>
+        <small>gallery items</small>
+      </div>
+      <div class="pulse-box pulse-accent">
+        <span class="pulse-label">Teachers</span>
+        <strong>{{ metric_cards.1.count }}</strong>
+        <small>active staff</small>
+      </div>
+    </div>
+  </section>
+
   <section class="dashboard-stat-grid" aria-label="Dashboard statistics">
-    {% admin_dashboard_metric_cards as metric_cards %}
     {% for card in metric_cards %}
       <article class="stat-card">
         <div class="stat-card-top">
