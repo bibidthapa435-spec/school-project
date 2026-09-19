@@ -487,9 +487,9 @@ body.sticky-nav-active {
   height: 130px;
   border-radius: 50%;
   object-fit: cover;
-  border: 4px solid var(--accent-gold);
+  border: none;
   margin: 0 auto 16px;
-  box-shadow: 0 4px 10px rgba(0,0,0,0.12);
+  
 }
 
 /* Stats Section */

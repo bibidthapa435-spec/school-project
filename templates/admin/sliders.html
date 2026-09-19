@@ -55,7 +55,14 @@
                     {% for slider in sliders %}
                         <tr>
                             <td>
-                                {% if slider.image %}
+                                {% if slider.is_video %}
+                                    {% if slider.image %}
+                                        <img src="{{ slider.image.url }}" alt="{{ slider.title }}" style="width: 80px; height: 40px; object-fit: cover; border-radius: 4px;">
+                                    {% endif %}
+                                    <span class="status-badge" style="background: #0b2545; color: #fff;">
+                                        <i class="fa-solid fa-video"></i> Video
+                                    </span>
+                                {% elif slider.image %}
                                     <img src="{{ slider.image.url }}" alt="{{ slider.title }}" style="width: 80px; height: 40px; object-fit: cover; border-radius: 4px;">
                                 {% else %}
                                     <span class="text-muted">No image</span>

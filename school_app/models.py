@@ -1,3 +1,5 @@
+import re
+
 from django.db import models
 from django.utils.text import slugify
 
@@ -259,13 +261,80 @@ class PopupNotice(BaseSlugModel):
 
 
 class Slider(BaseSlugModel):
+    MEDIA_TYPE_CHOICES = [
+        ('image', 'Image'),
+        ('video', 'Video'),
+    ]
+
     subtitle = models.CharField(max_length=255, blank=True)
     description = models.TextField(blank=True)
     button_text = models.CharField(max_length=100, blank=True)
     button_url = models.CharField(max_length=255, blank=True)
-    image = models.ImageField(upload_to='sliders/', blank=True, null=True)
+    media_type = models.CharField(
+        max_length=10,
+        choices=MEDIA_TYPE_CHOICES,
+        default='image',
+        help_text='Choose whether this slide shows an image or a video.'
+    )
+    image = models.ImageField(
+        upload_to='sliders/',
+        blank=True,
+        null=True,
+        help_text='Used for image slides, and as the poster/thumbnail for video slides.'
+    )
+    video = models.FileField(
+        upload_to='sliders/videos/',
+        blank=True,
+        null=True,
+        help_text='Upload an MP4/WebM video file for video slides.'
+    )
+    video_url = models.URLField(
+        blank=True,
+        help_text='Or paste a YouTube/Vimeo link instead of uploading a video file.'
+    )
     overlay_color = models.CharField(max_length=20, default='#0b1b2b')
     overlay_opacity = models.FloatField(default=0.5)
+
+    @property
+    def has_video(self):
+        """True when a video file or external video URL is available."""
+        return bool(self.video or (self.video_url or '').strip())
+
+    @property
+    def is_video(self):
+        """True when this slide should be rendered as a video."""
+        return self.media_type == 'video' and self.has_video
+
+    @property
+    def video_embed_url(self):
+        """Convert YouTube / Vimeo links into an autoplaying embeddable URL."""
+        url = (self.video_url or '').strip()
+        if not url:
+            return ''
+
+        youtube = re.search(
+            r'(?:youtube\.com/(?:watch\?v=|embed/|shorts/|live/)|youtu\.be/)([\w-]{6,})',
+            url
+        )
+        if youtube:
+            video_id = youtube.group(1)
+            return (
+                f'https://www.youtube.com/embed/{video_id}'
+                f'?autoplay=1&mute=1&loop=1&playlist={video_id}&rel=0'
+            )
+
+        vimeo = re.search(r'vimeo\.com/(?:video/)?(\d+)', url)
+        if vimeo:
+            return f'https://player.vimeo.com/video/{vimeo.group(1)}?autoplay=1&muted=1&loop=1'
+
+        return url
+
+    @property
+    def display_image_url(self):
+        """Image URL for image slides (falls back to the default slide image)."""
+        if self.image and hasattr(self.image, 'url'):
+            return self.image.url
+        return '/media/sliders/fifthphoto.jpg'
 
 
 class Achievement(BaseSlugModel):

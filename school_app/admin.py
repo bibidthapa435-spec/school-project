@@ -5,6 +5,7 @@ from django.contrib.auth.models import Group, User
 from django.forms import DateTimeInput, TextInput
 from django.urls import NoReverseMatch, reverse
 from django.utils.html import format_html
+from django.utils.safestring import mark_safe
 from django.db import models
 
 # Custom DateTime Widget with better UX
@@ -463,16 +464,42 @@ class PopupNoticeAdmin(StatusBaseAdmin):
 
 @admin.register(Slider) 
 class SliderAdmin(StatusBaseAdmin):
-    list_display = ('title', 'subtitle', 'button_text', 'status', 'display_order', 'created_at', 'preview')
-    list_filter = ('status', 'created_at')
+    list_display = ('title', 'subtitle', 'media_type', 'button_text', 'status', 'display_order', 'created_at', 'preview')
+    list_filter = ('status', 'media_type', 'created_at')
     search_fields = ('title', 'subtitle', 'description')
     date_hierarchy = 'created_at'
     fieldsets = (
         (None, {'fields': ('title', 'status', 'display_order')}),
-        ('Slider Content', {'fields': ('subtitle', 'description', 'button_text', 'button_url', 'image', 'overlay_color', 'overlay_opacity')}),
+        ('Slider Content', {'fields': ('subtitle', 'description', 'button_text', 'button_url', 'overlay_color', 'overlay_opacity')}),
+        ('Media', {
+            'fields': ('media_type', 'image', 'video', 'video_url'),
+            'description': (
+                'Choose "Image" to show a picture, or "Video" to show a video. '
+                'For video slides you can either upload a video file (MP4/WebM) '
+                'or paste a YouTube/Vimeo link. The image is optional and is used '
+                'as the poster/thumbnail while a video loads.'
+            ),
+        }),
     )
 
     def preview(self, obj):
+        if obj and obj.is_video:
+            poster = ''
+            if getattr(obj, 'image', None):
+                poster_url = getattr(obj.image, 'url', '')
+                if poster_url:
+                    poster = mark_safe(
+                        f'<img src="{poster_url}" style="height:60px; object-fit:cover; '
+                        f'border-radius:6px; margin-right:6px;" />'
+                    )
+            source = 'file' if obj.video else 'URL'
+            badge = format_html(
+                '<span style="display:inline-flex; align-items:center; gap:4px; padding:4px 8px; '
+                'background:#0b2545; color:#fff; border-radius:6px; font-size:0.75rem;">'
+                '<i class="fa-solid fa-video"></i> Video ({})</span>',
+                source
+            )
+            return mark_safe(poster + badge)
         if obj and getattr(obj, 'image', None):
             url = getattr(obj.image, 'url', '')
             if url:

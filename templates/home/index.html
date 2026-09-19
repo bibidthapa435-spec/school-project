@@ -16,7 +16,25 @@
   <div class="carousel-inner">
     {% for slider in sliders %}
       <div class="carousel-item {% if forloop.first %}active{% endif %}">
-        <img src="{% if slider.image %}{{ slider.image.url }}{% else %}/media/sliders/fifthphoto.jpg{% endif %}" alt="{{ slider.title }}" class="d-block w-100" onerror="this.onerror=null; this.src='/media/sliders/fifthphoto.jpg';">
+        {% if slider.is_video %}
+          {% if slider.video %}
+            <video class="d-block w-100 hero-media" autoplay muted loop playsinline preload="metadata"
+                   {% if slider.image %}poster="{{ slider.image.url }}"{% endif %}>
+              <source src="{{ slider.video.url }}">
+              Your browser does not support the video tag.
+            </video>
+          {% elif slider.video_embed_url %}
+            <div class="hero-media hero-video-embed">
+              <iframe src="{{ slider.video_embed_url }}" title="{{ slider.title }}"
+                      allow="autoplay; encrypted-media; picture-in-picture; fullscreen"
+                      allowfullscreen frameborder="0"></iframe>
+            </div>
+          {% else %}
+            <img src="{{ slider.display_image_url }}" alt="{{ slider.title }}" class="d-block w-100 hero-media" onerror="this.onerror=null; this.src='/media/sliders/fifthphoto.jpg';">
+          {% endif %}
+        {% else %}
+          <img src="{{ slider.display_image_url }}" alt="{{ slider.title }}" class="d-block w-100 hero-media" onerror="this.onerror=null; this.src='/media/sliders/fifthphoto.jpg';">
+        {% endif %}
         <div class="hero-overlay" style="background-color: {{ slider.overlay_color|default:'#0b1b2b' }}; opacity: {{ slider.overlay_opacity|default:0.5 }};"></div>
         <div class="container hero-caption-wrapper">
           <div class="hero-caption">
@@ -45,6 +63,121 @@
     <span class="visually-hidden">Next</span>
   </button>
 </div>
+
+<script>
+  // Only play the video of the active slide to save bandwidth and avoid
+  // multiple videos running in the background at the same time.
+  document.addEventListener('DOMContentLoaded', function () {
+    var heroCarousel = document.getElementById('heroCarousel');
+    if (!heroCarousel) { return; }
+
+    function setVideoState(activeItem) {
+      heroCarousel.querySelectorAll('.carousel-item video').forEach(function (video) {
+        if (video.closest('.carousel-item') === activeItem) {
+          var playPromise = video.play();
+          if (playPromise && typeof playPromise.catch === 'function') {
+            playPromise.catch(function () { /* autoplay may be blocked */ });
+          }
+        } else {
+          video.pause();
+        }
+      });
+    }
+
+    heroCarousel.addEventListener('slide.bs.carousel', function (event) {
+      setVideoState(event.relatedTarget);
+    });
+
+    var currentItem = heroCarousel.querySelector('.carousel-item.active');
+    if (currentItem) { setVideoState(currentItem); }
+
+    // ----------------------------------------------------------------
+    // Fullscreen video sizing fix.
+    // The hero layout sizes videos to 100vh inside the slide, and the
+    // fullscreen player inherits that clipped/letterboxed geometry, so
+    // part of the video was cut off. Inline styles set here only while
+    // an element IS fullscreen always beat the stylesheets, so the whole
+    // video is shown at its original aspect ratio with object-fit:
+    // contain and nothing is cropped. Everything is restored on exit,
+    // so the normal slider design is left untouched.
+    // ----------------------------------------------------------------
+    var FS_PROPS = ['position', 'top', 'left', 'right', 'bottom',
+                    'width', 'height', 'max-width', 'max-height',
+                    'min-width', 'min-height', 'margin', 'padding',
+                    'object-fit', 'object-position', 'transform',
+                    'background-color'];
+
+    function fitToScreen(el) {
+      if (el.dataset.heroFsSized === '1') { return; }
+      // remember the previous inline values so exiting fullscreen is lossless
+      el.dataset.heroFsPrev = JSON.stringify(FS_PROPS.map(function (prop) {
+        return el.style.getPropertyValue(prop);
+      }));
+      el.dataset.heroFsSized = '1';
+
+      FS_PROPS.forEach(function (prop) { el.style.removeProperty(prop); });
+
+      el.style.setProperty('position', 'fixed', 'important');
+      ['top', 'left', 'right', 'bottom'].forEach(function (prop) {
+        el.style.setProperty(prop, '0', 'important');
+      });
+      el.style.setProperty('width', '100vw', 'important');
+      el.style.setProperty('height', '100vh', 'important');
+      el.style.setProperty('max-width', '100%', 'important');
+      el.style.setProperty('max-height', '100%', 'important');
+      el.style.setProperty('min-width', '0', 'important');
+      el.style.setProperty('min-height', '0', 'important');
+      el.style.setProperty('margin', '0', 'important');
+      el.style.setProperty('padding', '0', 'important');
+      el.style.setProperty('transform', 'none', 'important');
+      // never stretch or crop - keep the original aspect ratio
+      el.style.setProperty('object-fit', 'contain', 'important');
+      el.style.setProperty('object-position', 'center center', 'important');
+      el.style.setProperty('background-color', '#000', 'important');
+
+      // 100dvh keeps the player inside the visible screen on mobile
+      if (window.CSS && CSS.supports && CSS.supports('height', '100dvh')) {
+        el.style.setProperty('height', '100dvh', 'important');
+        el.style.setProperty('max-height', '100dvh', 'important');
+      }
+    }
+
+    function resetFit(el) {
+      if (el.dataset.heroFsSized !== '1') { return; }
+      var prev = [];
+      try { prev = JSON.parse(el.dataset.heroFsPrev || '[]'); } catch (err) { prev = []; }
+      FS_PROPS.forEach(function (prop, i) {
+        el.style.removeProperty(prop);
+        if (prev[i]) { el.style.setProperty(prop, prev[i]); }
+      });
+      delete el.dataset.heroFsSized;
+      delete el.dataset.heroFsPrev;
+    }
+
+    function getFullscreenElement() {
+      return document.fullscreenElement || document.webkitFullscreenElement ||
+             document.mozFullScreenElement || document.msFullscreenElement || null;
+    }
+
+    function onFullscreenChange() {
+      var fsEl = getFullscreenElement();
+      if (!fsEl) {
+        document.querySelectorAll('[data-hero-fs-sized="1"]').forEach(resetFit);
+        return;
+      }
+      // The fullscreened element may be the video itself, the slide, or the
+      // YouTube/Vimeo iframe. Fit whichever one needs the whole screen.
+      var target = fsEl;
+      if (!(fsEl.matches && fsEl.matches('video.hero-media')) && fsEl.querySelector) {
+        target = fsEl.querySelector('video.hero-media') || fsEl;
+      }
+      fitToScreen(target);
+    }
+
+    ['fullscreenchange', 'webkitfullscreenchange', 'mozfullscreenchange', 'MSFullscreenChange']
+      .forEach(function (evt) { document.addEventListener(evt, onFullscreenChange); });
+  });
+</script>
 {% endif %}
 
 {% if notices or MARQUEE_NOTICES %}

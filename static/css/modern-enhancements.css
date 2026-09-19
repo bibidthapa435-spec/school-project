@@ -1,4 +1,4 @@
-/*
+﻿/*
  * ============================================================
  *  Shree Jaljala Secondary School - Modern Enhancements
  *  Additional modern styling to enhance the existing design
@@ -825,16 +825,16 @@
 .teacher-card {
   text-align: center;
   padding: 1.5rem;
-  background: #ffffff;
+  background: transparent;
   border-radius: var(--radius-lg);
-  box-shadow: var(--shadow-sm);
+  box-shadow: none;
   transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
-  border: 1px solid rgba(11, 37, 69, 0.05);
+  border: none;
 }
 
 .teacher-card:hover {
   transform: translateY(-8px);
-  box-shadow: var(--shadow-lg);
+  
 }
 
 .teacher-photo {
@@ -843,14 +843,27 @@
   border-radius: 50%;
   object-fit: cover;
   margin: 0 auto 1rem;
-  border: 4px solid #ffffff;
-  box-shadow: var(--shadow-md);
+  border: none;
+  
   transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 .teacher-card:hover .teacher-photo {
   transform: scale(1.05);
   border-color: var(--accent-gold);
+}
+
+/* Teacher Card - Transparent for Dark Background */
+.card.teacher-card {
+  background: transparent !important;
+  border: none !important;
+  box-shadow: none !important;
+}
+
+.card.teacher-card:hover {
+  background: transparent !important;
+  transform: translateY(-8px);
+  box-shadow: none !important;
 }
 
 /* ===== Enhanced Gallery ===== */
