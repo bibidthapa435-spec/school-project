@@ -15,7 +15,7 @@
      working exactly as before. (Exception: `[data-scrub="title"]` composes
       `transform: perspective() rotateX()` with its `translate` — section
       headings carry no hover transform of their own.)
-    * On top of the one-shot reveals, sections 8–9 add a position-linked
+    * On top of the one-shot reveals, sections 7–8 add a position-linked
       scrub layer (`[data-scrub]`, driven by --jj-p from scroll-motion.js)
       and a single layout-neutral sticky hero window (.jj-hero-pin).
    * Keyframes end on the neutral value and `animation-fill-mode: backwards`
@@ -90,36 +90,25 @@ html.jj-motion [data-stagger="scale-in"] > *:not(.jj-in){translate:none;scale:.9
 [data-stagger="scale-in"] > .jj-in{animation-name:jjScaleIn}
 [data-img-reveal].jj-in{animation:jjImgReveal 700ms var(--jj-ease) var(--jj-d) backwards}
 
-/* ---------- 4. Scroll-progress indicator --------------------------------
-   Purely decorative, 3px, no pointer events, animated with scaleX so the
-   page never reflows. Sits above the (very high z-index) sticky navbar and
-   fades out while a modal / the mobile menu covers the top of the page. */
-.jj-progress{position:fixed;inset:0 0 auto 0;height:3px;z-index:100001;
-  pointer-events:none;transform-origin:0 50%;
-  transform:scaleX(var(--jj-progress,0));
-  background:linear-gradient(90deg,var(--color-highlight) 0%,var(--color-accent) 100%);
-  transition:opacity .25s linear}
-body.jj-overlay-open .jj-progress{opacity:0}
-
-/* ---------- 5. Navbar active-section highlighting -----------------------
+/* ---------- 4. Navbar active-section highlighting -----------------------
    Route-level `.active` comes from Django. While the home page is being
    scrolled we track the section in view and move the highlight with it, so
    the server-side item steps aside instead of double-highlighting. */
 .navbar-custom .nav-link.jj-inview{background:var(--color-accent);color:#fff!important}
 #mainNav.jj-nav-tracking .nav-link.active:not(.jj-inview){background:transparent;color:#fff!important}
 
-/* ---------- 6. In-page anchors ------------------------------------------ */
+/* ---------- 5. In-page anchors ------------------------------------------ */
 /* Sticky navbar would otherwise cover the anchor target. */
 body.sticky-nav-active main section[id]{scroll-margin-top:calc(var(--navbar-height,64px) + 16px)}
 
-/* ---------- 7. Hero parallax -------------------------------------------
+/* ---------- 6. Hero parallax -------------------------------------------
    The media layer gets a little vertical slack (112% tall, pulled up 6%) so
    it can drift without ever exposing an edge; the shade + text stay put, so
    contrast is unchanged. `will-change` is toggled by JS only while in view. */
 [data-parallax] > img,
 [data-parallax] > video{position:relative;height:112%;top:-6%;max-width:none}
 
-/* ---------- 8. Scroll-driven scrub layer (position-linked) ---------------
+/* ---------- 7. Scroll-driven scrub layer (position-linked) ---------------
    Unlike the one-shot reveals in sections 1–3, everything below is driven
    continuously by the element's own position in the viewport:
    scroll-motion.js writes a quantised progress value (--jj-p, 0 = below the
@@ -187,11 +176,11 @@ html.jj-motion [data-scrub="line"]{
 }
 @keyframes jjLineDraw{from{transform:scaleX(.2)}to{transform:scaleX(1)}}
 
-/* ---------- 9. One sticky moment: the hero --------------------------------
+/* ---------- 8. One sticky moment: the hero --------------------------------
    The single sticky section on the site: the hero pins for a 40px window
    while the strip below slides over it. The padding + negative-margin pair
-   cancels out exactly, so total document height — and therefore the scroll
-   progress maths — is unchanged. Followers are lifted above the pinned hero;
+   cancels out exactly, so total document height — and therefore every
+   scroll calculation — is unchanged. Followers are lifted above the pinned hero;
    the first follower gets an opaque background only when it would otherwise
    be transparent (sections without bg-light/bg-white). Under 40px of pin the
    notice marquee is always tall enough to cover the seam, so no second
@@ -208,14 +197,13 @@ html.jj-motion .jj-hero-pin > .jj-hero{position:sticky;top:0}
 html.jj-motion main > .jj-hero-pin ~ *{position:relative;z-index:1}
 html.jj-motion main > .jj-hero-pin + section{background-color:var(--color-bg)}
 
-/* ---------- 10. Reduced motion / no-JS safety net ------------------------ */
+/* ---------- 9. Reduced motion / no-JS safety net ------------------------ */
 @media (prefers-reduced-motion:reduce){
   html.jj-motion [data-aos]:not(.jj-in),
   html.jj-motion [data-img-reveal]:not(.jj-in),
   html.jj-motion [data-stagger] > *:not(.jj-in){opacity:1;translate:none;scale:none;
     rotate:none;clip-path:none}
   [data-aos].jj-in,[data-img-reveal].jj-in,[data-stagger] > .jj-in{animation:none!important}
-  .jj-progress{transition:none}
   [data-parallax] > img,[data-parallax] > video{position:static;height:100%;top:auto}
   /* Scrub layer + sticky hero: belt-and-braces on top of the html.jj-motion
      gate — even a mid-session preference change lands on the static layout. */
@@ -226,4 +214,3 @@ html.jj-motion main > .jj-hero-pin + section{background-color:var(--color-bg)}
   html.jj-motion .jj-hero-pin > .jj-hero{position:static}
   html.jj-motion .section-title .divider{animation:none!important;transform:none;scale:none}
 }
-@media print{.jj-progress{display:none}}

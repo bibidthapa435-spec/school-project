@@ -11,11 +11,10 @@
      5. Subtle scale-in for important cards              [data-aos="scale-in"]
      6. Statistic counters      (already in main.js — left untouched, no clash)
      7. Subtle image reveals                             [data-img-reveal]
-     8. Scroll-progress indicator (injected, 3px, decorative)
-     9. Navbar active-section highlighting (home page sections)
-    10. Subtle hero parallax                            [data-parallax]
-     11. Position-linked scrub layer  [data-scrub="hero|title|card|zoom|line"]
-     12. One sticky hero window                   (.jj-hero-pin, layout-safe)
+     8. Navbar active-section highlighting (home page sections)
+     9. Subtle hero parallax                            [data-parallax]
+    10. Position-linked scrub layer  [data-scrub="hero|title|card|zoom|line"]
+    11. One sticky hero window                   (.jj-hero-pin, layout-safe)
 
    Design notes
    ------------
@@ -146,28 +145,7 @@
   }
 
   /* =======================================================================
-     2. Scroll-progress indicator (item 8)
-     ===================================================================== */
-  function initProgress(onFrame) {
-    var bar = document.createElement('div');
-    bar.className = 'jj-progress';
-    bar.setAttribute('role', 'presentation');
-    document.body.appendChild(bar);
-
-    var scrollable = 1;
-    function measure() {
-      scrollable = Math.max(1, root.scrollHeight - window.innerHeight);
-    }
-    measure();
-    onFrame(function () {
-      var ratio = window.pageYOffset / scrollable;
-      bar.style.setProperty('--jj-progress', (ratio < 0 ? 0 : ratio > 1 ? 1 : ratio).toFixed(4));
-    });
-    return measure;
-  }
-
-  /* =======================================================================
-     3. Navbar active-section highlighting (item 9)
+     2. Navbar active-section highlighting (item 8)
      The navbar links are routes, not hashes, so each in-page section is
      matched to the route it belongs to (`programs-section` -> /programs);
      a top-level toggle is highlighted when that route lives in a dropdown.
@@ -230,7 +208,7 @@
   }
 
   /* =======================================================================
-     4. Smooth in-page scrolling (item 1)
+     3. Smooth in-page scrolling (item 1)
      Route links keep their normal navigation; only `#section` links are
      intercepted, scrolled with the sticky navbar taken into account, and
      focused for keyboard / screen-reader users.
@@ -267,21 +245,7 @@
   }
 
   /* =======================================================================
-     Keep the progress bar clear of full-width overlays (modals, mobile menu).
-     ===================================================================== */
-  function initOverlayGuard() {
-    var sync = function () {
-      var open = !!document.querySelector('.modal.show, .offcanvas.show, #mainNavbar.show');
-      document.body.classList.toggle('jj-overlay-open', open);
-    };
-    ['show.bs.modal', 'shown.bs.modal', 'hide.bs.modal', 'hidden.bs.modal',
-     'show.bs.collapse', 'shown.bs.collapse', 'hide.bs.collapse', 'hidden.bs.collapse'
-    ].forEach(function (name) { document.addEventListener(name, sync); });
-    sync();
-  }
-
-  /* =======================================================================
-     5. Subtle parallax for hero / background media (item 10)
+     4. Subtle parallax for hero / background media (item 9)
      Runs only while the layer is near the viewport, drifts at most ~60% of
      the slack the CSS gives it, and never touches the shade or the text.
      ===================================================================== */
@@ -331,7 +295,7 @@
   }
 
   /* =======================================================================
-     6. Position-linked scrub layer (items 11 + 12)
+     5. Position-linked scrub layer (items 10 + 11)
      Unlike the one-shot reveals above, these elements are driven continuously
      by their own position in the viewport: every [data-scrub] element receives
      a quantised progress custom property (--jj-p: 0 below the fold -> 1 past
@@ -428,10 +392,8 @@
       reveals = initReveals();
       measures.push(initParallax(onFrame));
       measures.push(initScrub(onFrame));
-      measures.push(initProgress(onFrame));
       initNavTracking();
       initSmoothAnchors();
-      initOverlayGuard();
     } catch (error) {
       root.classList.remove('jj-motion');       // fail safe: show the content
       if (window.console && console.warn) console.warn('scroll-motion: disabled —', error);
