@@ -26,10 +26,10 @@
     {% endif %}
   </div>
 
-  <div class="row g-4">
+  <div class="row g-4" data-stagger="zoom-in" data-stagger-step="80">
     {% if teachers %}
       {% for teacher in teachers %}
-      <div class="col-lg-3 col-md-4 col-sm-6" data-aos="zoom-in" data-aos-delay="{% cycle '0' '100' '200' '300' %}">
+      <div class="col-lg-3 col-md-4 col-sm-6">
         <div class="card custom-card teacher-card h-100 d-flex flex-column justify-content-between">
           <div>
             <img src="{% if teacher.photo %}{{ teacher.photo.url }}{% else %}/media/teachers/govinda shrestha.jpg{% endif %}" alt="{{ teacher.title }}" class="teacher-photo">

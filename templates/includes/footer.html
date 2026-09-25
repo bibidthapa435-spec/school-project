@@ -1,10 +1,10 @@
-<footer style="background: linear-gradient(135deg, #0D2340 0%, #14315B 100%); position: relative; overflow: hidden;">
+<footer style="background: linear-gradient(135deg, var(--color-primary) 0%, #2E4F45 100%); position: relative; overflow: hidden;">
   <div class="container" style="position: relative; z-index: 1;">
     <div class="row g-4">
       <!-- Col 1: School Overview -->
       <div class="col-lg-4 col-md-6">
         <h5>Shree Jaljala Secondary School</h5>
-        <p class="small text-muted mb-3" style="color: #cbd5e1 !important;">
+        <p class="small text-muted mb-3">
           Affiliated with the Government of Nepal (Ministry of Education). Providing quality public secondary education from Class Nursery up to Class 10 (SEE level) in Panchkhapan Municipality-7, Bihibare, Sankhuwasabha.
         </p>
         <div class="d-flex gap-3 social-icons fs-5">
@@ -41,7 +41,7 @@
       <!-- Col 4: Contact Info -->
       <div class="col-lg-3 col-md-6">
         <h5>Contact Us</h5>
-        <ul class="list-unstyled d-flex flex-column gap-2 small text-muted" style="color: #cbd5e1 !important;">
+        <ul class="list-unstyled d-flex flex-column gap-2 small text-muted">
           <li><i class="fa-solid fa-location-dot me-2 text-warning"></i> {{ settings.address|default:"Panchkhapan Municipality-7, Bihibare, Sankhuwasabha, Nepal" }}</li>
           <li><i class="fa-solid fa-phone me-2 text-warning"></i> {{ settings.phone|default:"+977-9842000000 / +977-9800000000" }}</li>
           <li><i class="fa-solid fa-envelope me-2 text-warning"></i> {{ settings.email|default:"info@shreejaljala.edu.np" }}</li>
@@ -52,7 +52,7 @@
 
     <div class="footer-bottom d-flex flex-wrap justify-content-between align-items-center text-center text-md-start">
       <p class="mb-0">&copy; {% now "Y" %} Shree Jaljala Secondary School. All Rights Reserved.</p>
-      <p class="mb-0 text-muted small" style="color: #cbd5e1 !important;">
+      <p class="mb-0 text-muted small">
         Design & Developed by <a href="https://bibid-thapa.com.np" target="_blank" rel="noopener noreferrer" class="text-warning fw-bold text-decoration-none hover-underline">Bibid Thapa</a>
       </p>
     </div>

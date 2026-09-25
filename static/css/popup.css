@@ -52,7 +52,7 @@
   overflow-x: hidden;
   padding: 24px;
   scrollbar-width: thin;
-  scrollbar-color: #cbd5e1 #f1f5f9;
+  scrollbar-color: var(--color-muted, #5B6B66) var(--color-band, #F1ECE1);
 }
 
 .school-notice-content::-webkit-scrollbar {
@@ -60,17 +60,17 @@
 }
 
 .school-notice-content::-webkit-scrollbar-track {
-  background: #f1f5f9;
+  background: var(--color-band, #F1ECE1);
   border-radius: 4px;
 }
 
 .school-notice-content::-webkit-scrollbar-thumb {
-  background: #cbd5e1;
+  background: var(--color-muted, #5B6B66);
   border-radius: 4px;
 }
 
 .school-notice-content::-webkit-scrollbar-thumb:hover {
-  background: #94a3b8;
+  background: var(--color-primary, #1F3A34);
 }
 
 /* Close button */

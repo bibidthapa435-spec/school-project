@@ -16,23 +16,44 @@
   <!-- Font Awesome Icons -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
 
-  <!-- Google Fonts (Inter) -->
+  <!-- Google Fonts (brief: Lora headings, Karla body, Devanagari pairing) -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Merriweather:wght@700;900&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Lora:wght@500;600;700&family=Karla:wght@400;500;600;700&family=Noto+Serif+Devanagari:wght@500;600;700&family=Noto+Sans+Devanagari:wght@400;500;600&display=swap" rel="stylesheet">
 
   <!-- Custom CSS -->
   <link rel="stylesheet" href="/static/css/style.css">
   <link rel="stylesheet" href="/static/css/home.css">
   <link rel="stylesheet" href="/static/css/popup.css">
   <link rel="stylesheet" href="/static/css/modern-enhancements.css">
-  <!-- Responsive overrides (mobile/tablet only � desktop unchanged) -->
+  <!-- Responsive overrides (mobile/tablet only — desktop unchanged) -->
   <link rel="stylesheet" href="/static/css/responsive.css">
-
-  <!-- AOS Animation on Scroll CSS -->
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.css">
+  <!-- Redesign brief layer (LAST: pine/rhododendron/marigold system) -->
+  <link rel="stylesheet" href="/static/css/jaljala-redesign.css">
+  <link rel="stylesheet" href="/static/css/jaljala-redesign-2.css">
+  <!-- Scroll-animation layer: native IntersectionObserver engine, no library -->
+  <link rel="stylesheet" href="/static/css/scroll-motion.css">
+  <!-- Safety net: never leave a reveal target hidden if the engine never runs -->
+  <noscript><style>
+    [data-aos],[data-img-reveal],[data-stagger]>*{opacity:1!important;
+      translate:none!important;scale:none!important;rotate:none!important;clip-path:none!important}
+  </style></noscript>
+  <script>
+    // Flag the "hidden until revealed" state before the first paint, so scroll
+    // reveals never flash their end state. The watchdog drops the flag again if
+    // the engine never reports in, so content can never be stranded invisible.
+    (function () {
+      if (!('IntersectionObserver' in window)) return;
+      if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+      document.documentElement.classList.add('jj-motion');
+      setTimeout(function () {
+        if (!window.__jjMotionReady) document.documentElement.classList.remove('jj-motion');
+      }, 2500);
+    })();
+  </script>
 </head>
 <body>
+  <a class="skip-link" href="#main-content">Skip to main content</a>
 
   <!-- Preloader -->
   {% if showPreloader %}
@@ -46,7 +67,7 @@
   {% include 'includes/messages.html' %}
 
   <!-- Main Content Block -->
-  <main>
+  <main id="main-content">
     {% block content %}{% endblock %}
   </main>
 
@@ -62,12 +83,11 @@
   <!-- Bootstrap 5 JS Bundle -->
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 
-  <!-- AOS Animation on Scroll JS -->
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.js"></script>
-
   <!-- Custom JS -->
   <script src="/static/js/main.js"></script>
   <script src="/static/js/popup.js"></script>
+  <!-- Scroll-animation engine: reveals, stagger, progress bar, nav highlight, parallax -->
+  <script src="/static/js/scroll-motion.js"></script>
 </body>
 </html>
 

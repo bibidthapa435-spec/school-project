@@ -1,0 +1,146 @@
+/* Jaljala redesign 2/2: sections, trust band, plain blurbs, timeline, cards, footer, motion */
+/* ===========================================================================
+   DARK-SURFACE GUARD (colour-mismatch fix)
+   Layer 1/2 forces heading colour globally (h1–h4 -> pine) and that rule beats
+   .text-white, because utility classes live on a *parent* wrapper and never
+   compete with a declaration on the element itself. Any block that sits on a
+   pine background therefore has to re-declare its own text colours here:
+   page banners (.bg-primary.text-white), .page-hero, the auth modal header,
+   the trust band and the footer.
+   ========================================================================== */
+.bg-primary.text-white{background:var(--color-primary)!important;
+  border-bottom:3px solid var(--color-highlight);color:#EFE7D6}
+.bg-primary.text-white h1,.bg-primary.text-white h2,.bg-primary.text-white h3,
+.bg-primary.text-white h4,.bg-primary.text-white h5,.bg-primary.text-white h6{color:#fff!important}
+.bg-primary.text-white p,.bg-primary.text-white li,.bg-primary.text-white small,
+.bg-primary.text-white .text-muted,.bg-primary.text-white .text-secondary,
+.bg-primary.text-white .text-body{color:#EFE7D6!important}
+.bg-primary.text-white .text-white{color:#fff!important}
+/* Marigold is the only accent that reads on pine for icons/breadcrumb trails */
+.bg-primary.text-white .text-warning,.bg-primary.text-white .text-primary,
+.bg-primary.text-white .text-success,.bg-primary.text-white .text-info{color:var(--color-highlight)!important}
+.bg-primary.text-white .text-danger{color:#F3B7C4!important}
+.bg-primary.text-white .breadcrumb-item,.bg-primary.text-white .breadcrumb-item a,
+.bg-primary.text-white .breadcrumb-item.active,
+.bg-primary.text-white .breadcrumb-item+.breadcrumb-item::before{color:#EFE7D6!important}
+/* A pine badge inside a pine band would vanish -> promote it to marigold */
+.bg-primary.text-white .badge.bg-primary{background:var(--color-highlight)!important;color:var(--color-ink)!important}
+.page-hero{background:var(--color-primary)!important;border-bottom:3px solid var(--color-highlight)}
+.page-hero h1,.page-hero h2,.page-hero h3,.page-hero h4{color:#fff!important}
+.page-hero .lead{color:#EFE7D6!important}
+.page-hero p{color:#EFE7D6!important}
+.page-hero .breadcrumb-item,.page-hero .breadcrumb-item a,
+.page-hero .breadcrumb-item.active{color:#EFE7D6!important}
+.page-hero .text-warning{color:var(--color-highlight)!important}
+.page-hero .eyebrow{background:var(--color-highlight);color:var(--color-ink);
+  display:inline-block;padding:.25rem .8rem;border-radius:999px;font-size:.8rem;font-weight:700;margin-bottom:.6rem}
+/* .page-header (achievement pages) is the same dark surface as .page-hero.
+   Note: page-local <style> blocks sit inside <body>, so they out-rank equal
+   specificity from the <head> — the guard below must stay !important. */
+.page-header{background:var(--color-primary)!important;border-bottom:3px solid var(--color-highlight);color:#EFE7D6}
+.page-header h1,.page-header h2,.page-header h3,.page-header h4,.page-header .page-title{color:#fff!important}
+.page-header p,.page-header .lead,.page-header .page-subtitle{color:#EFE7D6!important}
+.page-header .text-warning,.page-header .text-primary{color:var(--color-highlight)!important}
+.page-header .breadcrumb-item,.page-header .breadcrumb-item a,.page-header .breadcrumb-item.active,
+.page-header .breadcrumb-item+.breadcrumb-item::before{color:#EFE7D6!important}
+.section-title h2{margin-bottom:.4rem}
+.section-title p{color:var(--color-muted)}
+.section-title .divider{width:64px!important;height:3px!important;background:var(--color-highlight)!important;margin:1rem 0 0!important}
+/* Trust strip: plain pine band with dividers */
+.jj-trust{background:var(--color-primary);color:#fff;border-block:3px solid var(--color-highlight)}
+.jj-trust p,.jj-trust .text-muted,.jj-trust .text-secondary{color:#EFE7D6!important}
+.jj-trust h1,.jj-trust h2,.jj-trust h3,.jj-trust h4,.jj-trust h5,.jj-trust h6{color:#fff!important}
+.jj-trust .text-warning,.jj-trust .text-primary{color:var(--color-highlight)!important}
+.jj-trust .text-white{color:#fff!important}
+/* Auth modal header (pine) — same guard, scoped so the transparent lightbox
+   header keeps its current treatment. */
+#authModal .modal-header{background:var(--color-primary)!important}
+#authModal .modal-header .modal-title{color:#fff!important}
+#authModal .modal-header .text-warning,#authModal .modal-header .text-primary{color:var(--color-highlight)!important}
+#authModal .modal-body .text-muted,#authModal .modal-body .text-secondary{color:var(--color-muted)!important}
+/* --- Legacy inline colours ------------------------------------------------
+   A stylesheet !important out-ranks a *non-important* inline declaration, so
+   the 35 legacy `style="color: #0b2545"` (pre-redesign navy) overrides on
+   headings are re-pointed at pine here instead of editing 14 templates.
+   Verified: no public template uses #0b2545 as a background. */
+main [style*="#0b2545"],.modal [style*="#0b2545"]{color:var(--color-primary)!important}
+/* Preloader sits on white — its inline gold (#c59b27) was 3:1 on white */
+#school-preloader [style*="#c59b27"]{color:var(--color-accent)!important}
+#school-preloader [style*="#0b2545"]{color:var(--color-primary)!important}
+.jj-trust-grid{display:grid;grid-template-columns:repeat(4,1fr)}
+.jj-trust-cell{padding:2rem 1rem;text-align:center}
+.jj-trust-cell+.jj-trust-cell{border-left:1px solid rgba(255,255,255,.22)}
+.jj-trust-num{font-family:'Lora',Georgia,serif;font-size:2.2rem;color:#fff;line-height:1.1}
+/* Neutralize legacy .stat-number (2.8–3rem + gold gradient text) inside the band */
+.jj-trust-num .stat-number{font-family:inherit;font-size:inherit;font-weight:inherit;color:#fff;
+  line-height:inherit;margin-bottom:0;background:none!important;
+  -webkit-background-clip:border-box!important;background-clip:border-box!important;
+  -webkit-text-fill-color:#fff!important;font-variant-numeric:tabular-nums}
+.jj-trust-label{color:#EFE7D6;font-size:.95rem}
+/* Feature blurbs: plain icon + heading + line, no cards/shadows/numbers */
+.jj-blurb{display:flex;gap:.9rem;align-items:flex-start;padding:.4rem 0}
+.jj-blurb i{color:var(--color-highlight);background:var(--color-primary);width:44px;height:44px;
+  flex:0 0 44px;display:inline-flex;align-items:center;justify-content:center;border-radius:50%;font-size:1.05rem}
+.jj-blurb h3{margin:0 0 .15rem;font-size:1.2rem}
+.jj-blurb p{margin:0;color:var(--color-muted)}
+.feature-card{background:transparent!important;border:0!important;box-shadow:none!important;padding:.4rem 0!important}
+.feature-card i{background:var(--color-primary);color:var(--color-highlight);width:44px;height:44px;
+  display:inline-flex;align-items:center;justify-content:center;border-radius:50%}
+/* Notice timeline: date left, title right, hairline */
+.jj-timeline{list-style:none;margin:0;padding:0;border-left:2px solid #D9CFB8}
+.jj-timeline li{position:relative;padding:0 0 1.4rem 1.6rem}
+.jj-timeline li::before{content:'';position:absolute;left:-7px;top:.35rem;width:12px;height:12px;
+  border-radius:50%;background:var(--color-highlight);border:2px solid var(--color-primary)}
+.jj-timeline time{display:block;color:var(--color-muted);font-size:.88rem;margin-bottom:.15rem}
+.jj-timeline a{color:var(--color-ink);font-weight:700;text-decoration:none;font-size:1.05rem}
+.jj-timeline a:hover{color:var(--color-accent-deep);text-decoration:underline}
+.notice-card{background:var(--color-surface);border:1px solid #E4DCCB;border-radius:8px;box-shadow:none}
+/* Calm cards, consistent photos, one hover */
+.custom-card,.card{background:var(--color-surface)!important;border:1px solid #E4DCCB!important;
+  border-radius:8px!important;box-shadow:none!important}
+.custom-card:hover,.card:hover{border-color:var(--color-highlight)!important}
+.card-img-top,.teacher-photo,.gallery-item img{aspect-ratio:4/3;object-fit:cover}
+.teacher-photo{border:3px solid var(--color-highlight)}
+.gallery-item,.img-hover-zoom{border-radius:8px;overflow:hidden}
+.gallery-item img{transition:transform .3s ease}
+.gallery-item:hover img{transform:scale(1.04)}
+/* Notice strip under hero: quiet bar — ink links on surface (never white-on-white) */
+.notice-marquee-bar{background:var(--color-surface)!important;border-bottom:1px solid #E4DCCB;padding:.55rem 0}
+.notice-marquee-bar marquee a{color:var(--color-ink)!important}
+.notice-marquee-bar marquee a:hover{color:var(--color-accent-deep)!important}
+.notice-badge{background:var(--color-primary)!important;color:#fff!important;border-radius:6px}
+.marquee-track a{color:var(--color-ink)!important}
+/* Footer pine — force readable cream text over old muted/secondary utilities */
+footer{background:var(--color-primary)!important;border-top:3px solid var(--color-highlight)}
+footer h5,footer h6{color:#fff!important;border-bottom:2px solid var(--color-highlight)}
+footer p,footer li,footer small,footer a{color:#EFE7D6!important}
+footer .text-muted,footer .text-secondary,footer .text-body{color:#EFE7D6!important}
+/* style.css ships `.small.text-muted{color:#374151!important}` (0,2,0) — higher than
+   the rule above, and #374151 on pine is 1.19:1. Restate at (0,2,1). */
+footer .small.text-muted,footer .small.text-secondary,footer .text-muted.small,
+footer p.small.text-muted,footer ul.small.text-muted,footer .small.text-body{color:#EFE7D6!important}
+/* Footer arrow icons/links: dark rhododendron on pine is 1.45:1 -> marigold (6.5:1) */
+footer .text-warning,footer .text-primary,footer .text-success,footer .text-info{color:var(--color-highlight)!important}
+footer .text-danger{color:#F3B7C4!important}
+footer .text-white{color:#fff!important}
+footer .social-icons a{background:rgba(255,255,255,.12)}
+footer .social-icon-link:hover,footer .social-icon-link:focus{background:var(--color-highlight)!important;
+  color:var(--color-primary)!important}
+/* Hero: single settle-in moment (~400ms load entrance, NOT data-aos) */
+@keyframes jjSettle{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:none}}
+.jj-hero-inner{animation:jjSettle .4s ease-out both}
+#back-to-top{background:var(--color-accent)!important;color:#fff!important}
+.form-control{background:#fff!important;border:1px solid #CFC4AC!important}
+.form-control:focus{border-color:var(--color-accent)!important;box-shadow:0 0 0 .2rem rgba(166,49,75,.2)!important}
+.alert{border-radius:8px}
+@media (max-width:991px){.jj-trust-grid{grid-template-columns:repeat(2,1fr)}
+  .jj-trust-cell:nth-child(3){border-left:0}
+  .jj-trust-cell:nth-child(n+3){border-top:1px solid rgba(255,255,255,.22)}}
+@media (max-width:575px){body{font-size:16px}
+  .jj-hero{min-height:480px}
+  .jj-hero-inner{padding:3rem 0}.jj-trust-num{font-size:1.7rem}
+  .navbar-custom .nav-link,.navbar-custom .dropdown-item{min-height:44px;display:flex;align-items:center}}
+@media (prefers-reduced-motion:reduce){
+  *,*::before,*::after{animation-duration:.01ms!important;transition-duration:.01ms!important}
+  [data-aos]{transform:none!important;transition:none!important;animation:none!important;opacity:1!important}
+  html{scroll-behavior:auto}.jj-hero-inner{animation:none}.marquee-track{animation:none}}

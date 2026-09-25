@@ -1,0 +1,123 @@
+/* ===========================================================================
+   Scroll-motion layer — subtle, premium, once-only scroll animations.
+   Loaded LAST so it owns the reveal vocabulary on top of
+   style.css → home.css → modern-enhancements.css → jaljala-redesign(1|2).css.
+
+   How it works
+   ------------
+   * scroll-motion.js adds `jj-motion` to <html> BEFORE first paint, so the
+     "hidden until revealed" states below exist only while the engine runs.
+     No JS (or reduced motion, or a script error — see the watchdog in
+     base.html) means nothing is ever hidden.
+   * Only the independent `translate` / `scale` / `rotate` properties are
+     animated, never `transform`, so the existing hover lift + image zoom
+     transitions in style.css / home.css / modern-enhancements.css keep
+     working exactly as before.
+   * Keyframes end on the neutral value and `animation-fill-mode: backwards`
+     is used, so an element returns to the normal cascade when the reveal
+     finishes (hover states included).
+   * Nothing animates width/height/margin, and horizontal shifts shrink on
+     small screens, so this layer cannot introduce horizontal scrolling.
+   ========================================================================== */
+
+:root{
+  --jj-dur:520ms;                                  /* reveal duration          */
+  --jj-d:0ms;                                      /* per-element delay        */
+  --jj-ease:cubic-bezier(.22,.61,.36,1);
+  --jj-shift-y:24px;                               /* vertical start offset    */
+  --jj-shift-x:22px;                               /* horizontal start offset  */
+}
+@media (max-width:575px){:root{--jj-shift-y:16px;--jj-shift-x:12px}}
+
+/* ---------- 1. Hidden (start) state, engine-only ------------------------- */
+html.jj-motion [data-aos]:not(.jj-in),
+html.jj-motion [data-img-reveal]:not(.jj-in){opacity:0}
+html.jj-motion [data-aos="fade-up"]:not(.jj-in){translate:0 var(--jj-shift-y)}
+html.jj-motion [data-aos="fade-down"]:not(.jj-in){translate:0 calc(-1 * var(--jj-shift-y))}
+html.jj-motion [data-aos="fade-left"]:not(.jj-in){translate:var(--jj-shift-x) 0}
+html.jj-motion [data-aos="fade-right"]:not(.jj-in){translate:calc(-1 * var(--jj-shift-x)) 0}
+html.jj-motion [data-aos="zoom-in"]:not(.jj-in){scale:.92}
+html.jj-motion [data-aos="zoom-out"]:not(.jj-in){scale:1.04}
+html.jj-motion [data-aos="scale-in"]:not(.jj-in){scale:.965}
+html.jj-motion [data-aos="flip-left"]:not(.jj-in){rotate:y -45deg}
+html.jj-motion [data-aos="flip-right"]:not(.jj-in){rotate:y 45deg}
+html.jj-motion [data-img-reveal]:not(.jj-in){scale:.985;clip-path:inset(0 0 8% 0)}
+
+/* Staggered groups: one attribute on the grid, children cascade.
+   Default variant is fade-up; zoom-in / scale-in are overridden just below. */
+html.jj-motion [data-stagger] > *:not(.jj-in){opacity:0;translate:0 var(--jj-shift-y)}
+html.jj-motion [data-stagger="zoom-in"] > *:not(.jj-in){translate:none;scale:.94}
+html.jj-motion [data-stagger="scale-in"] > *:not(.jj-in){translate:none;scale:.97}
+
+/* ---------- 2. Reveal keyframes ----------------------------------------- */
+@keyframes jjFadeIn{from{opacity:0}to{opacity:1}}
+@keyframes jjFadeUp{from{opacity:0;translate:0 var(--jj-shift-y)}to{opacity:1;translate:none}}
+@keyframes jjFadeDown{from{opacity:0;translate:0 calc(-1 * var(--jj-shift-y))}to{opacity:1;translate:none}}
+@keyframes jjFadeLeft{from{opacity:0;translate:var(--jj-shift-x) 0}to{opacity:1;translate:none}}
+@keyframes jjFadeRight{from{opacity:0;translate:calc(-1 * var(--jj-shift-x)) 0}to{opacity:1;translate:none}}
+@keyframes jjZoomIn{from{opacity:0;scale:.92}to{opacity:1;scale:none}}
+@keyframes jjZoomOut{from{opacity:0;scale:1.04}to{opacity:1;scale:none}}
+@keyframes jjScaleIn{from{opacity:0;scale:.965}to{opacity:1;scale:none}}
+@keyframes jjFlipLeft{from{opacity:0;rotate:y -45deg}to{opacity:1;rotate:none}}
+@keyframes jjFlipRight{from{opacity:0;rotate:y 45deg}to{opacity:1;rotate:none}}
+@keyframes jjImgReveal{
+  from{opacity:0;scale:.985;clip-path:inset(0 0 8% 0)}
+  to{opacity:1;scale:none;clip-path:inset(0)}
+}
+
+/* ---------- 3. Reveal rules (duration/delay from CSS vars) --------------- */
+[data-aos].jj-in{animation:jjFadeIn var(--jj-dur) var(--jj-ease) var(--jj-d) backwards}
+[data-aos="fade-up"].jj-in{animation-name:jjFadeUp}
+[data-aos="fade-down"].jj-in{animation-name:jjFadeDown}
+[data-aos="fade-left"].jj-in{animation-name:jjFadeLeft}
+[data-aos="fade-right"].jj-in{animation-name:jjFadeRight}
+[data-aos="zoom-in"].jj-in{animation-name:jjZoomIn}
+[data-aos="zoom-out"].jj-in{animation-name:jjZoomOut}
+[data-aos="scale-in"].jj-in{animation-name:jjScaleIn}
+[data-aos="flip-left"].jj-in{animation-name:jjFlipLeft}
+[data-aos="flip-right"].jj-in{animation-name:jjFlipRight}
+[data-stagger] > .jj-in{animation:jjFadeUp var(--jj-dur) var(--jj-ease) var(--jj-d) backwards}
+[data-stagger="zoom-in"] > .jj-in{animation-name:jjZoomIn}
+[data-stagger="scale-in"] > .jj-in{animation-name:jjScaleIn}
+[data-img-reveal].jj-in{animation:jjImgReveal 700ms var(--jj-ease) var(--jj-d) backwards}
+
+/* ---------- 4. Scroll-progress indicator --------------------------------
+   Purely decorative, 3px, no pointer events, animated with scaleX so the
+   page never reflows. Sits above the (very high z-index) sticky navbar and
+   fades out while a modal / the mobile menu covers the top of the page. */
+.jj-progress{position:fixed;inset:0 0 auto 0;height:3px;z-index:100001;
+  pointer-events:none;transform-origin:0 50%;
+  transform:scaleX(var(--jj-progress,0));
+  background:linear-gradient(90deg,var(--color-highlight) 0%,var(--color-accent) 100%);
+  transition:opacity .25s linear}
+body.jj-overlay-open .jj-progress{opacity:0}
+
+/* ---------- 5. Navbar active-section highlighting -----------------------
+   Route-level `.active` comes from Django. While the home page is being
+   scrolled we track the section in view and move the highlight with it, so
+   the server-side item steps aside instead of double-highlighting. */
+.navbar-custom .nav-link.jj-inview{background:var(--color-accent);color:#fff!important}
+#mainNav.jj-nav-tracking .nav-link.active:not(.jj-inview){background:transparent;color:#fff!important}
+
+/* ---------- 6. In-page anchors ------------------------------------------ */
+/* Sticky navbar would otherwise cover the anchor target. */
+body.sticky-nav-active main section[id]{scroll-margin-top:calc(var(--navbar-height,64px) + 16px)}
+
+/* ---------- 7. Hero parallax -------------------------------------------
+   The media layer gets a little vertical slack (112% tall, pulled up 6%) so
+   it can drift without ever exposing an edge; the shade + text stay put, so
+   contrast is unchanged. `will-change` is toggled by JS only while in view. */
+[data-parallax] > img,
+[data-parallax] > video{position:relative;height:112%;top:-6%;max-width:none}
+
+/* ---------- 8. Reduced motion / no-JS safety net ------------------------ */
+@media (prefers-reduced-motion:reduce){
+  html.jj-motion [data-aos]:not(.jj-in),
+  html.jj-motion [data-img-reveal]:not(.jj-in),
+  html.jj-motion [data-stagger] > *:not(.jj-in){opacity:1;translate:none;scale:none;
+    rotate:none;clip-path:none}
+  [data-aos].jj-in,[data-img-reveal].jj-in,[data-stagger] > .jj-in{animation:none!important}
+  .jj-progress{transition:none}
+  [data-parallax] > img,[data-parallax] > video{position:static;height:100%;top:auto}
+}
+@media print{.jj-progress{display:none}}

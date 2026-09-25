@@ -4,182 +4,30 @@
 {% block title %}Shree Jaljala Secondary School | Panchkhapan, Sankhuwasabha{% endblock %}
 
 {% block content %}
-<!-- Hero Slider Section -->
-{% if sliders %}
-<div id="heroCarousel" class="carousel slide hero-carousel carousel-fade" data-bs-ride="carousel" data-bs-interval="5000">
-  <div class="carousel-indicators">
-    {% for slider in sliders %}
-      <button type="button" data-bs-target="#heroCarousel" data-bs-slide-to="{{ forloop.counter0 }}" class="{% if forloop.first %}active{% endif %}" aria-current="{% if forloop.first %}true{% else %}false{% endif %}"></button>
-    {% endfor %}
+<!-- ONE hero (brief 3): single campus photo or video background. -->
+{% if hero %}
+<section class="jj-hero" aria-label="Shree Jaljala Secondary School introduction">
+  <div class="jj-hero-media" aria-hidden="true" data-parallax="1">
+    {% if hero.is_video and hero.video %}
+      <video autoplay muted loop playsinline preload="metadata"{% if hero.image %} poster="{{ hero.image.url }}"{% endif %}>
+        <source src="{{ hero.video.url }}">
+      </video>
+    {% else %}
+      <img src="{{ hero.display_image_url }}" alt="" onerror="this.onerror=null; this.src='/media/sliders/fifthphoto.jpg';">
+    {% endif %}
   </div>
-
-  <div class="carousel-inner">
-    {% for slider in sliders %}
-      <div class="carousel-item {% if forloop.first %}active{% endif %}">
-        {% if slider.is_video %}
-          {% if slider.video %}
-            <video class="d-block w-100 hero-media" autoplay muted loop playsinline preload="metadata"
-                   {% if slider.image %}poster="{{ slider.image.url }}"{% endif %}>
-              <source src="{{ slider.video.url }}">
-              Your browser does not support the video tag.
-            </video>
-          {% elif slider.video_embed_url %}
-            <div class="hero-media hero-video-embed">
-              <iframe src="{{ slider.video_embed_url }}" title="{{ slider.title }}"
-                      allow="autoplay; encrypted-media; picture-in-picture; fullscreen"
-                      allowfullscreen frameborder="0"></iframe>
-            </div>
-          {% else %}
-            <img src="{{ slider.display_image_url }}" alt="{{ slider.title }}" class="d-block w-100 hero-media" onerror="this.onerror=null; this.src='/media/sliders/fifthphoto.jpg';">
-          {% endif %}
-        {% else %}
-          <img src="{{ slider.display_image_url }}" alt="{{ slider.title }}" class="d-block w-100 hero-media" onerror="this.onerror=null; this.src='/media/sliders/fifthphoto.jpg';">
-        {% endif %}
-        <div class="hero-overlay" style="background-color: {{ slider.overlay_color|default:'#0b1b2b' }}; opacity: {{ slider.overlay_opacity|default:0.5 }};"></div>
-        <div class="container hero-caption-wrapper">
-          <div class="hero-caption">
-            <span class="badge bg-warning text-dark px-3 py-2 fs-6 mb-3 font-weight-bold">
-              {{ slider.subtitle|default:"Affiliated by Government of Nepal" }}
-            </span>
-            <h1>{{ slider.title }}</h1>
-            <p>{{ slider.description }}</p>
-            {% if slider.button_text %}
-              <a href="{{ slider.button_url }}" class="btn btn-gold btn-lg shadow-sm">
-                {{ slider.button_text }} <i class="fa-solid fa-arrow-right me-1"></i>
-              </a>
-            {% endif %}
-          </div>
-        </div>
-      </div>
-    {% endfor %}
+  <div class="jj-hero-shade" aria-hidden="true"></div>
+  <div class="container">
+    <div class="jj-hero-inner">
+      <span class="jj-hero-badge">Estd. 2045 B.S. (1988) · Panchkhapan-7, Sankhuwasabha</span>
+      <p class="jj-hero-nep" lang="ne">श्री जलजला माध्यमिक विद्यालय</p>
+      <h1>Shree Jaljala Secondary School</h1>
+      <p>Nursery to Class 10 in Panchkhapan-7, Sankhuwasabha. Steady teaching, practical science and computer learning, and strong community roots for 38 years.</p>
+      <a href="/admission" class="btn jj-btn-primary btn-lg">Apply for Admission</a>
+    </div>
   </div>
-
-  <button class="carousel-control-prev" type="button" data-bs-target="#heroCarousel" data-bs-slide="prev">
-    <span class="carousel-control-prev-icon" aria-hidden="true"></span>
-    <span class="visually-hidden">Previous</span>
-  </button>
-  <button class="carousel-control-next" type="button" data-bs-target="#heroCarousel" data-bs-slide="next">
-    <span class="carousel-control-next-icon" aria-hidden="true"></span>
-    <span class="visually-hidden">Next</span>
-  </button>
-</div>
-
-<script>
-  // Only play the video of the active slide to save bandwidth and avoid
-  // multiple videos running in the background at the same time.
-  document.addEventListener('DOMContentLoaded', function () {
-    var heroCarousel = document.getElementById('heroCarousel');
-    if (!heroCarousel) { return; }
-
-    function setVideoState(activeItem) {
-      heroCarousel.querySelectorAll('.carousel-item video').forEach(function (video) {
-        if (video.closest('.carousel-item') === activeItem) {
-          var playPromise = video.play();
-          if (playPromise && typeof playPromise.catch === 'function') {
-            playPromise.catch(function () { /* autoplay may be blocked */ });
-          }
-        } else {
-          video.pause();
-        }
-      });
-    }
-
-    heroCarousel.addEventListener('slide.bs.carousel', function (event) {
-      setVideoState(event.relatedTarget);
-    });
-
-    var currentItem = heroCarousel.querySelector('.carousel-item.active');
-    if (currentItem) { setVideoState(currentItem); }
-
-    // ----------------------------------------------------------------
-    // Fullscreen video sizing fix.
-    // The hero layout sizes videos to 100vh inside the slide, and the
-    // fullscreen player inherits that clipped/letterboxed geometry, so
-    // part of the video was cut off. Inline styles set here only while
-    // an element IS fullscreen always beat the stylesheets, so the whole
-    // video is shown at its original aspect ratio with object-fit:
-    // contain and nothing is cropped. Everything is restored on exit,
-    // so the normal slider design is left untouched.
-    // ----------------------------------------------------------------
-    var FS_PROPS = ['position', 'top', 'left', 'right', 'bottom',
-                    'width', 'height', 'max-width', 'max-height',
-                    'min-width', 'min-height', 'margin', 'padding',
-                    'object-fit', 'object-position', 'transform',
-                    'background-color'];
-
-    function fitToScreen(el) {
-      if (el.dataset.heroFsSized === '1') { return; }
-      // remember the previous inline values so exiting fullscreen is lossless
-      el.dataset.heroFsPrev = JSON.stringify(FS_PROPS.map(function (prop) {
-        return el.style.getPropertyValue(prop);
-      }));
-      el.dataset.heroFsSized = '1';
-
-      FS_PROPS.forEach(function (prop) { el.style.removeProperty(prop); });
-
-      el.style.setProperty('position', 'fixed', 'important');
-      ['top', 'left', 'right', 'bottom'].forEach(function (prop) {
-        el.style.setProperty(prop, '0', 'important');
-      });
-      el.style.setProperty('width', '100vw', 'important');
-      el.style.setProperty('height', '100vh', 'important');
-      el.style.setProperty('max-width', '100%', 'important');
-      el.style.setProperty('max-height', '100%', 'important');
-      el.style.setProperty('min-width', '0', 'important');
-      el.style.setProperty('min-height', '0', 'important');
-      el.style.setProperty('margin', '0', 'important');
-      el.style.setProperty('padding', '0', 'important');
-      el.style.setProperty('transform', 'none', 'important');
-      // never stretch or crop - keep the original aspect ratio
-      el.style.setProperty('object-fit', 'contain', 'important');
-      el.style.setProperty('object-position', 'center center', 'important');
-      el.style.setProperty('background-color', '#000', 'important');
-
-      // 100dvh keeps the player inside the visible screen on mobile
-      if (window.CSS && CSS.supports && CSS.supports('height', '100dvh')) {
-        el.style.setProperty('height', '100dvh', 'important');
-        el.style.setProperty('max-height', '100dvh', 'important');
-      }
-    }
-
-    function resetFit(el) {
-      if (el.dataset.heroFsSized !== '1') { return; }
-      var prev = [];
-      try { prev = JSON.parse(el.dataset.heroFsPrev || '[]'); } catch (err) { prev = []; }
-      FS_PROPS.forEach(function (prop, i) {
-        el.style.removeProperty(prop);
-        if (prev[i]) { el.style.setProperty(prop, prev[i]); }
-      });
-      delete el.dataset.heroFsSized;
-      delete el.dataset.heroFsPrev;
-    }
-
-    function getFullscreenElement() {
-      return document.fullscreenElement || document.webkitFullscreenElement ||
-             document.mozFullScreenElement || document.msFullscreenElement || null;
-    }
-
-    function onFullscreenChange() {
-      var fsEl = getFullscreenElement();
-      if (!fsEl) {
-        document.querySelectorAll('[data-hero-fs-sized="1"]').forEach(resetFit);
-        return;
-      }
-      // The fullscreened element may be the video itself, the slide, or the
-      // YouTube/Vimeo iframe. Fit whichever one needs the whole screen.
-      var target = fsEl;
-      if (!(fsEl.matches && fsEl.matches('video.hero-media')) && fsEl.querySelector) {
-        target = fsEl.querySelector('video.hero-media') || fsEl;
-      }
-      fitToScreen(target);
-    }
-
-    ['fullscreenchange', 'webkitfullscreenchange', 'mozfullscreenchange', 'MSFullscreenChange']
-      .forEach(function (evt) { document.addEventListener(evt, onFullscreenChange); });
-  });
-</script>
+</section>
 {% endif %}
-
 {% if notices or MARQUEE_NOTICES %}
 <div class="notice-marquee-bar">
   <div class="container d-flex align-items-center">
@@ -188,7 +36,7 @@
     </span>
     <marquee behavior="scroll" direction="left" scrollamount="6" onmouseover="this.stop();" onmouseout="this.start();">
       {% for notice in notices|default:MARQUEE_NOTICES %}
-        <a href="/notices/{{ notice.slug }}" class="text-white me-5 text-decoration-none">
+        <a href="/notices/{{ notice.slug }}" class="me-5 text-decoration-none">
           📢 <strong>{{ notice.title }}</strong>
         </a>
       {% endfor %}
@@ -197,51 +45,12 @@
 </div>
 {% endif %}
 
-<!-- Statistics Counter Section Removed -->
-<!--
-  <div class="container">
-    <div class="row g-4">
-      <div class="col-lg-3 col-md-6" data-aos="fade-up" data-aos-delay="50">
-        <div class="stat-item">
-          <div class="stat-icon"><i class="fa-solid fa-user-graduate"></i></div>
-          <div class="stat-number" data-count="500">0</div>
-          <div class="stat-label">Students Enrolled</div>
-        </div>
-      </div>
-      <div class="col-lg-3 col-md-6" data-aos="fade-up" data-aos-delay="100">
-        <div class="stat-item">
-          <div class="stat-icon"><i class="fa-solid fa-chalkboard-user"></i></div>
-          <div class="stat-number" data-count="25">0</div>
-          <div class="stat-label">Qualified Teachers</div>
-        </div>
-      </div>
-      <div class="col-lg-3 col-md-6" data-aos="fade-up" data-aos-delay="150">
-        <div class="stat-item">
-          <div class="stat-icon"><i class="fa-solid fa-trophy"></i></div>
-          <div class="stat-number" data-count="50">0</div>
-          <div class="stat-label">Awards Won</div>
-        </div>
-      </div>
-      <div class="col-lg-3 col-md-6" data-aos="fade-up" data-aos-delay="200">
-        <div class="stat-item">
-          <div class="stat-icon"><i class="fa-solid fa-calendar-check"></i></div>
-          <div class="stat-number" data-count="38">0</div>
-          <div class="stat-label">Years of Excellence</div>
-        </div>
-      </div>
-    </div>
-  </div>
-</section> -->
-
-<!-- Welcome & Overview Section -->
-<section class="py-5" id="about-section">
+<!-- Welcome & Overview Section: plain fade-up (brief §2) -->
+<section class="py-5" id="about-section" data-aos="fade-up">
   <div class="container">
     <div class="row align-items-center g-5">
-      <div class="col-lg-6" data-aos="fade-right">
-        <span class="text-warning fw-bold text-uppercase tracking-wide" style="color: #d4af37 !important;">
-          <i class="fa-solid fa-graduation-cap me-1"></i> Welcome to Jaljala Secondary School
-        </span>
-        <h2 class="display-6 fw-bold mt-2 text-navy" style="color: #0b2545;">
+      <div class="col-lg-6">
+        <h2 class="mt-2">
           Empowering Young Minds from Nursery to Class 10 (SEE)
         </h2>
         <p class="lead text-secondary mt-3">
@@ -250,39 +59,39 @@
         <p class="text-secondary">
           Our school provides holistic basic and secondary education (Classes Nursery to 10), combining academic excellence, practical science laboratories, computer digital literacy, and traditional cultural values. We aim to prepare students to succeed in the Secondary Education Examination (SEE) and beyond.
         </p>
-        <div class="row g-3 mt-2">
+        <div class="row g-3 mt-2" data-stagger>
           <div class="col-sm-6">
-            <div class="feature-card">
-              <i class="fa-solid fa-book-open"></i>
+            <div class="feature-card jj-blurb">
+              <i class="fa-solid fa-book-open" aria-hidden="true"></i>
               <div>
-                <h6>Holistic Learning</h6>
+                <h3>Holistic Learning</h3>
                 <p>Balanced academics, discipline, and values.</p>
               </div>
             </div>
           </div>
           <div class="col-sm-6">
-            <div class="feature-card">
-              <i class="fa-solid fa-laptop"></i>
+            <div class="feature-card jj-blurb">
+              <i class="fa-solid fa-laptop" aria-hidden="true"></i>
               <div>
-                <h6>Modern Facilities</h6>
+                <h3>Modern Facilities</h3>
                 <p>Computer, science, library and sports support.</p>
               </div>
             </div>
           </div>
           <div class="col-sm-6">
-            <div class="feature-card">
-              <i class="fa-solid fa-shield-heart"></i>
+            <div class="feature-card jj-blurb">
+              <i class="fa-solid fa-shield-heart" aria-hidden="true"></i>
               <div>
-                <h6>Safe Campus</h6>
+                <h3>Safe Campus</h3>
                 <p>Comfortable environment for every child.</p>
               </div>
             </div>
           </div>
           <div class="col-sm-6">
-            <div class="feature-card">
-              <i class="fa-solid fa-people-group"></i>
+            <div class="feature-card jj-blurb">
+              <i class="fa-solid fa-people-group" aria-hidden="true"></i>
               <div>
-                <h6>Community Trust</h6>
+                <h3>Community Trust</h3>
                 <p>Strong links with parents, guardians, and local leaders.</p>
               </div>
             </div>
@@ -290,17 +99,17 @@
         </div>
         <div class="d-flex gap-3 mt-4 flex-wrap">
           <a href="/about" class="btn btn-navy">
-            Read Full History <i class="fa-solid fa-circle-chevron-right ms-1"></i>
+            Read Full History
           </a>
-          <a href="/admission" class="btn btn-gold">
-            Enroll Your Child <i class="fa-solid fa-pen-to-square ms-1"></i>
+          <a href="/admission" class="btn jj-btn-primary">
+            Enroll Your Child
           </a>
         </div>
       </div>
 
-      <div class="col-lg-6" data-aos="fade-left">
+      <div class="col-lg-6">
         <div class="position-relative">
-          <img src="/static/images/image/firstphoto.jpg" alt="Jaljala School Campus" class="img-fluid rounded-4 shadow-lg w-100" onerror="this.src='/media/slider/slide_2.jpg'">
+          <img src="/static/images/image/firstphoto.jpg" alt="Students and teachers gathered in the Shree Jaljala school courtyard in Bihibare" class="img-fluid rounded-4 shadow-lg w-100" data-img-reveal onerror="this.src='/media/slider/slide_2.jpg'">
           <div class="position-absolute bottom-0 start-0 bg-warning text-dark p-3 m-3 rounded-3 shadow font-weight-bold">
             <i class="fa-solid fa-award fa-2x me-2 align-middle"></i>
             <span class="align-middle">38+ Years of Educational Legacy (Estd. 2045 B.S.)</span>
@@ -313,24 +122,24 @@
 
 <!-- Principal Message Card Section -->
 {% if principal %}
-<section class="py-5 bg-light" data-aos="fade-up">
+<section class="py-5 bg-light">
   <div class="container">
-    <div class="custom-card p-4 p-md-5 rounded-4">
+    <div class="custom-card p-4 p-md-5 rounded-4" data-aos="scale-in">
       <div class="row align-items-center g-4">
-        <div class="col-md-4 text-center" data-aos="fade-right">
-          <img src="{% if principal.photo %}{{ principal.photo.url }}{% else %}/media/teachers/govinda shrestha.jpg{% endif %}" alt="{{ principal.title }}" class="img-fluid rounded-circle shadow" style="width: 200px; height: 200px; object-fit: cover; border: 5px solid var(--accent-gold);">
+        <div class="col-md-4 text-center">
+          <img src="{% if principal.photo %}{{ principal.photo.url }}{% else %}/media/teachers/govinda shrestha.jpg{% endif %}" alt="Portrait of {{ principal.title }}, Principal of Shree Jaljala Secondary School" class="img-fluid rounded-circle shadow" data-img-reveal style="width: 200px; height: 200px; object-fit: cover; border: 5px solid var(--accent-gold);">
           <h5 class="fw-bold mt-3 text-navy mb-1" style="color: #0b2545;">{{ principal.title }}</h5>
           <p class="text-muted small mb-0">{{ principal.position }}</p>
           <span class="badge bg-secondary mt-1">{{ principal.qualification }}</span>
         </div>
-        <div class="col-md-8" data-aos="fade-left">
+        <div class="col-md-8">
           <div class="badge bg-primary mb-2 px-3 py-2">Message from the Principal</div>
-          <h3 class="fw-bold text-navy mb-3" style="color: #0b2545;">"Building Character, Curiosity & Academic Excellence"</h3>
+          <h3 class="mb-3">"Building Character, Curiosity & Academic Excellence"</h3>
           <blockquote class="blockquote fs-6 text-secondary italic">
             "Dear Parents, Students, and Well-Wishers, Welcome to Shree Jaljala Secondary School. Education is not merely acquiring knowledge, but molding character, nurturing critical thinking, and instilling strong moral values. At Jaljala, our dedicated teachers foster a safe, inclusive, and inspiring environment for every child from Nursery to Class 10."
           </blockquote>
           <a href="/principal-message" class="btn btn-outline-dark btn-sm mt-2">
-            Read Full Principal Message <i class="fa-solid fa-arrow-right ms-1"></i>
+            Read Full Principal Message
           </a>
         </div>
       </div>
@@ -339,61 +148,49 @@
 </section>
 {% endif %}
 
-<!-- School Statistics Section -->
-<section class="py-5 stats-section" data-aos="zoom-in">
+<!-- Trust band: signature count-up moment (brief §3). NO fade/slide on top. -->
+<section class="jj-trust" aria-label="School at a glance">
   <div class="container">
-    <div class="row g-4 text-center">
-      <div class="col-md-3 col-6" data-aos="zoom-in" data-aos-delay="100">
-        <div class="stat-item">
-          <div class="stat-icon"><i class="fa-solid fa-user-graduate"></i></div>
-          <div class="stat-number" data-count="550" data-suffix="+">550+</div>
-          <div class="stat-label">Enrolled Students</div>
-        </div>
+    <div class="jj-trust-grid" data-stagger data-stagger-step="90">
+      <div class="jj-trust-cell">
+        <div class="jj-trust-num"><span class="stat-number" data-count="550" data-suffix="+">550+</span></div>
+        <div class="jj-trust-label">Students, Nursery to Class 10</div>
       </div>
-      <div class="col-md-3 col-6" data-aos="zoom-in" data-aos-delay="200">
-        <div class="stat-item">
-          <div class="stat-icon"><i class="fa-solid fa-chalkboard-user"></i></div>
-          <div class="stat-number" data-count="16" data-suffix="+">16+</div>
-          <div class="stat-label">Qualified Teachers</div>
-        </div>
+      <div class="jj-trust-cell">
+        <div class="jj-trust-num"><span class="stat-number" data-count="16" data-suffix="+">16+</span></div>
+        <div class="jj-trust-label">Dedicated Teachers</div>
       </div>
-      <div class="col-md-3 col-6" data-aos="zoom-in" data-aos-delay="300">
-        <div class="stat-item">
-          <div class="stat-icon"><i class="fa-solid fa-award"></i></div>
-          <div class="stat-number" data-count="100" data-suffix="%">100%</div>
-          <div class="stat-label">SEE Pass Rate</div>
-        </div>
+      <div class="jj-trust-cell">
+        <div class="jj-trust-num"><span class="stat-number" data-count="100" data-suffix="%">100%</span></div>
+        <div class="jj-trust-label">SEE Pass Rate</div>
       </div>
-      <div class="col-md-3 col-6" data-aos="zoom-in" data-aos-delay="400">
-        <div class="stat-item">
-          <div class="stat-icon"><i class="fa-solid fa-landmark"></i></div>
-          <div class="stat-number" data-count="38" data-suffix=" Yrs">38 Yrs</div>
-          <div class="stat-label">Estd. 2045 B.S.</div>
-        </div>
+      <div class="jj-trust-cell">
+        <div class="jj-trust-num"><span class="stat-number" data-count="38" data-suffix="">38</span></div>
+        <div class="jj-trust-label">Years in Panchkhapan, Estd. 2045 B.S.</div>
       </div>
     </div>
   </div>
 </section>
 
 <!-- School Programs (Class Nursery to Class 10) -->
-<section class="py-5">
+<section class="py-5" id="programs-section">
   <div class="container">
-    <div class="section-title" data-aos="fade-up">
+    <div class="section-title">
       <h2>Academic Programs (Class Nursery - 10)</h2>
       <p class="text-muted">Structured education tailored for early childhood, primary, basic, and secondary SEE levels.</p>
       <div class="divider"></div>
     </div>
 
-    <div class="row g-4">
+    <div class="row g-4" data-stagger>
       {% if programs %}
         {% for program in programs %}
-        <div class="col-lg-4 col-md-6" data-aos="flip-left" data-aos-delay="100">
+        <div class="col-lg-4 col-md-6">
           <div class="card custom-card h-100">
             <div class="card-img-wrapper">
-              <img src="{% if program.image %}{{ program.image.url }}{% else %}/media/programs/image 1.jpg{% endif %}" alt="{{ program.title }}" class="card-img-top">
+              <img src="{% if program.image %}{{ program.image.url }}{% else %}/media/programs/image 1.jpg{% endif %}" alt="Students in the {{ program.title }} classroom at Shree Jaljala" class="card-img-top">
             </div>
             <div class="card-body d-flex flex-column">
-              <h5 class="card-title fw-bold text-navy" style="color: #0b2545;">{{ program.title }}</h5>
+              <h3 class="card-title" style="font-size:1.2rem">{{ program.title }}</h3>
               <div class="d-flex justify-content-between text-muted small mb-2">
                 <span><i class="fa-regular fa-clock text-warning me-1"></i> {{ program.duration }}</span>
                 <span class="badge bg-success">{{ program.fee }}</span>
@@ -403,7 +200,7 @@
               </p>
               <div class="mt-3">
                 <a href="/programs/{{ program.slug }}" class="btn btn-outline-primary btn-sm w-100">
-                  Program Details <i class="fa-solid fa-arrow-right ms-1"></i>
+                  Program Details
                 </a>
               </div>
             </div>
@@ -415,63 +212,48 @@
   </div>
 </section>
 
-<!-- Latest Notices Section -->
-<section class="py-5 bg-light">
+<!-- Notices: utility section, near-instant (brief §2: fade only, 300ms) -->
+<section class="py-5 bg-light" id="notices-section" data-aos="fade" data-aos-duration="300">
   <div class="container">
-    <div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-2" data-aos="fade-up">
+    <div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-2">
       <div>
-        <h2 class="fw-bold text-navy mb-0" style="color: #0b2545;"><i class="fa-solid fa-bullhorn text-warning me-2"></i> Notice Board & Announcements</h2>
-        <p class="text-muted mb-0">Stay updated with admissions, examination routines, and school events.</p>
+        <h2 class="mb-0">Notice Board</h2>
+        <p class="text-muted mb-0">Admissions, examination routines, and school events, newest first.</p>
       </div>
       <a href="/notices" class="btn btn-navy">
-        View All Notices <i class="fa-solid fa-arrow-right ms-1"></i>
+        View All Notices
       </a>
     </div>
 
-    <div class="row g-4">
-      {% if notices %}
-        {% for notice in notices %}
-        <div class="col-md-6 col-lg-4" data-aos="fade-up" data-aos-delay="100">
-          <div class="notice-card h-100 d-flex flex-column justify-content-between">
-            <div>
-              <div class="d-flex justify-content-between align-items-center mb-2">
-                <span class="badge badge-modern badge-gold text-capitalize">{{ notice.category_display|default:notice.category }}</span>
-                <small class="text-muted"><i class="fa-regular fa-calendar me-1"></i> {{ notice.created_at|date:"M d, Y" }}</small>
-              </div>
-              <h5 class="notice-title fw-bold mb-2">{{ notice.title }}</h5>
-              <p class="notice-excerpt text-secondary small mb-3">
-                {{ notice.description|truncatewords:20 }}
-              </p>
-            </div>
-            <div>
-              <a href="/notices/{{ notice.slug }}" class="btn btn-link p-0 text-navy font-weight-bold text-decoration-none">
-                Read Notice <i class="fa-solid fa-chevron-right ms-1" style="font-size: 0.8rem;"></i>
-              </a>
-            </div>
-          </div>
-        </div>
-        {% endfor %}
-      {% endif %}
-    </div>
+    {% if notices %}
+    <ol class="jj-timeline" data-stagger data-stagger-step="55">
+      {% for notice in notices %}
+      <li>
+        <time datetime="{{ notice.created_at|date:'Y-m-d' }}">{{ notice.created_at|date:"M d, Y" }} · {{ notice.category_display|default:notice.category }}</time>
+        <a href="/notices/{{ notice.slug }}">{{ notice.title }}</a>
+      </li>
+      {% endfor %}
+    </ol>
+    {% endif %}
   </div>
 </section>
 
-<!-- Teachers / Faculty Section -->
-<section class="py-5">
+<!-- Teachers grid: subtle zoom-in, ~80ms stagger (brief §2) -->
+<section class="py-5" id="teachers-section">
   <div class="container">
-    <div class="section-title" data-aos="fade-up">
-      <h2>Our Experienced Teachers & Staff</h2>
+    <div class="section-title">
+      <h2>Teachers and Staff</h2>
       <p class="text-muted">Dedicated educators empowering students in Panchkhapan Municipality.</p>
       <div class="divider"></div>
     </div>
 
-    <div class="row g-4">
+    <div class="row g-4" data-stagger="zoom-in" data-stagger-step="80">
       {% if teachers %}
         {% for teacher in teachers %}
-        <div class="col-lg-3 col-md-4 col-sm-6" data-aos="flip-left" data-aos-delay="100">
+        <div class="col-lg-3 col-md-4 col-sm-6">
           <div class="card custom-card teacher-card h-100">
-            <img src="{% if teacher.photo %}{{ teacher.photo.url }}{% else %}/media/teachers/govinda shrestha.jpg{% endif %}" alt="{{ teacher.title }}" class="teacher-photo">
-            <h6 class="fw-bold mb-1 text-navy" style="color: #0b2545;">{{ teacher.title }}</h6>
+            <img src="{% if teacher.photo %}{{ teacher.photo.url }}{% else %}/media/teachers/govinda shrestha.jpg{% endif %}" alt="Portrait of {{ teacher.title }}, {{ teacher.position }} at Shree Jaljala" class="teacher-photo">
+            <h3 style="font-size:1.05rem" class="mb-1">{{ teacher.title }}</h3>
             <p class="text-primary small mb-1 fw-semibold">{{ teacher.position }}</p>
             <p class="text-muted small mb-2">{{ teacher.qualification }}</p>
             <a href="/teachers/{{ teacher.slug }}" class="btn btn-sm btn-outline-secondary mt-auto">
@@ -482,31 +264,31 @@
         {% endfor %}
       {% endif %}
     </div>
-    <div class="text-center mt-4" data-aos="fade-up">
+    <div class="text-center mt-4">
       <a href="/teachers" class="btn btn-navy px-4">
-        View All Faculty Members <i class="fa-solid fa-arrow-right ms-1"></i>
+        View All Faculty Members
       </a>
     </div>
   </div>
 </section>
 
-<!-- Achievements Section -->
-<section class="py-5 bg-light">
+<!-- Achievements: plain fade-up (brief §2) -->
+<section class="py-5 bg-light" id="achievements-section" data-aos="fade-up">
   <div class="container">
-    <div class="section-title" data-aos="fade-up">
-      <h2>Our Achievements</h2>
+    <div class="section-title">
+      <h2>Achievements</h2>
       <p class="text-muted">Celebrating student accomplishments and school excellence.</p>
       <div class="divider"></div>
     </div>
 
-    <div class="row g-4">
+    <div class="row g-4" data-stagger>
       {% if achievements %}
         {% for achievement in achievements %}
-        <div class="col-lg-3 col-md-6" data-aos="fade-up" data-aos-delay="{% cycle '0' '100' '200' '300' %}">
+        <div class="col-lg-3 col-md-6">
           <div class="achievement-item-home">
             {% if achievement.image %}
               <div class="achievement-img-wrap">
-                <img src="{{ achievement.image.url }}" alt="{{ achievement.title }}" class="achievement-img-home">
+                <img src="{{ achievement.image.url }}" alt="{{ achievement.title }} — Shree Jaljala achievement photo" class="achievement-img-home">
               </div>
             {% else %}
               <div class="achievement-img-wrap achievement-img-placeholder">
@@ -521,7 +303,7 @@
                   <i class="fa-solid fa-trophy"></i>
                 {% endif %}
               </div>
-              <h6>{{ achievement.title }}</h6>
+              <h3 style="font-size:1rem">{{ achievement.title }}</h3>
               <div class="achievement-meta">
                 {% if achievement.rank_or_position %}
                   <span><i class="fa-solid fa-medal"></i> {{ achievement.rank_or_position }}</span>
@@ -535,7 +317,7 @@
               {% endif %}
               <p>{{ achievement.description|truncatewords:12 }}</p>
               <a href="/achievements/{{ achievement.slug }}" class="btn btn-sm btn-outline-primary">
-                Read More <i class="fa-solid fa-arrow-right ms-1"></i>
+                Read More
               </a>
             </div>
           </div>
@@ -543,9 +325,9 @@
         {% endfor %}
       {% endif %}
     </div>
-    <div class="text-center mt-4" data-aos="fade-up">
+    <div class="text-center mt-4">
       <a href="/achievements" class="btn btn-gold px-4">
-        View All Achievements <i class="fa-solid fa-arrow-right ms-1"></i>
+        View All Achievements
       </a>
     </div>
   </div>
@@ -553,17 +335,17 @@
 
 <style>
 .achievement-item-home {
-  background: white;
-  border-radius: 12px;
+  background: var(--color-surface);
+  border: 1px solid var(--color-line);
+  border-radius: 8px;
   overflow: hidden;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
-  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  box-shadow: none;
+  transition: border-color 0.25s ease;
   height: 100%;
 }
 
 .achievement-item-home:hover {
-  transform: translateY(-5px);
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+  border-color: var(--color-highlight);
 }
 
 .achievement-img-wrap {
@@ -586,7 +368,7 @@
 }
 
 .achievement-img-placeholder {
-  background: linear-gradient(135deg, #1e3a8a 0%, #3b82f6 100%);
+  background: linear-gradient(135deg, var(--color-primary) 0%, #2E4F45 100%);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -604,26 +386,26 @@
 .achievement-icon-badge {
   width: 36px;
   height: 36px;
-  background: #f0f9ff;
+  background: var(--color-primary);
   border-radius: 50%;
   display: flex;
   align-items: center;
   justify-content: center;
   margin-bottom: 10px;
-  color: #3b82f6;
+  color: var(--color-highlight);
   font-size: 0.9rem;
 }
 
 .achievement-info h6 {
   font-size: 0.95rem;
   font-weight: 600;
-  color: #1e3a8a;
+  color: var(--color-primary);
   margin-bottom: 8px;
 }
 
 .achievement-meta {
   font-size: 0.8rem;
-  color: #6b7280;
+  color: var(--color-muted);
   margin-bottom: 8px;
 }
 
@@ -634,27 +416,27 @@
 
 .achievement-info p {
   font-size: 0.85rem;
-  color: #6b7280;
+  color: var(--color-muted);
   margin-bottom: 12px;
 }
 </style>
 
 <!-- Photo Gallery Preview Section -->
-<section class="py-5 bg-light">
+<section class="py-5 bg-light" id="gallery-section">
   <div class="container">
-    <div class="section-title" data-aos="fade-up">
+    <div class="section-title">
       <h2>School Gallery</h2>
       <p class="text-muted">Moments from academic activities, Saraswati Puja, and sports events.</p>
       <div class="divider"></div>
     </div>
 
-    <div class="row g-3">
+    <div class="row g-3" data-stagger="zoom-in" data-stagger-step="80">
       {% if gallery_items %}
         {% for item in gallery_items %}
-        <div class="col-lg-3 col-md-4 col-6" data-aos="zoom-in" data-aos-delay="100">
+        <div class="col-lg-3 col-md-4 col-6">
           <a href="#" class="gallery-lightbox-trigger gallery-item" data-img="{% if item.image %}{{ item.image.url }}{% endif %}" data-title="{{ item.title }}">
             <div class="img-hover-zoom shadow-sm">
-              <img src="{% if item.image %}{{ item.image.url }}{% else %}/media/teachers/govinda shrestha.jpg{% endif %}" alt="{{ item.title }}" class="img-fluid w-100" style="height: 180px; object-fit: cover;">
+              <img src="{% if item.image %}{{ item.image.url }}{% else %}/media/teachers/govinda shrestha.jpg{% endif %}" alt="Shree Jaljala {{ item.category_display|default:'school event' }} photo: {{ item.title }}" class="img-fluid w-100" style="height: 180px; object-fit: cover;">
             </div>
             <div class="text-center mt-2">
               <small class="fw-bold text-dark d-block text-truncate">{{ item.title }}</small>
@@ -664,16 +446,16 @@
         {% endfor %}
       {% endif %}
     </div>
-    <div class="text-center mt-4" data-aos="fade-up">
+    <div class="text-center mt-4">
       <a href="/gallery" class="btn btn-gold px-4">
-        Browse Full Photo Gallery <i class="fa-solid fa-images ms-1"></i>
+        Browse Full Photo Gallery
       </a>
     </div>
   </div>
 </section>
 
-<!-- Google Map Location Section -->
-<section class="py-5 bg-light" data-aos="zoom-in">
+<!-- Campus map: real Jaljala Secondary School Bihibare pin (brief 4) -->
+<section class="py-5 bg-light">
   <div class="container">
     <div class="section-title">
       <h2>School Location</h2>
@@ -681,7 +463,7 @@
       <div class="divider"></div>
     </div>
     <div class="rounded-4 overflow-hidden shadow">
-      <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d113500.0000000000!2d87.2000000000000!3d27.5000000000000!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x39e8000000000001%3A0x0!2sPanchkhapan%20Municipality!5e0!3m2!1sen!2snp!4v1700000000000!5m2!1sen!2snp" width="100%" height="380" style="border:0;" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
+      <iframe title="Map showing Shree Jaljala Secondary School, Bihibare, Panchkhapan-7, Sankhuwasabha" src="https://www.google.com/maps?q=Jaljala%20Secondary%20School%20Bihibare%20Panchkhapan%20Sankhuwasabha%20Nepal&z=16&output=embed" width="100%" height="380" style="border:0;" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
     </div>
   </div>
 </section>

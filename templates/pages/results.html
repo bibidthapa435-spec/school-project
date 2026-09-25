@@ -13,9 +13,9 @@
 
 <div class="container py-4">
 {% if results %}
-  <div class="row g-4">
+  <div class="row g-4" data-stagger="zoom-in" data-stagger-step="90">
     {% for result in results %}
-    <div class="col-md-6 col-lg-4" data-aos="zoom-in" data-aos-delay="{% cycle '0' '100' '200' %}">
+    <div class="col-md-6 col-lg-4">
       <div class="custom-card p-3 h-100 d-flex flex-column justify-content-between">
         <h5 class="fw-bold">{{ result.title }}</h5>
         <p class="mb-2"><strong>Examination:</strong> {{ result.examination }}</p>

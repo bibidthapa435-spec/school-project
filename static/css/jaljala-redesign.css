@@ -1,0 +1,162 @@
+/* Jaljala redesign 1/2: tokens, base type, header/nav, hero, buttons, focus */
+:root{
+  --color-primary:#1F3A34; --color-accent:#A6314B; --color-accent-deep:#8C2740;
+  --color-highlight:#E8A33D; --color-bg:#F7F4EE; --color-surface:#FFFFFF;
+  --color-ink:#24211D; --color-muted:#5B6B66;
+  --font-head:'Lora','Noto Serif Devanagari',Georgia,serif;
+  --font-body:'Karla','Noto Sans Devanagari',system-ui,sans-serif;
+  /* Warm neutrals used by the calm surfaces (hairlines, tinted bands) */
+  --color-line:#E4DCCB; --color-band:#F1ECE1; --color-highlight-deep:#8A6A12;
+  /* --- Legacy palette aliases (colour-drift fix) -------------------------
+     Older files and inline styles still call the pre-redesign names. Pointing
+     every alias at the new system means those call sites can no longer render
+     an off-palette navy/gold/coral tone next to pine/rhododendron/marigold. */
+  --primary-navy:var(--color-primary);
+  --secondary-navy:var(--color-primary);
+  --primary-blue:var(--color-primary);
+  --footer-dark:var(--color-primary);
+  --accent-gold:var(--color-highlight);
+  --accent-gold-hover:#C9871F;
+  --accent-coral:var(--color-accent);
+  --accent-coral-hover:var(--color-accent-deep);
+  --light-bg:var(--color-bg);
+  --dark-text:var(--color-ink);
+  --muted-text:var(--color-muted);
+  --gradient-navy:linear-gradient(135deg,var(--color-primary) 0%,#2E4F45 100%);
+  --gradient-gold:linear-gradient(135deg,var(--color-highlight) 0%,#F3C377 100%);
+  --gradient-coral:linear-gradient(135deg,var(--color-accent) 0%,#C05270 100%);
+  --gradient-hero:linear-gradient(135deg,rgba(20,35,31,.88) 0%,rgba(20,35,31,.62) 100%);
+}
+html{scroll-behavior:smooth}
+body{background:var(--color-bg)!important;color:var(--color-ink)!important;
+  font-family:var(--font-body)!important;font-size:17px;line-height:1.6}
+main{background:var(--color-bg)}
+main p,main li{max-width:78ch}
+h1,h2,h3,h4{font-family:var(--font-head)!important;color:var(--color-primary)!important;
+  line-height:1.25;letter-spacing:0}
+h1{font-size:clamp(1.9rem,3.4vw,2.7rem)} h2{font-size:clamp(1.5rem,2.6vw,2rem)}
+h3{font-size:1.25rem} h4{font-size:1.1rem}
+p,li{color:var(--color-ink)}
+.text-muted,.text-secondary{color:var(--color-muted)!important}
+/* style.css pairs `.small.text-muted` (0,2,0) with !important, which out-ranks
+   the single-class rule above — restate it one step higher so muted text stays
+   palette-grey instead of the legacy cool #374151. */
+.text-muted.small,.small.text-muted,.text-secondary.small,.text-muted.text-body{color:var(--color-muted)!important}
+a{color:var(--color-accent)}
+a:hover{color:var(--color-accent-deep)}
+::selection{background:var(--color-highlight);color:var(--color-ink)}
+:focus-visible{outline:3px solid var(--color-accent)!important;outline-offset:2px}
+.skip-link{position:absolute;left:-9999px;top:0;z-index:100000;background:var(--color-primary);
+  color:#fff!important;padding:.65rem 1rem;font-weight:700}
+.skip-link:focus{left:0}
+/* Header + nav: deep pine, calm */
+.top-bar{background:var(--color-primary)!important;border-bottom:2px solid var(--color-highlight);
+  font-size:.85rem}
+.top-bar span,.top-bar a{color:#fff!important}
+.brand-header{background:var(--color-surface)!important;border-bottom:1px solid #E4DCCB}
+.brand-header .school-title{font-family:var(--font-head);color:var(--color-primary)!important}
+.brand-header .school-subtitle{color:var(--color-muted)!important;font-weight:700;
+  letter-spacing:.14em;font-size:.78rem}
+.navbar-custom{background:var(--color-primary)!important;box-shadow:none!important}
+.navbar-custom .nav-link{color:#fff!important;font-size:.88rem;letter-spacing:.02em}
+.navbar-custom .nav-link:hover{background:rgba(255,255,255,.12);color:#fff!important}
+.navbar-custom .nav-link.active{background:var(--color-accent);color:#fff!important}
+.navbar-custom .nav-link::after{display:none}
+/* Legacy stylesheets still ship !important navy/white for the *sticky* navbar and
+   the collapsed mobile panel (style.css .navbar-custom{background:#14315B!important},
+   modern-enhancements.css .navbar-custom.is-sticky{rgba(20,49,91,.92)!important},
+   responsive.css dropdown items {color:rgba(255,255,255,.75)!important}).
+   Those out-rank the plain remaps above, and white-on-light dropdown text is the
+   worst failure of the set (1.05:1) — so restate them here with !important. */
+.navbar-custom.is-sticky,.navbar-custom.sticky.show{background:var(--color-primary)!important;
+  box-shadow:0 4px 16px rgba(0,0,0,.12)!important}
+.navbar-custom .navbar-collapse{background-color:var(--color-primary)!important;
+  border-top:1px solid rgba(255,255,255,.14)!important}
+.navbar-custom .dropdown-menu{background:var(--color-surface)!important;border:1px solid var(--color-line)!important}
+.navbar-custom .dropdown-item{color:var(--color-ink)!important}
+.navbar-custom .dropdown-item:hover,.navbar-custom .dropdown-item:focus{background:#F0E9DA!important;
+  color:var(--color-accent-deep)!important}
+/* Hero: ONE left-aligned treatment */
+.jj-hero{position:relative;background:var(--color-primary);overflow:hidden;min-height:560px;display:flex;align-items:center}
+.jj-hero .container{position:relative;z-index:2;width:100%}
+.jj-hero-media{position:absolute;inset:0}
+.jj-hero-media img,.jj-hero-media video{width:100%;height:100%;object-fit:cover;display:block}
+.jj-hero-shade{position:absolute;inset:0;
+  background:linear-gradient(90deg,rgba(20,35,31,.88) 0%,rgba(20,35,31,.62) 46%,rgba(20,35,31,.18) 100%)}
+/* Hero readability: readable cream text + soft shadow over photo, badge ink-on-marigold */
+.jj-hero-inner{position:relative;z-index:2;color:#fff;max-width:640px;padding:4.5rem 0;text-shadow:0 1px 10px rgba(0,0,0,.55)}
+.jj-hero-badge{display:inline-block;background:var(--color-highlight);color:var(--color-ink);
+  font-weight:700;font-size:.82rem;padding:.35rem .9rem;border-radius:999px;margin-bottom:1rem}
+.jj-hero h1{color:#fff!important;margin:.2rem 0 .8rem}
+.jj-hero .jj-hero-nep{font-family:'Noto Serif Devanagari','Lora',serif;color:#fff;font-size:1.15rem;margin-bottom:.4rem}
+.jj-hero p{color:#F3EDE0!important;font-size:1.08rem}
+/* Buttons: flat, accent only for primary CTA */
+.btn{border-radius:6px;font-weight:700}
+.jj-btn-primary,.btn-jaljala{background:var(--color-accent)!important;border:1px solid var(--color-accent)!important;color:#fff!important}
+.jj-btn-primary:hover,.btn-jaljala:hover{background:var(--color-accent-deep)!important;color:#fff!important}
+.btn-gold{background:var(--color-accent)!important;border-color:var(--color-accent)!important;color:#fff!important}
+.btn-navy{background:var(--color-primary)!important;border-color:var(--color-primary)!important;color:#fff!important}
+.btn-outline-dark,.btn-outline-primary{border-color:var(--color-primary)!important;color:var(--color-primary)!important;background:transparent!important}
+.btn-outline-dark:hover,.btn-outline-primary:hover{background:var(--color-primary)!important;color:#fff!important}
+.bg-primary{background-color:var(--color-primary)!important}
+.bg-warning{background-color:var(--color-highlight)!important;color:var(--color-ink)!important}
+.text-warning{color:var(--color-accent-deep)!important}
+.badge.bg-primary{background:var(--color-primary)!important}
+.badge.bg-secondary{background:var(--color-muted)!important}
+.badge.bg-success{background:var(--color-primary)!important}
+/* --- Bootstrap utility remaps: no off-palette blue/grey/cool tones ---------
+   Text sits on the warm cream/surface system, so every semantic utility is
+   re-pointed at the palette (keeps ≥4.5:1 on --color-surface). */
+.text-primary{color:var(--color-primary)!important}
+.text-navy{color:var(--color-primary)!important}
+.text-success,.text-info{color:#2F6B52!important}
+.text-danger{color:var(--color-accent-deep)!important}
+.text-body{color:var(--color-ink)!important}
+.bg-light{background-color:var(--color-band)!important}
+.bg-white{background-color:var(--color-surface)!important}
+.bg-secondary{background-color:var(--color-muted)!important}
+.bg-success,.bg-info{background-color:var(--color-primary)!important}
+.bg-danger{background-color:var(--color-accent)!important}
+.border{border-color:var(--color-line)!important}
+.border-light{border-color:var(--color-line)!important}
+/* .btn-outline-navy was referenced in templates but never defined -> chrome-less
+   "button". Define it as the quiet pine outline used elsewhere. */
+.btn-outline-navy{border:1px solid var(--color-primary)!important;color:var(--color-primary)!important;
+  background:transparent!important}
+.btn-outline-navy:hover{background:var(--color-primary)!important;color:#fff!important}
+.btn-outline-secondary{border-color:var(--color-muted)!important;color:var(--color-muted)!important;
+  background:transparent!important}
+.btn-outline-secondary:hover{background:var(--color-primary)!important;border-color:var(--color-primary)!important;
+  color:#fff!important}
+.btn-outline-info{border-color:var(--color-muted)!important;color:var(--color-muted)!important;
+  background:transparent!important}
+.btn-outline-info:hover{background:var(--color-primary)!important;border-color:var(--color-primary)!important;
+  color:#fff!important}
+.btn-outline-danger{border-color:var(--color-accent)!important;color:var(--color-accent)!important;
+  background:transparent!important}
+.btn-outline-danger:hover{background:var(--color-accent)!important;color:#fff!important}
+/* Solid buttons: plain .btn-primary was still Bootstrap blue (#0d6efd) */
+.btn-primary{background:var(--color-accent)!important;border-color:var(--color-accent)!important;color:#fff!important}
+.btn-primary:hover,.btn-primary:focus{background:var(--color-accent-deep)!important;border-color:var(--color-accent-deep)!important;color:#fff!important}
+.btn-secondary,.btn-success{background:var(--color-primary)!important;border-color:var(--color-primary)!important;color:#fff!important}
+.btn-secondary:hover,.btn-success:hover{background:#16302A!important;border-color:#16302A!important;color:#fff!important}
+.btn-warning{background:var(--color-highlight)!important;border-color:var(--color-highlight)!important;color:var(--color-ink)!important}
+.btn-warning:hover{background:var(--color-highlight-deep)!important;border-color:var(--color-highlight-deep)!important;color:#fff!important}
+.btn-danger{background:var(--color-accent)!important;border-color:var(--color-accent)!important;color:#fff!important}
+.btn-danger:hover{background:var(--color-accent-deep)!important;border-color:var(--color-accent-deep)!important;color:#fff!important}
+/* Blue leftovers inside components (pills, checks, links) */
+.nav-pills .nav-link{color:var(--color-primary)}
+.nav-pills .nav-link.active{background:var(--color-accent)!important;color:#fff!important}
+.form-check-input:checked{background-color:var(--color-accent);border-color:var(--color-accent)}
+.form-check-input:focus{border-color:var(--color-accent);box-shadow:0 0 0 .2rem rgba(166,49,75,.2)}
+.link-primary{color:var(--color-accent)!important}
+.badge-gold{background:var(--color-highlight)!important;color:var(--color-ink)!important}
+/* Alerts: palette tints instead of Bootstrap blue/green/red.
+   style.css pins .alert-success/-danger/-info body colours with !important too,
+   so each tint also restates the text colour inside the same palette. */
+.alert{border-radius:8px;border:1px solid var(--color-line);color:var(--color-ink)!important}
+.alert-success{background:#EAF1EC!important;border-color:#C6DCCF!important;color:#2F6B52!important}
+.alert-danger,.alert-error{background:#F8EAEE!important;border-color:#E8C3CD!important;
+  color:var(--color-accent-deep)!important}
+.alert-info{background:#EDF1EF!important;border-color:#CFDAD6!important;color:var(--color-primary)!important}
+.alert-warning{background:#FBF0DC!important;border-color:#EBD3A4!important;color:var(--color-ink)!important}

@@ -23,7 +23,7 @@
     <!-- Left Column: Portrait & Info -->
     <div class="col-lg-4" data-aos="fade-right">
       <div class="card custom-card p-4 text-center">
-        <img src="{% if teacher.photo %}{{ teacher.photo.url }}{% else %}/media/teachers/govinda shrestha.jpg{% endif %}" alt="{{ teacher.title }}" class="img-fluid rounded-circle shadow mb-3 mx-auto" style="width: 180px; height: 180px; object-fit: cover; border: 4px solid var(--accent-gold);">
+        <img src="{% if teacher.photo %}{{ teacher.photo.url }}{% else %}/media/teachers/govinda shrestha.jpg{% endif %}" alt="{{ teacher.title }}" class="img-fluid rounded-circle shadow mb-3 mx-auto" data-img-reveal style="width: 180px; height: 180px; object-fit: cover; border: 4px solid var(--accent-gold);">
         <h4 class="fw-bold text-navy mb-1" style="color: #0b2545;">{{ teacher.title }}</h4>
         <p class="text-primary fw-semibold mb-2">{{ teacher.position }}</p>
         <span class="badge bg-secondary mb-3">{{ teacher.qualification }}</span>

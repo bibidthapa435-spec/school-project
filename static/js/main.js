@@ -1,9 +1,8 @@
 // Main JavaScript for Jaljala Secondary School Portal
 document.addEventListener('DOMContentLoaded', function () {
 
-  // Initialize AOS (Animate on Scroll) — deferred to the bottom of this
-  // handler (see initScrollAnimations) so it can coordinate with the
-  // preloader splash.
+  // Initialize AOS (Animate on Scroll) — removed per redesign brief
+  // (one deliberate hero moment only; no fade-in-on-scroll).
   
   // Back to top button
 
@@ -158,35 +157,44 @@ document.addEventListener('DOMContentLoaded', function () {
     }, 6000);
   });
 
-  // Numbers counter animation
-  const counters = document.querySelectorAll('.stat-number[data-count]');
-  let counted = false;
+  // Numbers counter animation (signature moment, brief §2§3): count up once
+  // when the trust band enters the viewport. Replaces the old scroll+setInterval
+  // version so both do not fight over the same .stat-number spans.
+  const statCounters = document.querySelectorAll('.stat-number[data-count]');
+  const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
-  function runCounters() {
-    if (counters.length === 0 || counted) return;
-    const firstCounter = counters[0];
-    const rect = firstCounter.getBoundingClientRect();
-    if (rect.top <= window.innerHeight && rect.bottom >= 0) {
-      counted = true;
-      counters.forEach(counter => {
-        const target = parseInt(counter.getAttribute('data-count'), 10);
-        let count = 0;
-        const step = Math.ceil(target / 40);
-        const timer = setInterval(() => {
-          count += step;
-          if (count >= target) {
-            counter.textContent = target + (counter.getAttribute('data-suffix') || '');
-            clearInterval(timer);
-          } else {
-            counter.textContent = count + (counter.getAttribute('data-suffix') || '');
-          }
-        }, 40);
+  function animateCount(el, target, suffix, duration) {
+    if (prefersReducedMotion) {
+      el.textContent = target + suffix;
+      return;
+    }
+    const startTime = performance.now();
+    function tick(now) {
+      const progress = Math.min((now - startTime) / duration, 1);
+      const eased = 1 - Math.pow(1 - progress, 3); // easeOutCubic
+      el.textContent = Math.floor(eased * target) + suffix;
+      if (progress < 1) requestAnimationFrame(tick);
+    }
+    requestAnimationFrame(tick);
+  }
+
+  if (statCounters.length) {
+    if ('IntersectionObserver' in window) {
+      const statObserver = new IntersectionObserver((entries) => {
+        entries.forEach((entry) => {
+          if (!entry.isIntersecting) return;
+          const el = entry.target;
+          animateCount(el, parseInt(el.getAttribute('data-count'), 10), el.getAttribute('data-suffix') || '', 1400);
+          statObserver.unobserve(el);
+        });
+      }, { threshold: 0.5 });
+      statCounters.forEach((el) => statObserver.observe(el));
+    } else {
+      statCounters.forEach((el) => {
+        el.textContent = el.getAttribute('data-count') + (el.getAttribute('data-suffix') || '');
       });
     }
   }
-
-  window.addEventListener('scroll', runCounters);
-  runCounters();
 
   // Gallery scroll-triggered animation using IntersectionObserver
   function initGalleryAnimation() {
@@ -236,43 +244,4 @@ document.addEventListener('DOMContentLoaded', function () {
 
   // Initialize gallery animation on page load
   initGalleryAnimation();
-
-  // ===== AOS (Animate on Scroll) initialization =====
-  // Deferred until after the preloader splash (if shown) so the entrance
-  // animations are actually visible on reload/first visit instead of
-  // finishing behind the splash screen.
-  const prefersReducedMotionGlobal = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-
-  function initScrollAnimations() {
-    // If the AOS library failed to load (offline/CDN blocked) or the user
-    // prefers reduced motion, reveal all animated content immediately
-    // instead of leaving it permanently invisible.
-    if (prefersReducedMotionGlobal || typeof AOS === 'undefined') {
-      document.querySelectorAll('[data-aos]').forEach(el => {
-        el.classList.add('aos-animate');
-      });
-      return;
-    }
-
-    AOS.init({
-      duration: 800,
-      easing: 'ease-in-out',
-      once: true,
-      offset: 80
-    });
-
-    // Recalculate trigger positions once images/fonts finish loading so
-    // scroll animations fire at the correct position after a reload
-    // (browsers often restore the previous scroll position on reload).
-    window.addEventListener('load', () => AOS.refresh());
-  }
-
-  const preloaderForAos = document.getElementById('school-preloader');
-  if (preloaderForAos && preloaderForAos.style.display === 'flex') {
-    // Splash screen is active: start entrance animations as it fades out
-    // (matches the 1850ms fade-out timer in the preloader logic above).
-    setTimeout(initScrollAnimations, 1850);
-  } else {
-    initScrollAnimations();
-  }
 });
