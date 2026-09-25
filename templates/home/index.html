@@ -6,6 +6,7 @@
 {% block content %}
 <!-- ONE hero (brief 3): single campus photo or video background. -->
 {% if hero %}
+<div class="jj-hero-pin">
 <section class="jj-hero" aria-label="Shree Jaljala Secondary School introduction">
   <div class="jj-hero-media" aria-hidden="true" data-parallax="1">
     {% if hero.is_video and hero.video %}
@@ -17,7 +18,7 @@
     {% endif %}
   </div>
   <div class="jj-hero-shade" aria-hidden="true"></div>
-  <div class="container">
+  <div class="container" data-scrub="hero">
     <div class="jj-hero-inner">
       <span class="jj-hero-badge">Estd. 2045 B.S. (1988) · Panchkhapan-7, Sankhuwasabha</span>
       <p class="jj-hero-nep" lang="ne">श्री जलजला माध्यमिक विद्यालय</p>
@@ -27,6 +28,7 @@
     </div>
   </div>
 </section>
+</div>
 {% endif %}
 {% if notices or MARQUEE_NOTICES %}
 <div class="notice-marquee-bar">
@@ -61,7 +63,7 @@
         </p>
         <div class="row g-3 mt-2" data-stagger>
           <div class="col-sm-6">
-            <div class="feature-card jj-blurb">
+            <div class="feature-card jj-blurb" data-scrub="card">
               <i class="fa-solid fa-book-open" aria-hidden="true"></i>
               <div>
                 <h3>Holistic Learning</h3>
@@ -70,7 +72,7 @@
             </div>
           </div>
           <div class="col-sm-6">
-            <div class="feature-card jj-blurb">
+            <div class="feature-card jj-blurb" data-scrub="card">
               <i class="fa-solid fa-laptop" aria-hidden="true"></i>
               <div>
                 <h3>Modern Facilities</h3>
@@ -79,7 +81,7 @@
             </div>
           </div>
           <div class="col-sm-6">
-            <div class="feature-card jj-blurb">
+            <div class="feature-card jj-blurb" data-scrub="card">
               <i class="fa-solid fa-shield-heart" aria-hidden="true"></i>
               <div>
                 <h3>Safe Campus</h3>
@@ -88,7 +90,7 @@
             </div>
           </div>
           <div class="col-sm-6">
-            <div class="feature-card jj-blurb">
+            <div class="feature-card jj-blurb" data-scrub="card">
               <i class="fa-solid fa-people-group" aria-hidden="true"></i>
               <div>
                 <h3>Community Trust</h3>
@@ -175,7 +177,7 @@
 <!-- School Programs (Class Nursery to Class 10) -->
 <section class="py-5" id="programs-section">
   <div class="container">
-    <div class="section-title">
+    <div class="section-title" data-scrub="title">
       <h2>Academic Programs (Class Nursery - 10)</h2>
       <p class="text-muted">Structured education tailored for early childhood, primary, basic, and secondary SEE levels.</p>
       <div class="divider"></div>
@@ -185,9 +187,9 @@
       {% if programs %}
         {% for program in programs %}
         <div class="col-lg-4 col-md-6">
-          <div class="card custom-card h-100">
+          <div class="card custom-card h-100" data-scrub="card">
             <div class="card-img-wrapper">
-              <img src="{% if program.image %}{{ program.image.url }}{% else %}/media/programs/image 1.jpg{% endif %}" alt="Students in the {{ program.title }} classroom at Shree Jaljala" class="card-img-top">
+              <img src="{% if program.image %}{{ program.image.url }}{% else %}/media/programs/image 1.jpg{% endif %}" alt="Students in the {{ program.title }} classroom at Shree Jaljala" class="card-img-top" data-scrub="zoom">
             </div>
             <div class="card-body d-flex flex-column">
               <h3 class="card-title" style="font-size:1.2rem">{{ program.title }}</h3>
@@ -241,7 +243,7 @@
 <!-- Teachers grid: subtle zoom-in, ~80ms stagger (brief §2) -->
 <section class="py-5" id="teachers-section">
   <div class="container">
-    <div class="section-title">
+    <div class="section-title" data-scrub="title">
       <h2>Teachers and Staff</h2>
       <p class="text-muted">Dedicated educators empowering students in Panchkhapan Municipality.</p>
       <div class="divider"></div>
@@ -251,8 +253,8 @@
       {% if teachers %}
         {% for teacher in teachers %}
         <div class="col-lg-3 col-md-4 col-sm-6">
-          <div class="card custom-card teacher-card h-100">
-            <img src="{% if teacher.photo %}{{ teacher.photo.url }}{% else %}/media/teachers/govinda shrestha.jpg{% endif %}" alt="Portrait of {{ teacher.title }}, {{ teacher.position }} at Shree Jaljala" class="teacher-photo">
+          <div class="card custom-card teacher-card h-100" data-scrub="card">
+            <img src="{% if teacher.photo %}{{ teacher.photo.url }}{% else %}/media/teachers/govinda shrestha.jpg{% endif %}" alt="Portrait of {{ teacher.title }}, {{ teacher.position }} at Shree Jaljala" class="teacher-photo" data-scrub="zoom">
             <h3 style="font-size:1.05rem" class="mb-1">{{ teacher.title }}</h3>
             <p class="text-primary small mb-1 fw-semibold">{{ teacher.position }}</p>
             <p class="text-muted small mb-2">{{ teacher.qualification }}</p>
@@ -275,7 +277,7 @@
 <!-- Achievements: plain fade-up (brief §2) -->
 <section class="py-5 bg-light" id="achievements-section" data-aos="fade-up">
   <div class="container">
-    <div class="section-title">
+    <div class="section-title" data-scrub="title">
       <h2>Achievements</h2>
       <p class="text-muted">Celebrating student accomplishments and school excellence.</p>
       <div class="divider"></div>
@@ -285,10 +287,10 @@
       {% if achievements %}
         {% for achievement in achievements %}
         <div class="col-lg-3 col-md-6">
-          <div class="achievement-item-home">
+          <div class="achievement-item-home" data-scrub="card">
             {% if achievement.image %}
               <div class="achievement-img-wrap">
-                <img src="{{ achievement.image.url }}" alt="{{ achievement.title }} — Shree Jaljala achievement photo" class="achievement-img-home">
+                <img src="{{ achievement.image.url }}" alt="{{ achievement.title }} — Shree Jaljala achievement photo" class="achievement-img-home" data-scrub="zoom">
               </div>
             {% else %}
               <div class="achievement-img-wrap achievement-img-placeholder">
@@ -424,7 +426,7 @@
 <!-- Photo Gallery Preview Section -->
 <section class="py-5 bg-light" id="gallery-section">
   <div class="container">
-    <div class="section-title">
+    <div class="section-title" data-scrub="title">
       <h2>School Gallery</h2>
       <p class="text-muted">Moments from academic activities, Saraswati Puja, and sports events.</p>
       <div class="divider"></div>
@@ -436,7 +438,7 @@
         <div class="col-lg-3 col-md-4 col-6">
           <a href="#" class="gallery-lightbox-trigger gallery-item" data-img="{% if item.image %}{{ item.image.url }}{% endif %}" data-title="{{ item.title }}">
             <div class="img-hover-zoom shadow-sm">
-              <img src="{% if item.image %}{{ item.image.url }}{% else %}/media/teachers/govinda shrestha.jpg{% endif %}" alt="Shree Jaljala {{ item.category_display|default:'school event' }} photo: {{ item.title }}" class="img-fluid w-100" style="height: 180px; object-fit: cover;">
+              <img src="{% if item.image %}{{ item.image.url }}{% else %}/media/teachers/govinda shrestha.jpg{% endif %}" alt="Shree Jaljala {{ item.category_display|default:'school event' }} photo: {{ item.title }}" class="img-fluid w-100" data-scrub="zoom" style="height: 180px; object-fit: cover;">
             </div>
             <div class="text-center mt-2">
               <small class="fw-bold text-dark d-block text-truncate">{{ item.title }}</small>
@@ -457,7 +459,7 @@
 <!-- Campus map: real Jaljala Secondary School Bihibare pin (brief 4) -->
 <section class="py-5 bg-light">
   <div class="container">
-    <div class="section-title">
+    <div class="section-title" data-scrub="title">
       <h2>School Location</h2>
       <p class="text-muted">Panchkhapan Municipality-7, Bihibare, Sankhuwasabha, Nepal</p>
       <div class="divider"></div>

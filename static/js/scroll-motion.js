@@ -14,6 +14,8 @@
      8. Scroll-progress indicator (injected, 3px, decorative)
      9. Navbar active-section highlighting (home page sections)
     10. Subtle hero parallax                            [data-parallax]
+     11. Position-linked scrub layer  [data-scrub="hero|title|card|zoom|line"]
+     12. One sticky hero window                   (.jj-hero-pin, layout-safe)
 
    Design notes
    ------------
@@ -329,6 +331,85 @@
   }
 
   /* =======================================================================
+     6. Position-linked scrub layer (items 11 + 12)
+     Unlike the one-shot reveals above, these elements are driven continuously
+     by their own position in the viewport: every [data-scrub] element receives
+     a quantised progress custom property (--jj-p: 0 below the fold -> 1 past
+     it) and scroll-motion.css maps that to independent transform properties.
+
+       hero — hero content lifts, shrinks and fades as the hero scrolls away
+       title — headings drift and tilt a few degrees (subtle 3D depth)
+       card — cards float in, settle centred, then ease out again
+       zoom — images relax from a 5% zoom to 1.0 while crossing the view
+       line — section-title dividers draw themselves (JS fallback only; the
+              native CSS animation-timeline path in scroll-motion.css takes
+              over in browsers that support it, and JS then stays out)
+
+     `line` attributes are only injected when the browser lacks native CSS
+     scroll-driven animations, so each divider is driven by exactly one path.
+     ===================================================================== */
+  function initScrub(onFrame) {
+    var nativeViewTimeline = !!(window.CSS && CSS.supports &&
+      CSS.supports('animation-timeline', 'view()'));
+
+    if (!nativeViewTimeline) {
+      var lines = document.querySelectorAll('.section-title .divider');
+      for (var l = 0; l < lines.length; l++) lines[l].setAttribute('data-scrub', 'line');
+    }
+
+    var nodes = document.querySelectorAll('[data-scrub]');
+    var items = [];
+    for (var i = 0; i < nodes.length; i++) {
+      items.push({
+        el: nodes[i],
+        mode: nodes[i].getAttribute('data-scrub'),
+        last: null,
+        active: false
+      });
+    }
+    if (!items.length) return null;
+
+    var vh = window.innerHeight;
+    var measure = function () { vh = window.innerHeight; };
+
+    onFrame(function () {
+      for (var i = 0; i < items.length; i++) {
+        var item = items[i];
+        var rect = item.el.getBoundingClientRect();
+        var near = rect.bottom > -160 && rect.top < vh + 160;
+
+        if (near !== item.active) {
+          item.active = near;
+          // Promote only the hero (one element) — layer-per-card would cost
+          // more than the few pixels of paint it saves.
+          if (item.mode === 'hero') item.el.style.willChange = near ? 'transform, opacity' : '';
+        }
+
+        var p;
+        if (item.mode === 'hero') {
+          // 0 while the hero is at rest, 1 once ~70% of it has scrolled past.
+          p = -rect.top / Math.max(1, rect.height * 0.7);
+        } else if (item.mode === 'line') {
+          // Pre-compressed so the divider finishes drawing early in its pass.
+          p = ((vh - rect.top) / Math.max(1, vh + rect.height)) * 2.2;
+        } else {
+          p = (vh - rect.top) / Math.max(1, vh + rect.height);
+        }
+        if (p < 0) p = 0; else if (p > 1) p = 1;
+
+        // Quantised to 100 steps: sub-pixel drift needs no style writes, and
+        // values already parked at an end stop (far off-screen) are skipped.
+        var q = Math.round(p * 100) / 100;
+        if (q === item.last) continue;
+        item.last = q;
+        item.el.style.setProperty('--jj-p', q.toFixed(2));
+      }
+    });
+
+    return measure;
+  }
+
+  /* =======================================================================
      Boot
      ===================================================================== */
   ready(function () {
@@ -346,6 +427,7 @@
     try {
       reveals = initReveals();
       measures.push(initParallax(onFrame));
+      measures.push(initScrub(onFrame));
       measures.push(initProgress(onFrame));
       initNavTracking();
       initSmoothAnchors();

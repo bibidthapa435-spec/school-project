@@ -12,7 +12,12 @@
    * Only the independent `translate` / `scale` / `rotate` properties are
      animated, never `transform`, so the existing hover lift + image zoom
      transitions in style.css / home.css / modern-enhancements.css keep
-     working exactly as before.
+     working exactly as before. (Exception: `[data-scrub="title"]` composes
+      `transform: perspective() rotateX()` with its `translate` — section
+      headings carry no hover transform of their own.)
+    * On top of the one-shot reveals, sections 8–9 add a position-linked
+      scrub layer (`[data-scrub]`, driven by --jj-p from scroll-motion.js)
+      and a single layout-neutral sticky hero window (.jj-hero-pin).
    * Keyframes end on the neutral value and `animation-fill-mode: backwards`
      is used, so an element returns to the normal cascade when the reveal
      finishes (hover states included).
@@ -26,8 +31,12 @@
   --jj-ease:cubic-bezier(.22,.61,.36,1);
   --jj-shift-y:24px;                               /* vertical start offset    */
   --jj-shift-x:22px;                               /* horizontal start offset  */
+  --jj-hero-y:44px;                                /* hero exit lift (scrub)   */
+  --jj-tilt-y:36px;                                /* title drift (scrub)      */
+  --jj-tilt-x:7deg;                                /* title 3D tilt (scrub)    */
 }
-@media (max-width:575px){:root{--jj-shift-y:16px;--jj-shift-x:12px}}
+@media (max-width:575px){:root{--jj-shift-y:16px;--jj-shift-x:12px;
+  --jj-hero-y:30px;--jj-tilt-y:18px;--jj-tilt-x:0deg}}
 
 /* ---------- 1. Hidden (start) state, engine-only ------------------------- */
 html.jj-motion [data-aos]:not(.jj-in),
@@ -110,7 +119,96 @@ body.sticky-nav-active main section[id]{scroll-margin-top:calc(var(--navbar-heig
 [data-parallax] > img,
 [data-parallax] > video{position:relative;height:112%;top:-6%;max-width:none}
 
-/* ---------- 8. Reduced motion / no-JS safety net ------------------------ */
+/* ---------- 8. Scroll-driven scrub layer (position-linked) ---------------
+   Unlike the one-shot reveals in sections 1–3, everything below is driven
+   continuously by the element's own position in the viewport:
+   scroll-motion.js writes a quantised progress value (--jj-p, 0 = below the
+   fold, 1 = past it) and these rules map it to independent transform
+   properties. Neutral defaults (--jj-p:.5, hero 0) keep each element in its
+   resting state until the first frame lands, and every rule is gated behind
+   html.jj-motion, so no-JS, reduced motion and the base.html watchdog all
+   collapse straight back to today's static layout.
+   Only Y-translation, scale, a few degrees of rotateX and opacity are used —
+   none of which can widen an element, so horizontal overflow stays
+   impossible. Values shrink on small screens via the :root vars above. */
+html.jj-motion [data-scrub]{--jj-p:.5}
+html.jj-motion [data-scrub="hero"]{--jj-p:0}
+
+/* Hero content: lifts, eases down a notch and fades while the hero scrolls
+   away (the media layer keeps its own parallax). Targets .jj-hero .container
+   only — .jj-hero-inner is owned by the load-time jjSettle keyframes in
+   jaljala-redesign-2.css and must keep ruling its own transform. */
+html.jj-motion .jj-hero [data-scrub="hero"]{
+  translate:0 calc(var(--jj-p) * var(--jj-hero-y) * -1);
+  scale:calc(1 - .05 * var(--jj-p));
+  opacity:calc(1 - 1.15 * var(--jj-p));
+}
+
+/* Section headings: a gentle scroll-linked drift plus a whisper of 3D tilt
+   that flattens as the heading reaches the middle of the screen. */
+html.jj-motion [data-scrub="title"]{
+  translate:0 calc((.5 - var(--jj-p)) * var(--jj-tilt-y));
+  transform:perspective(700px) rotateX(calc((.5 - var(--jj-p)) * var(--jj-tilt-x)));
+}
+
+/* Cards: float in from below, settle centred, ease out on the way up —
+   ±8px of drift and 1.5% of scale at the edges. Applied to the card *inside*
+   the stagger wrapper, so the one-shot reveal and this drift never fight over
+   the same element (reveal on .col, scrub on .custom-card). Hover lift/zoom
+   keeps working: `transform` composes with the individual `translate`/`scale`. */
+html.jj-motion [data-scrub="card"]{
+  translate:0 calc((.5 - var(--jj-p)) * 16px);
+  scale:calc(1 - .06 * (var(--jj-p) - .5) * (var(--jj-p) - .5));
+}
+
+/* Images: subtle Ken-Burns-style zoom that relaxes to 1.0 while the picture
+   crosses the viewport. Lives inside overflow-hidden frames (card wrappers,
+   achievement/gallery crops), and composes with the existing hover zooms. */
+html.jj-motion [data-scrub="zoom"]{scale:calc(1.05 - .05 * var(--jj-p))}
+
+/* Section-title divider draw — JS fallback for browsers without native CSS
+   scroll-driven animations (JS only adds data-scrub="line" when the browser
+   can't do the @supports block below, so one divider = one driver). */
+html.jj-motion [data-scrub="line"]{
+  transform-origin:0 50%;
+  scale:calc(.2 + .8 * var(--jj-p));
+}
+
+/* The same divider, driven natively by the scroll position in browsers that
+   understand CSS scroll-driven animations — zero JavaScript, zero per-frame
+   style writes. `both` fill keeps it drawn once the section has passed. */
+@supports (animation-timeline:view()){
+  html.jj-motion .section-title .divider{
+    transform-origin:0 50%;
+    animation:jjLineDraw linear both;
+    animation-timeline:view();
+    animation-range:entry 10% entry 100%;
+  }
+}
+@keyframes jjLineDraw{from{transform:scaleX(.2)}to{transform:scaleX(1)}}
+
+/* ---------- 9. One sticky moment: the hero --------------------------------
+   The single sticky section on the site: the hero pins for a 40px window
+   while the strip below slides over it. The padding + negative-margin pair
+   cancels out exactly, so total document height — and therefore the scroll
+   progress maths — is unchanged. Followers are lifted above the pinned hero;
+   the first follower gets an opaque background only when it would otherwise
+   be transparent (sections without bg-light/bg-white). Under 40px of pin the
+   notice marquee is always tall enough to cover the seam, so no second
+   follower can ever expose the hero behind it. */
+html.jj-motion .jj-hero-pin{
+  position:relative;
+  z-index:0;                 /* confine the hero's z-index:2 container so the
+                                followers below (z-index:1) cover it while the
+                                hero is pinned */
+  padding-bottom:var(--jj-pin,40px);
+  margin-bottom:calc(-1 * var(--jj-pin,40px));
+}
+html.jj-motion .jj-hero-pin > .jj-hero{position:sticky;top:0}
+html.jj-motion main > .jj-hero-pin ~ *{position:relative;z-index:1}
+html.jj-motion main > .jj-hero-pin + section{background-color:var(--color-bg)}
+
+/* ---------- 10. Reduced motion / no-JS safety net ------------------------ */
 @media (prefers-reduced-motion:reduce){
   html.jj-motion [data-aos]:not(.jj-in),
   html.jj-motion [data-img-reveal]:not(.jj-in),
@@ -119,5 +217,13 @@ body.sticky-nav-active main section[id]{scroll-margin-top:calc(var(--navbar-heig
   [data-aos].jj-in,[data-img-reveal].jj-in,[data-stagger] > .jj-in{animation:none!important}
   .jj-progress{transition:none}
   [data-parallax] > img,[data-parallax] > video{position:static;height:100%;top:auto}
+  /* Scrub layer + sticky hero: belt-and-braces on top of the html.jj-motion
+     gate — even a mid-session preference change lands on the static layout. */
+  html.jj-motion [data-scrub]{--jj-p:.5;translate:none;scale:none;opacity:1}
+  html.jj-motion [data-scrub="title"]{transform:none}
+  html.jj-motion .jj-hero [data-scrub="hero"]{translate:none;scale:none;opacity:1}
+  html.jj-motion .jj-hero-pin{padding-bottom:0;margin-bottom:0}
+  html.jj-motion .jj-hero-pin > .jj-hero{position:static}
+  html.jj-motion .section-title .divider{animation:none!important;transform:none;scale:none}
 }
 @media print{.jj-progress{display:none}}
