@@ -496,8 +496,10 @@
   letter-spacing: 1px;
   /* Soft maroon glow around the border — derived from the button colour
      (#A6314B), not orange/coral. The button's own box-shadow is never
-     clipped by its overflow:hidden. */
-  box-shadow: 0 4px 18px rgba(166, 49, 75, 0.35), 0 0 6px rgba(166, 49, 75, 0.30);
+     clipped by its overflow:hidden. !important outranks Bootstrap's
+     .shadow-sm utility (box-shadow !important) that ships on this button,
+     which was silently suppressing every glow attempt before. */
+  box-shadow: 0 4px 18px rgba(166, 49, 75, 0.35), 0 0 6px rgba(166, 49, 75, 0.30) !important;
 }
 
 /* Travelling border light: a 2px ring hugging the button edge (inside the
@@ -530,13 +532,13 @@
 
 .brand-admission-cta .btn-gold:hover {
   transform: scale(1.015); /* 1.5% — subtle, no repositioning */
-  box-shadow: 0 6px 24px rgba(166, 49, 75, 0.48), 0 0 14px rgba(166, 49, 75, 0.42);
+  box-shadow: 0 6px 24px rgba(166, 49, 75, 0.48), 0 0 14px rgba(166, 49, 75, 0.42) !important;
 }
 
 /* Keyboard focus: the site-wide maroon :focus-visible outline stays in
    force; just intensify the matching glow here. */
 .brand-admission-cta .btn-gold:focus-visible {
-  box-shadow: 0 6px 24px rgba(166, 49, 75, 0.48), 0 0 14px rgba(166, 49, 75, 0.42);
+  box-shadow: 0 6px 24px rgba(166, 49, 75, 0.48), 0 0 14px rgba(166, 49, 75, 0.42) !important;
 }
 
 /* Reduced motion: hold the ring still and drop the hover scale (the
