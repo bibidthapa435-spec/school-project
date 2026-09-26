@@ -12,7 +12,7 @@
   --glass-shadow: 0 8px 32px rgba(11, 37, 69, 0.12);
   --gradient-navy: linear-gradient(135deg, #14315B 0%, #1e4a8a 100%);
   --gradient-gold: linear-gradient(135deg, #d4af37 0%, #f0d78c 100%);
-  --gradient-coral: linear-gradient(135deg, #E8734A 0%, #f4a582 100%);
+  --gradient-coral: linear-gradient(135deg, #E8734A 0%, #ef9a75 100%);
   --gradient-hero: linear-gradient(135deg, rgba(11, 27, 43, 0.85) 0%, rgba(20, 49, 91, 0.7) 100%);
   --shadow-sm: 0 2px 8px rgba(11, 37, 69, 0.08);
   --shadow-md: 0 4px 16px rgba(11, 37, 69, 0.12);
@@ -227,6 +227,16 @@
 .feature-icon {
   width: 80px;
   height: 80px;
+  margin: 0 auto 1.5rem;
+  background: var(--gradient-navy);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 2rem;
+  color: #ffffff;
+  transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+}
 
 /* ===== Enhanced Notice Cards ===== */
 .notice-card {
@@ -474,77 +484,134 @@
   border-bottom: 2px solid var(--accent-gold);
 }
 
-/* ===== Admission CTA Enhancement =====
-   The maroon ONLINE ADMISSION CTA keeps its existing palette (accent
-   #A6314B + tints of the same hue) and gains a premium travelling border
-   light: a ::before ring masked to the inner edge of the button runs a
-   conic-gradient whose angle is animated through an @property registered
-   custom property, so a brighter maroon highlight sweeps the whole
-   perimeter continuously. Pure CSS (no JS); text, icon, link, size,
-   rounded corners and position are untouched. Browsers without @property
-   support simply show a static ring. */
+/* ===== Admission CTA: bright animated gold border + glow =====
+   ONLINE ADMISSION keeps its maroon fill. A marigold / white / aqua
+   conic ring travels the perimeter, with a matching outer bloom.
+   overflow is visible so the ring and glow sit around the button. */
 @property --jj-adm-ang {
   syntax: '<angle>';
   inherits: false;
   initial-value: 0deg;
 }
 
+.brand-admission-cta {
+  overflow: visible;
+}
+
 .brand-admission-cta .btn-gold {
-  background: var(--gradient-coral);
+  position: relative;
+  isolation: isolate;
+  overflow: visible !important;
+  z-index: 1;
   color: #ffffff;
   font-weight: 700;
   letter-spacing: 1px;
-  /* Soft maroon glow around the border — derived from the button colour
-     (#A6314B), not orange/coral. The button's own box-shadow is never
-     clipped by its overflow:hidden. !important outranks Bootstrap's
-     .shadow-sm utility (box-shadow !important) that ships on this button,
-     which was silently suppressing every glow attempt before. */
-  box-shadow: 0 4px 18px rgba(166, 49, 75, 0.35), 0 0 6px rgba(166, 49, 75, 0.30) !important;
+  box-shadow:
+    0 0 10px 2px rgba(255, 229, 120, 0.95),
+    0 0 22px 6px rgba(232, 163, 61, 0.65),
+    0 0 36px 10px rgba(92, 255, 240, 0.28),
+    0 4px 16px rgba(166, 49, 75, 0.32) !important;
+  animation: jjAdmGlowPulse 1.8s ease-in-out infinite;
 }
 
-/* Travelling border light: a 2px ring hugging the button edge (inside the
-   box so overflow:hidden cannot clip it), revealed by the content-box
-   mask trick and rotated via the registered angle custom property. */
 .brand-admission-cta .btn-gold::before {
   content: '';
   position: absolute;
-  inset: 0;
-  padding: 2px; /* ring thickness */
+  inset: -3px;
+  padding: 3px;
   border-radius: inherit;
-  background: conic-gradient(from var(--jj-adm-ang, 0deg),
-    rgba(206, 86, 111, 0.30) 0turn,
-    rgba(206, 86, 111, 0.30) 0.45turn,
-    #C05270 0.70turn,
-    #E4657C 0.88turn,
-    #EE8095 0.95turn,
-    rgba(206, 86, 111, 0.30) 1turn);
+  background: conic-gradient(
+    from var(--jj-adm-ang, 0deg),
+    #FFE566 0%,
+    #FFFFFF 14%,
+    #7CFFEE 26%,
+    #E8A33D 42%,
+    #FFB347 58%,
+    #FFFFFF 74%,
+    #FFE566 88%,
+    #E8A33D 100%
+  );
   -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
           mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
   -webkit-mask-composite: xor;
           mask-composite: exclude;
   pointer-events: none;
-  animation: jjAdmRing 4s linear infinite;
+  z-index: 2;
+  animation: jjAdmRing 2.2s linear infinite;
+}
+
+.brand-admission-cta .btn-gold::after {
+  content: '';
+  position: absolute;
+  inset: -8px;
+  padding: 8px;
+  border-radius: inherit;
+  background: conic-gradient(
+    from var(--jj-adm-ang, 0deg),
+    #FFE566 0%,
+    #FFFFFF 14%,
+    #7CFFEE 26%,
+    #E8A33D 42%,
+    #FFB347 58%,
+    #FFFFFF 74%,
+    #FFE566 88%,
+    #E8A33D 100%
+  );
+  -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+          mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor;
+          mask-composite: exclude;
+  filter: blur(8px);
+  opacity: 0.85;
+  pointer-events: none;
+  z-index: 0;
+  animation: jjAdmRing 2.2s linear infinite;
 }
 
 @keyframes jjAdmRing {
   to { --jj-adm-ang: 360deg; }
 }
 
+@keyframes jjAdmGlowPulse {
+  0%, 100% {
+    box-shadow:
+      0 0 10px 2px rgba(255, 229, 120, 0.85),
+      0 0 22px 6px rgba(232, 163, 61, 0.55),
+      0 0 36px 10px rgba(92, 255, 240, 0.22),
+      0 4px 16px rgba(166, 49, 75, 0.32) !important;
+  }
+  50% {
+    box-shadow:
+      0 0 16px 4px rgba(255, 248, 200, 1),
+      0 0 32px 10px rgba(255, 213, 79, 0.8),
+      0 0 48px 14px rgba(92, 255, 240, 0.4),
+      0 4px 18px rgba(166, 49, 75, 0.36) !important;
+  }
+}
+
 .brand-admission-cta .btn-gold:hover {
-  transform: scale(1.015); /* 1.5% — subtle, no repositioning */
-  box-shadow: 0 6px 24px rgba(166, 49, 75, 0.48), 0 0 14px rgba(166, 49, 75, 0.42) !important;
+  transform: scale(1.015);
+  box-shadow:
+    0 0 18px 4px rgba(255, 248, 200, 1),
+    0 0 36px 12px rgba(255, 213, 79, 0.85),
+    0 0 52px 16px rgba(92, 255, 240, 0.42),
+    0 6px 20px rgba(166, 49, 75, 0.4) !important;
 }
 
-/* Keyboard focus: the site-wide maroon :focus-visible outline stays in
-   force; just intensify the matching glow here. */
 .brand-admission-cta .btn-gold:focus-visible {
-  box-shadow: 0 6px 24px rgba(166, 49, 75, 0.48), 0 0 14px rgba(166, 49, 75, 0.42) !important;
+  box-shadow:
+    0 0 18px 4px rgba(255, 248, 200, 1),
+    0 0 36px 12px rgba(255, 213, 79, 0.85),
+    0 0 52px 16px rgba(92, 255, 240, 0.42),
+    0 6px 20px rgba(166, 49, 75, 0.4) !important;
 }
 
-/* Reduced motion: hold the ring still and drop the hover scale (the
-   site-wide reset already flattens all animation durations). */
 @media (prefers-reduced-motion: reduce) {
-  .brand-admission-cta .btn-gold::before { animation: none; }
+  .brand-admission-cta .btn-gold,
+  .brand-admission-cta .btn-gold::before,
+  .brand-admission-cta .btn-gold::after {
+    animation: none;
+  }
   .brand-admission-cta .btn-gold:hover { transform: none; }
 }
 
@@ -850,17 +917,6 @@
 .reveal.active {
   opacity: 1;
   transform: translateY(0);
-}
-
-  margin: 0 auto 1.5rem;
-  background: var(--gradient-navy);
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 2rem;
-  color: #ffffff;
-  transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 .feature-card:hover .feature-icon {

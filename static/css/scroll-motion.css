@@ -26,7 +26,7 @@
    ========================================================================== */
 
 :root{
-  --jj-dur:520ms;                                  /* reveal duration          */
+  --jj-dur:700ms;                                  /* reveal duration          */
   --jj-d:0ms;                                      /* per-element delay        */
   --jj-ease:cubic-bezier(.22,.61,.36,1);
   --jj-shift-y:24px;                               /* vertical start offset    */
@@ -57,6 +57,9 @@ html.jj-motion [data-img-reveal]:not(.jj-in){scale:.985;clip-path:inset(0 0 8% 0
 html.jj-motion [data-stagger] > *:not(.jj-in){opacity:0;translate:0 var(--jj-shift-y)}
 html.jj-motion [data-stagger="zoom-in"] > *:not(.jj-in){translate:none;scale:.94}
 html.jj-motion [data-stagger="scale-in"] > *:not(.jj-in){translate:none;scale:.97}
+/* `fade` = opacity-only cascade, for table rows: a translated <tr> extends the
+   .table-responsive scroll area and would flash a vertical scrollbar mid-cascade. */
+html.jj-motion [data-stagger="fade"] > *:not(.jj-in){opacity:0;translate:none}
 
 /* ---------- 2. Reveal keyframes ----------------------------------------- */
 @keyframes jjFadeIn{from{opacity:0}to{opacity:1}}
@@ -88,6 +91,7 @@ html.jj-motion [data-stagger="scale-in"] > *:not(.jj-in){translate:none;scale:.9
 [data-stagger] > .jj-in{animation:jjFadeUp var(--jj-dur) var(--jj-ease) var(--jj-d) backwards}
 [data-stagger="zoom-in"] > .jj-in{animation-name:jjZoomIn}
 [data-stagger="scale-in"] > .jj-in{animation-name:jjScaleIn}
+[data-stagger="fade"] > .jj-in{animation-name:jjFadeIn}
 [data-img-reveal].jj-in{animation:jjImgReveal 700ms var(--jj-ease) var(--jj-d) backwards}
 
 /* ---------- 4. Navbar active-section highlighting -----------------------
@@ -197,13 +201,55 @@ html.jj-motion .jj-hero-pin > .jj-hero{position:sticky;top:0}
 html.jj-motion main > .jj-hero-pin ~ *{position:relative;z-index:1}
 html.jj-motion main > .jj-hero-pin + section{background-color:var(--color-bg)}
 
-/* ---------- 9. Reduced motion / no-JS safety net ------------------------ */
+/* ---------- 9. Hero load entrance + alternating groups --------------------
+   * Hero — a short load-time cascade. The single `jjSettle` on
+   * .jj-hero-inner (jaljala-redesign-2.css) is *replaced* here, not stacked
+   * on, by the same settle split across the children, so the block still
+   * enters as one moment: badge -> Devanagari line -> heading -> subtext ->
+   * button (~200ms after the subtext). Same 18px travel, same ease, and the
+   * whole rule is behind `html.jj-motion`, so no-JS, reduced motion and the
+   * base.html watchdog all keep today's untouched single settle.
+   * `data-stagger="alternate"` — the same per-child cascade as the plain
+   * group, but odd/even children enter from opposite sides. The horizontal
+   * travel only starts at 1200px, where .container still has 30px of free
+   * margin at each side; narrower viewports keep the vertical fade-up, so no
+   * breakpoint can grow a horizontal scrollbar. */
+html.jj-motion .jj-hero-inner{animation:none}
+html.jj-motion .jj-hero-inner > *{animation:jjHeroStep 460ms var(--jj-ease) backwards}
+html.jj-motion .jj-hero-inner > :nth-child(1){animation-delay:0ms}
+html.jj-motion .jj-hero-inner > :nth-child(2){animation-delay:40ms}
+html.jj-motion .jj-hero-inner > :nth-child(3){animation-delay:90ms}
+html.jj-motion .jj-hero-inner > :nth-child(4){animation-delay:180ms}
+html.jj-motion .jj-hero-inner > :nth-child(5){animation-delay:380ms}
+/* Any element added after the CTA keeps the last step rather than firing early. */
+html.jj-motion .jj-hero-inner > :nth-child(n+6){animation-delay:380ms}
+@keyframes jjHeroStep{from{opacity:0;translate:0 18px}to{opacity:1;translate:none}}
+
+html.jj-motion [data-stagger="alternate"] > *:not(.jj-in){opacity:0;translate:0 var(--jj-shift-y)}
+/* `vertical` is the name scroll-motion.js swaps an "alternate" group to when
+   the viewport is too narrow for the sideways start state. Identical to the
+   default group, spelled out so a downgrade can never leave cards visible. */
+html.jj-motion [data-stagger="vertical"] > *:not(.jj-in){opacity:0;translate:0 var(--jj-shift-y)}
+@media (min-width:1200px){
+  html.jj-motion [data-stagger="alternate"] > *:not(.jj-in):nth-child(odd){translate:calc(-1 * var(--jj-shift-x)) 0}
+  html.jj-motion [data-stagger="alternate"] > *:not(.jj-in):nth-child(even){translate:var(--jj-shift-x) 0}
+  [data-stagger="alternate"] > .jj-in:nth-child(odd){animation-name:jjFadeRight}
+  [data-stagger="alternate"] > .jj-in:nth-child(even){animation-name:jjFadeLeft}
+}
+
+/* ---------- 10. Reduced motion / no-JS safety net ----------------------- */
 @media (prefers-reduced-motion:reduce){
   html.jj-motion [data-aos]:not(.jj-in),
   html.jj-motion [data-img-reveal]:not(.jj-in),
   html.jj-motion [data-stagger] > *:not(.jj-in){opacity:1;translate:none;scale:none;
     rotate:none;clip-path:none}
   [data-aos].jj-in,[data-img-reveal].jj-in,[data-stagger] > .jj-in{animation:none!important}
+  /* The two §9 entrances: hero cascade and the alternating group (which
+     needs the same override as the plain group, its nth-child rules are
+     more specific than the selector above). */
+  html.jj-motion .jj-hero-inner > *{animation:none!important}
+  html.jj-motion [data-stagger="alternate"] > *:not(.jj-in):nth-child(odd),
+  html.jj-motion [data-stagger="alternate"] > *:not(.jj-in):nth-child(even){opacity:1;translate:none;scale:none}
   [data-parallax] > img,[data-parallax] > video{position:static;height:100%;top:auto}
   /* Scrub layer + sticky hero: belt-and-braces on top of the html.jj-motion
      gate — even a mid-session preference change lands on the static layout. */

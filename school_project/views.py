@@ -104,17 +104,6 @@ def home(request):
 
     sliders_qs = Slider.objects.filter(status=True).order_by('display_order')
 
-    # ONE hero (brief §3): skip blank/placeholder slides in Python so the
-    # template stays small and the "shot"/"testing" row can never render.
-    hero = None
-    for s in sliders_qs:
-        t = (s.title or '').strip().lower()
-        if t and t not in ('shot', 'testing', 'test'):
-            hero = s
-            break
-    if hero is None:
-        hero = sliders_qs.first()
-
     programs_qs = list(
         Program.objects.filter(status=True)
         .order_by('display_order')
@@ -155,7 +144,6 @@ def home(request):
     )
 
     context = get_base_context({
-        'hero': hero,
         'sliders': list(sliders_qs),
         'principal': principal,
         'programs': programs_qs,

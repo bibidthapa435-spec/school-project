@@ -5,7 +5,7 @@
 
 {% block content %}
 <!-- Page Header -->
-<section class="page-header">
+<section class="page-header" data-aos="fade-up">
   <div class="container">
     <nav aria-label="breadcrumb">
       <ol class="breadcrumb justify-content-center bg-transparent mb-3">
@@ -22,7 +22,7 @@
 <section class="achievement-detail-section py-5">
   <div class="container">
     <div class="row">
-      <div class="col-lg-8">
+      <div class="col-lg-8" data-aos="fade-right">
         <div class="achievement-detail-card shadow-sm">
           {% if achievement.image %}
             <div class="achievement-detail-image-wrapper">
@@ -93,11 +93,11 @@
         </div>
       </div>
 
-      <div class="col-lg-4">
+      <div class="col-lg-4" data-aos="fade-left">
         {% if other_achievements %}
           <div class="other-achievements-widget shadow-sm p-4 bg-white rounded">
             <h3 class="h5 mb-4">Other Achievements</h3>
-            <div class="other-achievements-list">
+            <div class="other-achievements-list" data-stagger data-stagger-step="55">
               {% for other in other_achievements %}
                 <div class="other-achievement-item mb-3 pb-3 border-bottom">
                   <a href="{% url 'achievement_detail' other.slug %}" class="text-decoration-none">

@@ -2,7 +2,10 @@
 :root{
   --color-primary:#1F3A34; --color-accent:#A6314B; --color-accent-deep:#8C2740;
   --color-highlight:#E8A33D; --color-bg:#F7F4EE; --color-surface:#FFFFFF;
-  --color-ink:#24211D; --color-muted:#5B6B66;
+  /* Body text: warm CHARCOAL instead of pure black. Sits softer on the cream
+     surface than #24211D (13.1:1 on --color-bg) while still clearing 6.6:1 on
+     the marigold fills (badges, .btn-warning, ::selection). */
+  --color-ink:#2C2A24; --color-muted:#5B6B66;
   --font-head:'Lora','Noto Serif Devanagari',Georgia,serif;
   --font-body:'Karla','Noto Sans Devanagari',system-ui,sans-serif;
   /* Warm neutrals used by the calm surfaces (hairlines, tinted bands) */
@@ -160,3 +163,215 @@ a:hover{color:var(--color-accent-deep)}
   color:var(--color-accent-deep)!important}
 .alert-info{background:#EDF1EF!important;border-color:#CFDAD6!important;color:var(--color-primary)!important}
 .alert-warning{background:#FBF0DC!important;border-color:#EBD3A4!important;color:var(--color-ink)!important}
+
+/* ONLINE ADMISSION CTA: animated marigold / aqua light around one button. */
+@property --jj-admission-angle {
+  syntax: '<angle>';
+  inherits: false;
+  initial-value: 0deg;
+}
+
+.brand-admission-cta {
+  overflow: visible;
+}
+
+.brand-admission-cta .admission-glow-btn {
+  position: relative;
+  isolation: isolate;
+  z-index: 1;
+  overflow: visible !important;
+  color: #fff !important;
+  font-weight: 700;
+  letter-spacing: .04em;
+  background: linear-gradient(135deg, #A6314B 0%, #8C2740 100%) !important;
+  border: 1px solid #FFD166 !important;
+  box-shadow:
+    0 0 10px 2px rgba(255, 209, 102, .72),
+    0 0 22px 6px rgba(85, 230, 213, .24),
+    0 5px 16px rgba(31, 58, 52, .24);
+  animation: jjAdmissionGlow 1.9s ease-in-out infinite;
+  transition: transform .2s ease, filter .2s ease;
+}
+
+.brand-admission-cta .admission-glow-btn::before {
+  content: '';
+  position: absolute;
+  inset: -3px;
+  z-index: 2;
+  padding: 3px;
+  border-radius: inherit;
+  background: conic-gradient(
+    from var(--jj-admission-angle),
+    #FFD166 0deg,
+    #FFF7D6 55deg,
+    #55E6D5 100deg,
+    #FF8FAB 155deg,
+    #FFD166 360deg
+  );
+  -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+          mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor;
+          mask-composite: exclude;
+  pointer-events: none;
+  animation: jjAdmissionRing 2.4s linear infinite;
+}
+
+.brand-admission-cta .admission-glow-btn::after {
+  content: '';
+  position: absolute;
+  inset: -6px;
+  z-index: -1;
+  padding: 6px;
+  border-radius: inherit;
+  background: conic-gradient(
+    from var(--jj-admission-angle),
+    #FFD166 0deg,
+    #FFF7D6 55deg,
+    #55E6D5 100deg,
+    #FF8FAB 155deg,
+    #FFD166 360deg
+  );
+  -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+          mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor;
+          mask-composite: exclude;
+  filter: blur(7px);
+  opacity: .7;
+  pointer-events: none;
+  animation: jjAdmissionRing 2.4s linear infinite;
+}
+
+.brand-admission-cta .admission-glow-btn:hover {
+  color: #fff !important;
+  filter: brightness(1.08) saturate(1.06);
+  transform: translateY(-2px) scale(1.015);
+}
+
+.brand-admission-cta .admission-glow-btn:focus-visible {
+  outline: 3px solid #FFF7D6 !important;
+  outline-offset: 3px;
+}
+
+@keyframes jjAdmissionRing {
+  to { --jj-admission-angle: 360deg; }
+}
+
+@keyframes jjAdmissionGlow {
+  0%, 100% {
+    box-shadow:
+      0 0 9px 1px rgba(255, 209, 102, .62),
+      0 0 19px 4px rgba(85, 230, 213, .18),
+      0 5px 16px rgba(31, 58, 52, .24);
+  }
+  50% {
+    box-shadow:
+      0 0 17px 4px rgba(255, 209, 102, .95),
+      0 0 34px 10px rgba(85, 230, 213, .38),
+      0 6px 20px rgba(31, 58, 52, .28);
+  }
+}
+
+/* --- Admission glow, reusable outside the navbar --------------------------
+   The navbar button above is the first user of this effect, but the two
+   remaining conversion points read just as "apply now" and were left flat:
+   the home hero enroll CTA and the form's own submit. Both get the same
+   treatment here, reusing the registered --jj-admission-angle and the
+   ring/pulse keyframes above instead of duplicating them.
+
+   NOTE: box-shadow is deliberately NOT !important. An !important author
+   declaration out-ranks animation declarations in the cascade, so marking it
+   would silently kill the jjAdmissionGlow pulse and freeze the ring at its
+   base shadow. Nothing else declares a box-shadow on these two buttons, so
+   the un-flagged value wins on source order. */
+.jj-admission-glow {
+  position: relative;
+  isolation: isolate;
+  z-index: 1;
+  overflow: visible !important;
+  color: #fff !important;
+  font-weight: 700;
+  letter-spacing: .04em;
+  background: linear-gradient(135deg, #A6314B 0%, #8C2740 100%) !important;
+  border: 1px solid #FFD166 !important;
+  box-shadow:
+    0 0 10px 2px rgba(255, 209, 102, .72),
+    0 0 22px 6px rgba(85, 230, 213, .24),
+    0 5px 16px rgba(31, 58, 52, .24);
+  animation: jjAdmissionGlow 1.9s ease-in-out infinite;
+  transition: transform .2s ease, filter .2s ease;
+}
+
+.jj-admission-glow::before {
+  content: '';
+  position: absolute;
+  inset: -3px;
+  z-index: 2;
+  padding: 3px;
+  border-radius: inherit;
+  background: conic-gradient(
+    from var(--jj-admission-angle),
+    #FFD166 0deg,
+    #FFF7D6 55deg,
+    #55E6D5 100deg,
+    #FF8FAB 155deg,
+    #FFD166 360deg
+  );
+  -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+          mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor;
+          mask-composite: exclude;
+  pointer-events: none;
+  animation: jjAdmissionRing 2.4s linear infinite;
+}
+
+.jj-admission-glow::after {
+  content: '';
+  position: absolute;
+  inset: -6px;
+  z-index: -1;
+  padding: 6px;
+  border-radius: inherit;
+  background: conic-gradient(
+    from var(--jj-admission-angle),
+    #FFD166 0deg,
+    #FFF7D6 55deg,
+    #55E6D5 100deg,
+    #FF8FAB 155deg,
+    #FFD166 360deg
+  );
+  -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+          mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor;
+          mask-composite: exclude;
+  filter: blur(7px);
+  opacity: .7;
+  pointer-events: none;
+  animation: jjAdmissionRing 2.4s linear infinite;
+}
+
+.jj-admission-glow:hover {
+  color: #fff !important;
+  filter: brightness(1.08) saturate(1.06);
+  transform: translateY(-2px) scale(1.015);
+}
+
+.jj-admission-glow:focus-visible {
+  outline: 3px solid #FFF7D6 !important;
+  outline-offset: 3px;
+}
+
+
+@media (prefers-reduced-motion: reduce) {
+  .brand-admission-cta .admission-glow-btn,
+  .brand-admission-cta .admission-glow-btn::before,
+  .brand-admission-cta .admission-glow-btn::after,
+  .jj-admission-glow,
+  .jj-admission-glow::before,
+  .jj-admission-glow::after {
+    animation: none !important;
+  }
+  .brand-admission-cta .admission-glow-btn:hover,
+  .jj-admission-glow:hover {
+    transform: none;
+  }
+}

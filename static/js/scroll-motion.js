@@ -8,6 +8,9 @@
      2. Fade-up reveal on entering the viewport          [data-aos="fade-up"]
      3. Fade-left / fade-right for text and images       [data-aos="fade-left"]
      4. Staggered card cascades                          [data-stagger="zoom-in"]
+        …plus `fade` (opacity only, for table rows) and `alternate` (odd/even
+        children enter from opposite sides, downgraded to a vertical group
+        whenever the viewport is too narrow for the sideways start state)
      5. Subtle scale-in for important cards              [data-aos="scale-in"]
      6. Statistic counters      (already in main.js — left untouched, no clash)
      7. Subtle image reveals                             [data-img-reveal]
@@ -86,6 +89,15 @@
       return rect.right + shift <= viewport;   // rect already includes the shift
     }
 
+    // An "alternate" stagger child also starts shifted horizontally, so the
+    // same edge test applies — but only from the width at which the CSS
+    // actually starts moving the group sideways (1200px). Below that the
+    // group is already vertical, so there is nothing to guard.
+    function hasRoomForAlternateShift(el) {
+      if (window.innerWidth < 1200) return true;
+      return hasRoomForShift(el);
+    }
+
     function watch(el, fn) {
       handlers.set(el, fn || function (target) { target.classList.add('jj-in'); });
       observer.observe(el);
@@ -115,6 +127,15 @@
         kids.push(child);
       }
       if (!kids.length) return;
+      // An "alternate" group enters from opposite sides, so it can only run
+      // where every child has room for the shift. The CSS already limits it to
+      // wide viewports; this re-checks after a resize and falls back to the
+      // plain vertical fade-up for the group as a whole.
+      if (container.getAttribute('data-stagger') === 'alternate') {
+        for (var k = 0; k < kids.length; k++) {
+          if (!hasRoomForAlternateShift(kids[k])) { container.setAttribute('data-stagger', 'vertical'); break; }
+        }
+      }
       watch(container, function () {
         for (var k = 0; k < kids.length; k++) kids[k].classList.add('jj-in');
       });
@@ -139,6 +160,16 @@
         handlers.forEach(function (fn, el) {
           var variant = el.getAttribute ? el.getAttribute('data-aos') : null;
           if (variant && HORIZONTAL[variant] && !hasRoomForShift(el)) el.setAttribute('data-aos', 'fade-up');
+          // An "alternate" group whose children lost their room (e.g. a resize
+          // onto a narrower window) falls back to the vertical fade-up. Only
+          // downgrade, never back: the first pass already ran before images
+          // and fonts had settled, so a later "no room" reading is authoritative.
+          if (el.getAttribute && el.getAttribute('data-stagger') === 'alternate') {
+            var kids = el.children;
+            for (var i = 0; i < kids.length; i++) {
+              if (!hasRoomForAlternateShift(kids[i])) { el.setAttribute('data-stagger', 'vertical'); break; }
+            }
+          }
         });
       }
     };

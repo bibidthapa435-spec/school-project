@@ -1,60 +1,74 @@
 /* Home page custom styling */
+/* ============================================================
+   HOME HERO SLIDER
+   ----------------------------------------------------------
+   Sizing contract:
+     - the slide box is shaped by the NATIVE ratio of the slider
+       photos (2048x1536 = 4:3) via --jj-hero-ratio
+     - object-fit: contain  => nothing is ever cropped
+     - width: 100%          => the slider is FULL BLEED, edge to
+       edge, on every screen (no 1400px cap, no side gutters)
+     - NO max-height cap    => the box height is decided by the
+       ratio and the width alone, so the photo is never cropped
+       AND never letterboxed, at any viewport shape
+     Why there is deliberately no height cap: the 4:3 photos are
+     never cropped and never letterboxed at the same time as a
+     "must fit the fold" cap. On a viewport wider than 4:3 (any
+     landscape desktop) such a cap shortens the box below 4:3
+     while the width stays 100%, and `contain` then pads the two
+     sides with dead dark bands - the exact defect this block
+     exists to prevent. Fitting the fold is therefore given up in
+     favour of an always-complete, always-gap-free picture; on
+     landscape desktops the hero is 4:3 tall and simply extends
+     below the fold. Portrait phones, where the viewport is
+     taller than 4:3, are unaffected and fill edge to edge.
+   ============================================================ */
 .hero-slider-section {
+  --jj-hero-ratio: 4 / 3;
   position: relative;
-  overflow: hidden;
   width: 100%;
-}
-
-.carousel-item {
-  height: 100vh !important;
-  min-height: 100vh !important;
-  position: relative;
-  background-color: #0b1b2b;
-}
-
-.carousel-item img {
-  width: 100% !important;
-  height: 100vh !important;
-  min-height: 100vh !important;
-  object-fit: cover !important;
-  object-position: center center !important;
-  display: block;
-  margin: 0 auto;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  background: var(--color-primary, #1F3A34);
 }
 
 .hero-carousel {
   position: relative;
   overflow: hidden;
+  /* Full screen width - the photo is never boxed in by a max-width. */
+  width: 100%;
+  aspect-ratio: var(--jj-hero-ratio);
+  /* Height is ratio-derived, so it MUST NOT be capped: a cap would
+     leave `contain` no choice but to pad the sides with dead space.
+     min-height:0 stops a flex item's content-based minimum from
+     stretching the box and breaking the 4:3. */
+  min-height: 0;
+  margin-inline: auto;
 }
 
+.hero-carousel .carousel-inner,
 .hero-carousel .carousel-item {
-  height: 100vh !important;
-  min-height: 100vh !important;
+  height: 100% !important;
+  min-height: 0 !important;
   position: relative;
   background-color: #0b1b2b;
 }
 
-.hero-carousel .carousel-item img {
-  width: 100% !important;
-  height: 100vh !important;
-  min-height: 100vh !important;
-  object-fit: cover !important;
-  object-position: center center !important;
-  display: block;
-  margin: 0 auto;
-}
-
-/* Video slides (uploaded MP4/WebM) */
+/* Images AND uploaded video files (MP4/WebM) share one rule:
+   "contain" shows the FULL frame - nothing is cut off, never
+   stretched - so the photo is never clipped on the left or right. */
+.hero-carousel .carousel-item img,
 .hero-carousel .carousel-item video.hero-media,
+.carousel-item img,
 .carousel-item video.hero-media {
+  display: block;
   width: 100% !important;
-  height: 100vh !important;
-  min-height: 100vh !important;
-  /* "contain" shows the FULL video frame - nothing gets cut off.
-     The empty space around it is filled with the dark background below. */
+  height: 100% !important;
+  min-height: 0 !important;
   object-fit: contain !important;
   object-position: center center !important;
-  display: block;
   margin: 0 auto;
   background-color: #0b1b2b;
 }
@@ -63,24 +77,19 @@
 .hero-carousel .carousel-item .hero-video-embed,
 .carousel-item .hero-video-embed {
   position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100vh;
-  min-height: 100vh;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   overflow: hidden;
   background-color: #0b1b2b;
 }
 
-/* Keep the player inside the hero area at its native 16:9 ratio
-   so the whole video is visible (no cropping, no stretching). */
+/* The player fills the slide and keeps its own 16:9 ratio
+   internally, so it is never cropped or stretched. */
 .hero-video-embed iframe {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  width: min(100%, 177.78vh);
-  height: min(100vh, 56.25vw);
-  transform: translate(-50%, -50%);
+  width: 100%;
+  height: 100%;
   border: 0;
 }
 
@@ -221,9 +230,9 @@
   opacity: 1;
 }
 
-.notice-marquee-bar {
+.notice-marquee-bar {                            
   background-color: #1e3a8a;
-  color: #ffffff;
+  color: #25cbce;
   padding: 10px 0;
   font-weight: 500;
   box-shadow: inset 0 2px 4px rgba(0,0,0,0.1);
@@ -241,7 +250,7 @@
   border: none;
   border-radius: 12px;
   transition: transform 0.3s ease, box-shadow 0.3s ease;
-  background-color: #ffffff;
+  background-color: #8b2424;
 }
 
 .feature-card:hover {
@@ -266,20 +275,13 @@
   border-radius: 2px;
 }
 
-/* Responsive adjustments for full-size hero images */
+/* Note: the old 100vh/cover sizing for .carousel-item and
+   .carousel-item img used to be re-declared in the responsive
+   blocks below. That forced a fixed-height box and letterboxed
+   (or cropped) the 4:3 slider photos. Sizing is now owned
+   entirely by the HOME HERO SLIDER block at the top of this
+   file, so only caption typography is kept per breakpoint. */
 @media (max-width: 991.98px) {
-  .carousel-item,
-  .hero-carousel .carousel-item {
-    height: 100vh !important;
-    min-height: 100vh !important;
-  }
-
-  .carousel-item img,
-  .hero-carousel .carousel-item img {
-    height: 100vh !important;
-    min-height: 100vh !important;
-  }
-
   .hero-caption h1 {
     font-size: 1.8rem;
   }
@@ -290,18 +292,6 @@
 }
 
 @media (max-width: 767.98px) {
-  .carousel-item,
-  .hero-carousel .carousel-item {
-    height: 100vh !important;
-    min-height: 100vh !important;
-  }
-
-  .carousel-item img,
-  .hero-carousel .carousel-item img {
-    height: 100vh !important;
-    min-height: 100vh !important;
-  }
-
   .hero-caption {
     padding: 1.5rem;
     max-width: 90%;
@@ -317,17 +307,9 @@
 }
 
 @media (max-width: 575.98px) {
-  .carousel-item,
-  .hero-carousel .carousel-item {
-    height: 100vh !important;
-    min-height: 100vh !important;
-  }
-
-  .carousel-item img,
-  .hero-carousel .carousel-item img {
-    height: 100vh !important;
-    min-height: 100vh !important;
-  }
+  /* On phones the picture is still width-driven at the 4:3 ratio, so it
+     is never cropped and never letterboxed - the viewport cap declared
+     above simply never binds. Nothing to override here. */
 
   .hero-caption {
     padding: 1rem 1.25rem;
@@ -342,6 +324,7 @@
     font-size: 0.82rem;
   }
 }
+
 
 /* ===========================================================
    FULLSCREEN VIDEO

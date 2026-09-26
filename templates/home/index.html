@@ -4,30 +4,59 @@
 {% block title %}Shree Jaljala Secondary School | Panchkhapan, Sankhuwasabha{% endblock %}
 
 {% block content %}
-<!-- ONE hero (brief 3): single campus photo or video background. -->
-{% if hero %}
-<div class="jj-hero-pin">
-<section class="jj-hero" aria-label="Shree Jaljala Secondary School introduction">
-  <div class="jj-hero-media" aria-hidden="true" data-parallax="1">
-    {% if hero.is_video and hero.video %}
-      <video autoplay muted loop playsinline preload="metadata"{% if hero.image %} poster="{{ hero.image.url }}"{% endif %}>
-        <source src="{{ hero.video.url }}">
-      </video>
-    {% else %}
-      <img src="{{ hero.display_image_url }}" alt="" onerror="this.onerror=null; this.src='/media/sliders/fifthphoto.jpg';">
+<!-- Active slider media: images/videos only, with no text or admission overlay. -->
+{% if sliders %}
+<div class="hero-slider-section">
+  <div id="schoolSlider" class="carousel slide hero-carousel" data-bs-ride="carousel" data-bs-interval="7000" aria-label="School image slider">
+    {% if sliders|length > 1 %}
+    <div class="carousel-indicators">
+      {% for slide in sliders %}
+      <button type="button"
+              data-bs-target="#schoolSlider"
+              data-bs-slide-to="{{ forloop.counter0 }}"
+              {% if forloop.first %}class="active" aria-current="true"{% endif %}
+              aria-label="Show slide {{ forloop.counter }}"></button>
+      {% endfor %}
+    </div>
+    {% endif %}
+
+    <div class="carousel-inner">
+      {% for slide in sliders %}
+      <div class="carousel-item{% if forloop.first %} active{% endif %}">
+        {% if slide.is_video %}
+          {% if slide.video %}
+          <video class="hero-media" autoplay muted loop playsinline preload="metadata"{% if slide.image %} poster="{{ slide.image.url }}"{% endif %}>
+            <source src="{{ slide.video.url }}">
+          </video>
+          {% else %}
+          <div class="hero-video-embed">
+            <iframe src="{{ slide.video_embed_url }}"
+                    title="School video slide {{ forloop.counter }}"
+                    allow="autoplay; fullscreen; picture-in-picture"
+                    allowfullscreen></iframe>
+          </div>
+          {% endif %}
+        {% else %}
+        <img src="{{ slide.display_image_url }}"
+             alt=""
+             loading="{% if forloop.first %}eager{% else %}lazy{% endif %}"
+             onerror="this.onerror=null; this.src='/media/sliders/fifthphoto.jpg';">
+        {% endif %}
+      </div>
+      {% endfor %}
+    </div>
+
+    {% if sliders|length > 1 %}
+    <button class="carousel-control-prev" type="button" data-bs-target="#schoolSlider" data-bs-slide="prev">
+      <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+      <span class="visually-hidden">Previous slide</span>
+    </button>
+    <button class="carousel-control-next" type="button" data-bs-target="#schoolSlider" data-bs-slide="next">
+      <span class="carousel-control-next-icon" aria-hidden="true"></span>
+      <span class="visually-hidden">Next slide</span>
+    </button>
     {% endif %}
   </div>
-  <div class="jj-hero-shade" aria-hidden="true"></div>
-  <div class="container" data-scrub="hero">
-    <div class="jj-hero-inner">
-      <span class="jj-hero-badge">Estd. 2045 B.S. (1988) · Panchkhapan-7, Sankhuwasabha</span>
-      <p class="jj-hero-nep" lang="ne">श्री जलजला माध्यमिक विद्यालय</p>
-      <h1>Shree Jaljala Secondary School</h1>
-      <p>Nursery to Class 10 in Panchkhapan-7, Sankhuwasabha. Steady teaching, practical science and computer learning, and strong community roots for 38 years.</p>
-      <a href="/admission" class="btn jj-btn-primary btn-lg">Apply for Admission</a>
-    </div>
-  </div>
-</section>
 </div>
 {% endif %}
 {% if notices or MARQUEE_NOTICES %}
@@ -103,7 +132,7 @@
           <a href="/about" class="btn btn-navy">
             Read Full History
           </a>
-          <a href="/admission" class="btn jj-btn-primary">
+          <a href="/admission" class="btn jj-btn-primary jj-admission-glow">
             Enroll Your Child
           </a>
         </div>
@@ -175,7 +204,7 @@
 </section>
 
 <!-- School Programs (Class Nursery to Class 10) -->
-<section class="py-5" id="programs-section">
+<section class="py-5" id="programs-section" data-aos="fade-up">
   <div class="container">
     <div class="section-title" data-scrub="title">
       <h2>Academic Programs (Class Nursery - 10)</h2>
@@ -183,7 +212,7 @@
       <div class="divider"></div>
     </div>
 
-    <div class="row g-4" data-stagger>
+    <div class="row g-4" data-stagger="alternate" data-stagger-step="80">
       {% if programs %}
         {% for program in programs %}
         <div class="col-lg-4 col-md-6">
@@ -215,7 +244,7 @@
 </section>
 
 <!-- Notices: utility section, near-instant (brief §2: fade only, 300ms) -->
-<section class="py-5 bg-light" id="notices-section" data-aos="fade" data-aos-duration="300">
+<section class="py-5 bg-light" id="notices-section" data-aos="fade-up">
   <div class="container">
     <div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-2">
       <div>
@@ -241,7 +270,7 @@
 </section>
 
 <!-- Teachers grid: subtle zoom-in, ~80ms stagger (brief §2) -->
-<section class="py-5" id="teachers-section">
+<section class="py-5" id="teachers-section" data-aos="fade-up">
   <div class="container">
     <div class="section-title" data-scrub="title">
       <h2>Teachers and Staff</h2>
@@ -424,7 +453,7 @@
 </style>
 
 <!-- Photo Gallery Preview Section -->
-<section class="py-5 bg-light" id="gallery-section">
+<section class="py-5 bg-light" id="gallery-section" data-aos="fade-up">
   <div class="container">
     <div class="section-title" data-scrub="title">
       <h2>School Gallery</h2>
@@ -457,7 +486,7 @@
 </section>
 
 <!-- Campus map: real Jaljala Secondary School Bihibare pin (brief 4) -->
-<section class="py-5 bg-light">
+<section class="py-5 bg-light" data-aos="fade-up">
   <div class="container">
     <div class="section-title" data-scrub="title">
       <h2>School Location</h2>

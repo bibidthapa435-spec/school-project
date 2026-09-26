@@ -104,12 +104,49 @@ main [style*="#0b2545"],.modal [style*="#0b2545"]{color:var(--color-primary)!imp
 .gallery-item,.img-hover-zoom{border-radius:8px;overflow:hidden}
 .gallery-item img{transition:transform .3s ease}
 .gallery-item:hover img{transform:scale(1.04)}
-/* Notice strip under hero: quiet bar — ink links on surface (never white-on-white) */
-.notice-marquee-bar{background:var(--color-surface)!important;border-bottom:1px solid #E4DCCB;padding:.55rem 0}
-.notice-marquee-bar marquee a{color:var(--color-ink)!important}
-.notice-marquee-bar marquee a:hover{color:var(--color-accent-deep)!important}
-.notice-badge{background:var(--color-primary)!important;color:#fff!important;border-radius:6px}
+/* Notice strip under hero: a PINE band (not a light tint).
+   Measured, not guessed: the page background is --color-bg #F7F4EE, and every
+   light candidate measured against it lands at 1.07-1.22:1 — i.e. invisible.
+   #F1ECE1 read as plain white on screen because it *was* effectively white.
+   Only a dark band separates. Pine is already the site's anchor surface
+   (navbar, footer), so this reads as intentional rather than as an alarm bar.
+   Contrast on the band: cream #EFE7D6 = 9.97:1, marigold pill #E8A33D = 5.68:1
+   (AA pass for bold text), marigold dot = 5.68:1. All AA.
+   The pill MUST flip to marigold: a pine pill on a pine band is 1.0:1.
+   min-height is load-bearing, NOT decoration: scroll-motion.css section 8 notes
+   the 40px hero-pin seam is only ever covered because this bar is taller than
+   the pin window, so a second follower can never expose the hero behind it.
+   Never slim this bar below --jj-pin. */
+.notice-marquee-bar{background:linear-gradient(90deg,var(--color-primary) 0%,#2E4F45 100%)!important;
+  border-top:1px solid #2E4F45;border-bottom:2px solid var(--color-highlight);
+  padding:.6rem 0;min-height:46px;display:flex;align-items:center;transition:filter .35s ease}
+.notice-marquee-bar:hover{filter:brightness(1.12)}
+.notice-marquee-bar>.container{width:100%}
+/* Pill: marigold on pine (5.68:1). Pine-on-pine here would be invisible. */
+.notice-marquee-bar .notice-badge{background:var(--color-highlight)!important;
+  color:var(--color-primary)!important;border-radius:999px;padding:.4rem .85rem;font-size:.72rem;
+  font-weight:700;letter-spacing:.09em;line-height:1.2;white-space:nowrap;flex:0 0 auto;
+  display:inline-flex;align-items:center;box-shadow:0 2px 8px rgba(0,0,0,.28)}
+.notice-marquee-bar .notice-badge i{color:var(--color-primary);font-size:.8rem}
+/* Scrolling viewport: absorbs the free width, and both edges fade into the band
+   so titles dissolve rather than being cut at the container edge. */
+.notice-marquee-bar marquee{flex:1 1 auto;min-width:0;display:block;font-size:.92rem;line-height:1.5;padding:.1rem 0;
+  -webkit-mask-image:linear-gradient(90deg,transparent 0,#000 2.5rem,#000 calc(100% - 2.5rem),transparent 100%);
+  mask-image:linear-gradient(90deg,transparent 0,#000 2.5rem,#000 calc(100% - 2.5rem),transparent 100%)}
+/* Dark band -> cream titles, not ink. style.css .text-dark (0,2,0) and the old
+   ink rule both lose to these, which is why !important is restated. */
+.notice-marquee-bar marquee a{color:#EFE7D6!important;font-weight:600;padding:.15rem 0;
+  margin-right:0!important;border-bottom:1px solid transparent;transition:color .2s ease,border-color .2s ease}
+.notice-marquee-bar marquee a strong{font-weight:700;color:#fff!important}
+.notice-marquee-bar marquee a:hover{color:var(--color-highlight)!important;border-bottom-color:var(--color-highlight)}
+/* Marigold dot between consecutive notices, spacing handled by the margin. */
+.notice-marquee-bar marquee a+a::before{content:"\2022";color:var(--color-highlight);margin:0 1.1rem;font-weight:700}
 .marquee-track a{color:var(--color-ink)!important}
+@media (max-width:575px){
+  .notice-marquee-bar marquee{-webkit-mask-image:linear-gradient(90deg,transparent 0,#000 1rem,#000 calc(100% - 1rem),transparent 100%);
+    mask-image:linear-gradient(90deg,transparent 0,#000 1rem,#000 calc(100% - 1rem),transparent 100%)}
+  .notice-marquee-bar .notice-badge{font-size:.66rem;letter-spacing:.06em;padding:.35rem .7rem}
+}
 /* Footer pine — force readable cream text over old muted/secondary utilities */
 footer{background:var(--color-primary)!important;border-top:3px solid var(--color-highlight)}
 footer h5,footer h6{color:#fff!important;border-bottom:2px solid var(--color-highlight)}
