@@ -2,6 +2,8 @@
 {% load static %}
 
 {% block title %}Photo Gallery | Shree Jaljala Secondary School{% endblock %}
+{% block meta_description %}Photographs of campus life, Saraswati Puja, sports and school events at Shree Jaljala Secondary School, Panchkhapan-7, Sankhuwasabha, Nepal.{% endblock %}
+{% block canonical %}{{ request.scheme }}://{{ request.get_host }}{% url 'gallery' %}{% endblock %}
 
 {% block content %}
 <div class="bg-primary text-white py-4 mb-4" style="background-color: var(--primary-navy) !important;" data-aos="fade-up">
@@ -12,32 +14,39 @@
 </div>
 
 <div class="container py-4">
-  <!-- Category Filter Pills -->
-  <div class="d-flex flex-wrap gap-2 mb-4 justify-content-center" data-aos="fade-up">
-    <a href="/gallery" class="btn btn-sm {% if not selected_cat %}btn-navy{% else %}btn-outline-navy{% endif %} px-3 rounded-pill">
-      All Photos
-    </a>
-    {% if categories %}
-      {% for cat in categories %}
-        <a href="/gallery?cat={{ cat.0 }}" class="btn btn-sm {% if selected_cat == cat.0 %}btn-navy{% else %}btn-outline-secondary{% endif %} px-3 rounded-pill">
-          {{ cat.1 }}
-        </a>
-      {% endfor %}
-    {% endif %}
-  </div>
+  <!-- Category Filter Pills: one horizontally scrollable row on mobile. -->
+  <nav class="filter-chips mb-4" aria-label="Filter photos by category">
+    <div class="filter-chips-row justify-content-center">
+      <a href="{% url 'gallery' %}" class="btn btn-sm {% if not selected_cat %}btn-navy{% else %}btn-outline-navy{% endif %} px-3 rounded-pill{% if not selected_cat %} active{% endif %}"{% if not selected_cat %} aria-current="true"{% endif %}>
+        All Photos
+      </a>
+      {% if categories %}
+        {% for cat in categories %}
+          <a href="{% url 'gallery' %}?cat={{ cat.0 }}" class="btn btn-sm {% if selected_cat == cat.0 %}btn-navy{% else %}btn-outline-secondary{% endif %} px-3 rounded-pill{% if selected_cat == cat.0 %} active{% endif %}"{% if selected_cat == cat.0 %} aria-current="true"{% endif %}>
+            {{ cat.1 }}
+          </a>
+        {% endfor %}
+      {% endif %}
+    </div>
+  </nav>
 
   <div class="row g-4" data-stagger="zoom-in" data-stagger-step="70">
-    {% if page_obj or gallery_items %}
-      {% for item in page_obj|default:gallery_items %}
+    {% if gallery_items %}
+      {% for item in gallery_items %}
       <div class="col-lg-3 col-md-4 col-sm-6">
-        <a href="#" class="gallery-lightbox-trigger text-decoration-none" data-img="{% if item.image %}{{ item.image.url }}{% endif %}" data-title="{{ item.title }}">
+        <a href="#" class="gallery-lightbox-trigger text-decoration-none" data-img="{% if item.image %}{{ item.image.url }}{% endif %}" data-title="{{ item.title|escape }}" aria-label="Open larger photo: {{ item.title|escape }}">
           <div class="card custom-card h-100 overflow-hidden">
             <div class="card-img-wrapper" style="height: 220px;">
-              <img src="{% if item.image %}{{ item.image.url }}{% else %}/media/teachers/govinda shrestha.jpg{% endif %}" alt="{{ item.title }}" class="img-fluid w-100 h-100 object-fit-cover">
+              <img src="{% if item.image %}{{ item.image.url }}{% else %}{{ FALLBACK_GALLERY_IMAGE }}{% endif %}"
+                   alt="{{ item.get_category_display|default:'School event'|escape }} photograph from Shree Jaljala Secondary School: {{ item.title|escape }}"
+                   class="img-fluid w-100 h-100 object-fit-cover"
+                   width="480" height="220" loading="lazy" decoding="async"
+                   data-fallback-src="{{ FALLBACK_GALLERY_IMAGE }}"
+                   onerror="this.onerror=null; this.src=this.dataset.fallbackSrc;">
             </div>
             <div class="card-body p-3">
               <span class="badge bg-secondary mb-1 text-capitalize" style="font-size: 0.7rem;">{{ item.get_category_display|default:item.category }}</span>
-              <h6 class="card-title fw-bold text-dark mb-1 text-truncate">{{ item.title }}</h6>
+              <h2 class="h6 card-title fw-bold text-dark mb-1 text-truncate">{{ item.title }}</h2>
               {% if item.description %}
                 <p class="card-text text-muted small text-truncate mb-0">{{ item.description }}</p>
               {% endif %}
@@ -48,9 +57,20 @@
       {% endfor %}
     {% else %}
       <div class="col-12 text-center py-5">
-        <i class="fa-solid fa-images fa-3x text-muted mb-3"></i>
-        <h5 class="text-secondary">No gallery photos found in this category.</h5>
-        <a href="/gallery" class="btn btn-navy mt-2">View All Gallery Items</a>
+        <i class="fa-solid fa-images fa-3x text-muted mb-3" aria-hidden="true"></i>
+        <h2 class="h5 text-secondary">
+          {% if selected_cat %}
+            No gallery photos found in this category.
+          {% else %}
+            No photos have been added yet.
+          {% endif %}
+        </h2>
+        {% if selected_cat %}
+          <p class="text-muted small">Try another category, or view every photo.</p>
+          <a href="{% url 'gallery' %}" class="btn btn-navy mt-2">View All Gallery Items</a>
+        {% else %}
+          <p class="text-muted small">Photographs will appear here once they are published.</p>
+        {% endif %}
       </div>
     {% endif %}
   </div>

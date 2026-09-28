@@ -5,6 +5,8 @@ from django.template.loader import render_to_string
 from django.test import SimpleTestCase
 from django.urls import resolve, reverse
 
+from school_project.data import confirmed_statistics
+
 
 class StaticPageUrlTests(SimpleTestCase):
     def test_about_page_resolves(self):
@@ -185,6 +187,53 @@ class HomeSliderCssSizingTests(SimpleTestCase):
             )
 
 
+class StatisticsConfirmationTests(SimpleTestCase):
+    """Unverified school statistics must never reach the public page.
+
+    The audit found headline figures (enrolment, pass rate) published
+    without the school ever confirming them. These tests pin the rule
+    that an unconfirmed statistic is filtered out, and that the school
+    can switch one on with an environment variable.
+
+    Only the "years since founding" figure is confirmed out of the box,
+    because it is derived from the school's own founding year (Estd.
+    2045 B.S.) which is already stated throughout the existing site.
+    """
+
+    def _reload(self):
+        import importlib
+        from school_project import data as data_module
+        importlib.reload(data_module)
+        return data_module
+
+    def test_unconfirmed_statistics_are_hidden_by_default(self):
+        data_module = self._reload()
+
+        published = {s['key'] for s in data_module.confirmed_statistics()}
+
+        # Only the founding-year figure is confirmed out of the box.
+        self.assertEqual(published, {'years'})
+        for key in ('students', 'teachers', 'pass_rate'):
+            self.assertNotIn(
+                key, published,
+                f'{key} must stay hidden until the school confirms it',
+            )
+
+    def test_confirming_a_statistic_publishes_it(self):
+        import os
+        os.environ['STATS_CONFIRM_STUDENTS'] = '1'
+        try:
+            data_module = self._reload()
+            published = {s['key'] for s in data_module.confirmed_statistics()}
+            self.assertIn('students', published)
+            # The still-unconfirmed ones stay hidden.
+            self.assertNotIn('pass_rate', published)
+            self.assertNotIn('teachers', published)
+        finally:
+            del os.environ['STATS_CONFIRM_STUDENTS']
+            self._reload()
+
+
 class ScrollMotionSpecTests(SimpleTestCase):
     """Guards the home-page scroll-animation spec.
 
@@ -207,12 +256,34 @@ class ScrollMotionSpecTests(SimpleTestCase):
         cls.js = (root / 'static' / 'js' / 'scroll-motion.js').read_text(
             encoding='utf-8'
         )
+        # The home page only renders the Teachers / Achievements / Gallery
+        # sections when the view actually has rows for them, so the fixture
+        # supplies one of each. This keeps the assertions below about
+        # wiring and ordering meaningful.
         cls.html = render_to_string('home/index.html', {
             'sliders': [SimpleNamespace(
                 title='Campus', subtitle='', description='', button_text='',
                 button_url='', media_type='image', image=None, video='',
                 is_video=False, display_image_url='/media/sliders/campus.jpg',
             )],
+            'teachers': [SimpleNamespace(
+                title='A Teacher', position='Teacher', qualification='B.Ed',
+                photo=None, slug='a-teacher',
+            )],
+            'gallery_items': [SimpleNamespace(
+                title='A Photo', description='', category_display='Campus',
+                image=None, slug='a-photo',
+            )],
+            'achievements': [SimpleNamespace(
+                title='An Achievement', description='', image=None,
+                achievement_type='student', achievement_date=None,
+                rank_or_position='', event_name='', slug='an-achievement',
+            )],
+            'programs': [SimpleNamespace(
+                title='Primary Level (Grades 1 - 5)', slug='primary',
+                description='', duration='5 years', fee='Free', image=None,
+            )],
+            'statistics': confirmed_statistics(),
         })
 
     def _section_tag(self, marker):
@@ -280,12 +351,16 @@ class ScrollMotionSpecTests(SimpleTestCase):
                 )
 
     def test_stat_counters_count_up_rather_than_only_fading(self):
-        # The four headline figures must be real counters (data-count drives
-        # the count-up in main.js), not static text.
-        for value in ('550', '16', '100', '38'):
+        # Every rendered statistic must be a real counter (data-count drives
+        # the count-up in main.js), not static text. Only statistics the
+        # school has confirmed are rendered at all, so the assertion runs
+        # over whatever confirmed_statistics() actually returns.
+        stats = confirmed_statistics()
+        self.assertTrue(stats, 'at least one statistic must be confirmed')
+        for stat in stats:
             self.assertIn(
-                f'data-count="{value}"', self.html,
-                f'stat {value} must animate as a counter',
+                f'data-count="{stat["value"]}"', self.html,
+                f'stat {stat["value"]} must animate as a counter',
             )
 
     def test_reveal_duration_is_in_the_600_800ms_window(self):

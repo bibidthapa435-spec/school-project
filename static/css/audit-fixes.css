@@ -1,0 +1,382 @@
+/* =============================================================
+   Shree Jaljala Secondary School - audit fixes
+   --------------------------------------------------------------
+   Additive layer for the frontend audit. Everything here either
+   fixes a documented defect or improves accessibility/responsive
+   behaviour. No existing rule is removed or overridden, so the
+   established visual identity is untouched.
+
+   Contents
+     1. Filter chips (single scrollable row on mobile)
+     2. Downloads table (scrolls inside its own container)
+     3. Visible focus states (WCAG 2.2 AA)
+     4. Touch targets (44x44px minimum)
+     5. Forms (labels, errors, single-column mobile)
+     6. Devanagari / Nepali text
+     7. Statistics band (adapts to a confirmed-only count)
+     8. Print
+     9. Reduced motion
+    ============================================================= */
+
+
+/* -------------------------------------------------------------
+   1. FILTER CHIPS
+   -------------------------------------------------------------
+   Teachers / Gallery / Achievements / Downloads filters. On
+   mobile they become ONE horizontally scrollable row instead of
+   wrapping into a tall ragged block, and the active chip stays
+   clearly visible. Scroll-snap makes the row feel intentional. */
+.filter-chips {
+  position: relative;
+}
+
+.filter-chips-row {
+  display: flex;
+  flex-wrap: nowrap;
+  gap: 0.5rem;
+  overflow-x: auto;
+  overflow-y: hidden;
+  -webkit-overflow-scrolling: touch;
+  scroll-snap-type: x proximity;
+  /* Room for the focus ring and the hover shadow. */
+  padding: 0.25rem 0.15rem 0.6rem;
+  max-width: 100%;
+  scrollbar-width: thin;
+}
+
+.filter-chips-row > .btn {
+  flex: 0 0 auto;
+  white-space: nowrap;
+  scroll-snap-align: start;
+  /* WCAG 2.2 AA touch target. */
+  min-height: 44px;
+  display: inline-flex;
+  align-items: center;
+}
+
+/* Active filter must be unmistakable, not just a colour swap. */
+.filter-chips-row > .btn.active,
+.filter-chips-row > .btn[aria-current="true"] {
+  font-weight: 700;
+  box-shadow: 0 0 0 2px var(--color-highlight, #E8734A);
+}
+
+/* The focusable scroll container needs a visible ring too. */
+.filter-chips-row:focus-visible {
+  outline: 3px solid var(--color-highlight, #E8734A);
+  outline-offset: 2px;
+  border-radius: 6px;
+}
+
+@media (min-width: 768px) {
+  /* On wider screens every chip fits, so let them wrap and centre. */
+  .filter-chips-row {
+    flex-wrap: wrap;
+    overflow-x: visible;
+    justify-content: center !important;
+  }
+}
+
+
+/* -------------------------------------------------------------
+   2. DOWNLOADS TABLE
+   -------------------------------------------------------------
+   Six columns do not fit a 320px phone. The scroll happens
+   INSIDE .table-responsive, so the page itself never scrolls
+   sideways. A min-width keeps the columns readable instead of
+   crushing them into unreadable slivers. */
+.downloads-table-wrap {
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  max-width: 100%;
+}
+
+.downloads-table {
+  min-width: 720px;
+  margin-bottom: 0;
+}
+
+.downloads-table-wrap:focus-visible {
+  outline: 3px solid var(--color-highlight, #E8734A);
+  outline-offset: -3px;
+  border-radius: 4px;
+}
+
+/* Any other wide table on the site gets the same treatment. */
+.table-responsive {
+  max-width: 100%;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+
+/* -------------------------------------------------------------
+   3. VISIBLE FOCUS STATES
+   -------------------------------------------------------------
+   The audit found no visible keyboard focus. Every interactive
+   element gets a high-contrast ring that is never removed. */
+a:focus-visible,
+button:focus-visible,
+input:focus-visible,
+select:focus-visible,
+textarea:focus-visible,
+[tabindex]:focus-visible,
+summary:focus-visible,
+.form-control:focus,
+.form-select:focus {
+  outline: 3px solid var(--color-highlight, #E8734A);
+  outline-offset: 2px;
+  /* Bootstrap suppresses the default ring on .form-control; the
+     box-shadow restores a clearly visible indicator. */
+  box-shadow: 0 0 0 3px rgba(232, 115, 74, 0.35);
+  border-radius: 4px;
+}
+
+/* On the dark navbar / footer the orange ring needs more contrast. */
+.navbar-custom a:focus-visible,
+.navbar-custom button:focus-visible,
+.navbar-custom .nav-link:focus-visible,
+.top-bar a:focus-visible,
+.top-bar button:focus-visible,
+footer a:focus-visible {
+  outline-color: #FFD166;
+  box-shadow: 0 0 0 3px rgba(255, 209, 102, 0.45);
+}
+
+
+/* -------------------------------------------------------------
+   4. TOUCH TARGETS (WCAG 2.2 AA: 44x44px)
+   ------------------------------------------------------------- */
+.btn,
+.dropdown-item {
+  min-height: 44px;
+}
+
+footer .social-icon-link,
+.top-bar .social-icons a {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 44px;
+  min-height: 44px;
+}
+
+#back-to-top {
+  min-width: 48px;
+  min-height: 48px;
+  padding: 12px 14px;
+}
+
+/* Inline links inside prose must not be forced to 44px - only
+   standalone controls are. */
+.notice-content a,
+p a,
+li a {
+  min-height: 0;
+}
+
+
+/* -------------------------------------------------------------
+   5. FORMS
+   ------------------------------------------------------------- */
+.form-label {
+  margin-bottom: 0.35rem;
+}
+
+/* Required fields are marked with text, not colour alone. */
+.required-mark {
+  color: var(--color-accent-deep, #B3401A);
+  font-weight: 700;
+}
+
+/* Server-side validation errors: announced and visually obvious. */
+.is-invalid {
+  border-color: #b71c1c !important;
+}
+
+.invalid-feedback {
+  display: block;
+  font-weight: 600;
+}
+
+/* File inputs: a visible, tappable control. */
+input[type="file"].form-control {
+  min-height: 44px;
+  padding: 0.5rem;
+}
+
+/* Mobile: single column layout, full-width submit. */
+@media (max-width: 575.98px) {
+  .card.custom-card {
+    padding: 1rem !important;
+  }
+
+  form .btn[type="submit"] {
+    width: 100%;
+  }
+
+  .form-control,
+  .form-select {
+    min-height: 46px;
+  }
+}
+
+
+/* -------------------------------------------------------------
+   6. DEVANAGARI / NEPALI TEXT
+   -------------------------------------------------------------
+   The bilingual identity is preserved. `lang="ne"` is set in the
+   markup; these rules guarantee the correct font, generous line
+   height (Devanagari matras need it) and no clipping on mobile. */
+[lang="ne"],
+.school-title {
+  font-family: 'Noto Serif Devanagari', 'Noto Sans Devanagari', 'Mangal', sans-serif;
+  /* Devanagari ascenders/descenders (matra marks) are taller than
+     Latin, so it needs more leading than the global 1.6. */
+  line-height: 1.75;
+  /* Matra marks must never be clipped by a tight line box. */
+  padding-block: 0.15em;
+  word-break: break-word;
+  overflow-wrap: anywhere;
+}
+
+@media (max-width: 575.98px) {
+  .brand-header .school-title {
+    line-height: 1.7;
+    font-size: 1.05rem;
+  }
+}
+
+
+/* -------------------------------------------------------------
+   7. STATISTICS BAND
+   -------------------------------------------------------------
+   The band now renders only school-confirmed figures, so the
+   column count can be 1, 2, 3 or 4. auto-fit spreads the cells
+   evenly without ever leaving a ragged empty column. */
+.jj-trust-grid-auto {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+}
+
+/* The old per-cell divider assumed exactly four cells. Restore a
+   clean edge between cells however many there are. */
+.jj-trust-grid-auto .jj-trust-cell + .jj-trust-cell {
+  border-left: 1px solid rgba(255, 255, 255, 0.22);
+}
+
+@media (max-width: 820px) {
+  .jj-trust-grid-auto .jj-trust-cell + .jj-trust-cell {
+    border-left: 0;
+  }
+
+  .jj-trust-grid-auto .jj-trust-cell {
+    border-bottom: 1px solid rgba(255, 255, 255, 0.22);
+  }
+
+  .jj-trust-grid-auto .jj-trust-cell:last-child {
+    border-bottom: 0;
+  }
+}
+
+.jj-trust-asof {
+  display: block;
+  margin-top: 0.35rem;
+  font-size: 0.75rem;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: rgba(239, 231, 214, 0.8);
+}
+
+.jj-trust-note {
+  margin: 1rem 0 0;
+  text-align: center;
+  font-size: 0.8rem;
+  color: rgba(239, 231, 214, 0.8);
+}
+
+/* Very small phones: one cell per row so nothing is cramped. */
+@media (max-width: 400px) {
+  .jj-trust-grid-auto {
+    grid-template-columns: 1fr;
+  }
+
+  .jj-trust-grid-auto .jj-trust-cell {
+    border-bottom: 1px solid rgba(255, 255, 255, 0.22);
+    padding: 1.25rem 1rem;
+  }
+}
+
+
+/* -------------------------------------------------------------
+   8. PRINT
+   -------------------------------------------------------------
+   The notice page offers a Print button; keep the output clean. */
+@media print {
+  .top-bar,
+  .brand-header,
+  .navbar-custom,
+  footer,
+  #back-to-top,
+  .filter-chips,
+  .notice-marquee-bar,
+  #schoolNoticePopup,
+  .modal,
+  .skip-link,
+  .carousel-control-prev,
+  .carousel-control-next,
+  .carousel-indicators {
+    display: none !important;
+  }
+
+  body {
+    background: #fff !important;
+    color: #000 !important;
+  }
+
+  .card.custom-card {
+    border: 1px solid #999 !important;
+    box-shadow: none !important;
+  }
+
+  a[href^="http"]::after {
+    content: " (" attr(href) ")";
+    font-size: 0.75em;
+    color: #444;
+  }
+}
+
+
+/* -------------------------------------------------------------
+   9. REDUCED MOTION
+   -------------------------------------------------------------
+   scroll-motion.css already neutralises its own reveals. This block
+   additionally removes the remaining decorative and functional
+   motion so nothing moves for a visitor who asked for stillness. */
+@media (prefers-reduced-motion: reduce) {
+  html,
+  body {
+    scroll-behavior: auto !important;
+  }
+
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+    scroll-behavior: auto !important;
+  }
+
+  /* Never let an image or card "zoom in" or a button "lift" on hover. */
+  .img-hover-zoom:hover img,
+  .achievement-item-home:hover .achievement-img-home,
+  .achievement-card:hover .achievement-image,
+  .navbar-custom .btn-gold:hover,
+  .navbar-custom .btn-apply:hover {
+    transform: none !important;
+  }
+
+  /* Smooth scrolling would still animate; the JS in scroll-motion.js
+     reads the same media query and switches to 'auto'. */
+}

@@ -2,29 +2,33 @@
 {% load static %}
 
 {% block title %}Faculty & Teachers | Shree Jaljala Secondary School{% endblock %}
+{% block meta_description %}Meet the qualified teachers and administration team of Shree Jaljala Secondary School, Panchkhapan Municipality-7, Bihibare, Sankhuwasabha, Nepal.{% endblock %}
+{% block canonical %}{{ request.scheme }}://{{ request.get_host }}{% url 'teachers' %}{% endblock %}
 
 {% block content %}
 <div class="bg-primary text-white py-4 mb-4" style="background-color: var(--primary-navy) !important;" data-aos="fade-up">
   <div class="container">
-    <h1 class="fw-bold mb-1">Our Dedicated Faculty & Staff</h1>
+    <h1 class="fw-bold mb-1">Our Dedicated Faculty &amp; Staff</h1>
     <p class="mb-0 text-light opacity-75">Meet the qualified teachers and administration team behind Shree Jaljala Secondary School.</p>
   </div>
 </div>
 
 <div class="container py-4">
-  <!-- Department Filters -->
-  <div class="d-flex flex-wrap gap-2 mb-4 justify-content-center">
-    <a href="/teachers" class="btn btn-sm {% if not selected_dept %}btn-navy{% else %}btn-outline-navy{% endif %} px-3 rounded-pill">
-      All Departments
-    </a>
-    {% if departments %}
-      {% for dept in departments %}
-        <a href="/teachers?dept={{ dept.0 }}" class="btn btn-sm {% if selected_dept == dept.0 %}btn-navy{% else %}btn-outline-secondary{% endif %} px-3 rounded-pill">
-          {{ dept.1 }}
-        </a>
-      {% endfor %}
-    {% endif %}
-  </div>
+  <!-- Department Filters: one horizontally scrollable row on mobile. -->
+  <nav class="filter-chips mb-4" aria-label="Filter faculty by department">
+    <div class="filter-chips-row justify-content-center">
+      <a href="{% url 'teachers' %}" class="btn btn-sm {% if not selected_dept %}btn-navy{% else %}btn-outline-navy{% endif %} px-3 rounded-pill{% if not selected_dept %} active{% endif %}"{% if not selected_dept %} aria-current="true"{% endif %}>
+        All Departments
+      </a>
+      {% if departments %}
+        {% for dept in departments %}
+          <a href="{% url 'teachers' %}?dept={{ dept.0 }}" class="btn btn-sm {% if selected_dept == dept.0 %}btn-navy{% else %}btn-outline-secondary{% endif %} px-3 rounded-pill{% if selected_dept == dept.0 %} active{% endif %}"{% if selected_dept == dept.0 %} aria-current="true"{% endif %}>
+            {{ dept.1 }}
+          </a>
+        {% endfor %}
+      {% endif %}
+    </div>
+  </nav>
 
   <div class="row g-4" data-stagger="zoom-in" data-stagger-step="80">
     {% if teachers %}
@@ -32,15 +36,19 @@
       <div class="col-lg-3 col-md-4 col-sm-6">
         <div class="card custom-card teacher-card h-100 d-flex flex-column justify-content-between">
           <div>
-            <img src="{% if teacher.photo %}{{ teacher.photo.url }}{% else %}/media/teachers/govinda shrestha.jpg{% endif %}" alt="{{ teacher.title }}" class="teacher-photo">
-            <h5 class="fw-bold mb-1 text-navy" style="color: #0b2545;">{{ teacher.title }}</h5>
+            <img src="{% if teacher.photo %}{{ teacher.photo.url }}{% else %}{{ FALLBACK_TEACHER_PHOTO }}{% endif %}"
+                 alt="Portrait of {{ teacher.title|escape }}{% if teacher.position %}, {{ teacher.position|escape }}{% endif %}"
+                 class="teacher-photo" width="400" height="400" loading="lazy" decoding="async"
+                 data-fallback-src="{{ FALLBACK_TEACHER_PHOTO }}"
+                 onerror="this.onerror=null; this.src=this.dataset.fallbackSrc;">
+            <h2 class="h5 fw-bold mb-1 text-navy" style="color: #0b2545;">{{ teacher.title }}</h2>
             <p class="text-primary small mb-1 fw-semibold">{{ teacher.position }}</p>
             <p class="text-muted small mb-2">{{ teacher.qualification }}</p>
             <span class="badge bg-light text-dark border mb-3 text-wrap">{{ teacher.department_display|default:teacher.department }}</span>
           </div>
           <div>
-            <a href="/teachers/{{ teacher.slug }}" class="btn btn-sm btn-navy w-100">
-              View Full Profile <i class="fa-solid fa-arrow-right ms-1"></i>
+            <a href="{% url 'teacher_detail' teacher.slug %}" class="btn btn-sm btn-navy w-100">
+              View Full Profile <i class="fa-solid fa-arrow-right ms-1" aria-hidden="true"></i>
             </a>
           </div>
         </div>
@@ -48,9 +56,22 @@
       {% endfor %}
     {% else %}
       <div class="col-12 text-center py-5" data-aos="fade-up">
-        <i class="fa-solid fa-user-slash fa-3x text-muted mb-3"></i>
-        <h5 class="text-secondary">No faculty members found in this department.</h5>
-        <a href="/teachers" class="btn btn-navy mt-2">View All Staff</a>
+        <i class="fa-solid fa-user-slash fa-3x text-muted mb-3" aria-hidden="true"></i>
+        {# The message must match the filter that is actually applied. #}
+        <h2 class="h5 text-secondary">
+          {% if selected_dept %}
+            No faculty members found in this department.
+          {% else %}
+            No teachers have been added yet.
+          {% endif %}
+        </h2>
+        {% if selected_dept %}
+          <p class="text-muted small">Try another department, or view the full staff list.</p>
+          {# No "View All" button when the user is already on the All page. #}
+          <a href="{% url 'teachers' %}" class="btn btn-navy mt-2">View All Staff</a>
+        {% else %}
+          <p class="text-muted small">Faculty profiles will appear here once they are published.</p>
+        {% endif %}
       </div>
     {% endif %}
   </div>

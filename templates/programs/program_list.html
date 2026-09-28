@@ -2,6 +2,8 @@
 {% load static %}
 
 {% block title %}Academic Programs | Shree Jaljala Secondary School{% endblock %}
+{% block meta_description %}Academic programs at Shree Jaljala Secondary School, Panchkhapan-7, Sankhuwasabha: Early Childhood Development, Primary Level, Basic Level and Secondary SEE Level education.{% endblock %}
+{% block canonical %}{{ request.scheme }}://{{ request.get_host }}{% url 'programs' %}{% endblock %}
 
 {% block content %}
 <div class="bg-primary text-white py-4 mb-4" style="background-color: var(--primary-navy) !important;" data-aos="fade-up">
@@ -19,20 +21,26 @@
         <div class="card custom-card h-100 p-3">
           <div class="row g-3 align-items-center">
             <div class="col-md-5">
-              <img src="{% if program.image %}{{ program.image.url }}{% else %}/media/programs/image 1.jpg{% endif %}" alt="{{ program.title }}" class="img-fluid rounded-3 w-100 object-fit-cover" style="height: 180px;">
+              <img src="{% if program.image %}{{ program.image.url }}{% else %}{{ FALLBACK_PROGRAM_IMAGE }}{% endif %}"
+                   alt="{{ program.title|escape }} at Shree Jaljala Secondary School"
+                   class="img-fluid rounded-3 w-100 object-fit-cover"
+                   width="640" height="360" loading="lazy" decoding="async"
+                   style="height: 180px;"
+                   data-fallback-src="{{ FALLBACK_PROGRAM_IMAGE }}"
+                   onerror="this.onerror=null; this.src=this.dataset.fallbackSrc;">
             </div>
             <div class="col-md-7 d-flex flex-column h-100">
-              <h5 class="fw-bold text-navy mb-2" style="color: #0b2545;">{{ program.title }}</h5>
+              <h2 class="h5 fw-bold text-navy mb-2" style="color: #0b2545;">{{ program.title }}</h2>
               <div class="small text-muted mb-2">
-                <span class="me-3"><i class="fa-regular fa-clock text-warning me-1"></i> {{ program.duration }}</span>
+                <span class="me-3"><i class="fa-regular fa-clock text-warning me-1" aria-hidden="true"></i> {{ program.duration }}</span>
                 <span class="badge bg-success">{{ program.fee }}</span>
               </div>
               <p class="card-text text-secondary small flex-grow-1">
                 {{ program.description }}
               </p>
               <div class="mt-2">
-                <a href="/programs/{{ program.slug }}" class="btn btn-navy btn-sm">
-                  View Program Details <i class="fa-solid fa-arrow-right ms-1"></i>
+                <a href="{% url 'program_detail' program.slug %}" class="btn btn-navy btn-sm">
+                  View Program Details <i class="fa-solid fa-arrow-right ms-1" aria-hidden="true"></i>
                 </a>
               </div>
             </div>
@@ -40,6 +48,23 @@
         </div>
       </div>
       {% endfor %}
+    {% else %}
+      {% comment %} No programs published: a professional empty state rather than a
+         heading above an empty grid. No program content is invented. {% endcomment %}
+      <div class="col-12">
+        <div class="card custom-card p-5 text-center">
+          <i class="fa-solid fa-graduation-cap fa-3x text-muted mb-3" aria-hidden="true"></i>
+          <h2 class="h4 text-secondary">No academic programs have been published yet.</h2>
+          <p class="text-muted mb-0">
+            Our school offers education from Class Nursery to Class 10 (SEE level).
+            Please contact the school office for current program details.
+          </p>
+          <div class="mt-4 d-flex flex-wrap gap-2 justify-content-center">
+            <a href="{% url 'contact' %}" class="btn btn-navy">Contact the School</a>
+            <a href="{% url 'admission' %}" class="btn btn-outline-secondary">Online Admission</a>
+          </div>
+        </div>
+      </div>
     {% endif %}
   </div>
 </div>

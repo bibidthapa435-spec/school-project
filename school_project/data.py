@@ -1,3 +1,4 @@
+import os
 from typing import List, Dict, Optional
 
 
@@ -66,6 +67,85 @@ gallery_category_choices = [
     ['events', 'Events & Official Visits'],
     ['tour', 'Educational Tours'],
 ]
+
+
+def _stat_flag(name: str) -> bool:
+    """True when the school has explicitly confirmed a statistic.
+
+    Statistics are OFF by default. A statistic is only rendered on the
+    public site once the school administrator sets the matching
+    environment variable to '1' (for example ``STATS_CONFIRM_STUDENTS=1``)
+    in the Render dashboard. This keeps unverified numbers (enrolment
+    counts, pass rates) off a public school website until the school
+    itself stands behind them.
+    """
+    return os.environ.get(f'STATS_CONFIRM_{name}', '').strip().lower() in {
+        '1', 'true', 'yes',
+    }
+
+
+def _stat_as_of(default: str = '') -> str:
+    """Optional "as of" qualifier, e.g. "As of 2082 B.S.".
+
+    Falls back to the current Nepali academic year label only when the
+    school has confirmed at least one statistic, so an unconfirmed band
+    never shows a bare year.
+    """
+    return os.environ.get('STATS_AS_OF', '').strip() or default
+
+
+# Homepage statistics band.
+#
+# IMPORTANT: no number here is verified. `confirmed` is resolved from the
+# environment (see _stat_flag) and is False unless the school sets
+# STATS_CONFIRM_<NAME>=1. The template renders ONLY confirmed entries, so
+# nothing unverified is ever published. Labels are deliberately worded to
+# match the rest of the site (Nursery to Class 10, Estd. 2045 B.S.).
+homepage_statistics = [
+    {
+        'key': 'students',
+        'value': 550,
+        'suffix': '+',
+        'label': 'Students, Nursery to Class 10',
+        'confirmed': _stat_flag('students'),
+    },
+    {
+        'key': 'teachers',
+        'value': 16,
+        'suffix': '+',
+        'label': 'Dedicated Teachers',
+        'confirmed': _stat_flag('teachers'),
+    },
+    {
+        'key': 'pass_rate',
+        'value': 100,
+        'suffix': '%',
+        'label': 'SEE Pass Rate',
+        'confirmed': _stat_flag('pass_rate'),
+    },
+    {
+        'key': 'years',
+        # Derived from the school's own founding year (Estd. 2045 B.S.),
+        # which is stated throughout the existing site content.
+        'value': 38,
+        'suffix': '',
+        'label': 'Years in Panchkhapan, Estd. 2045 B.S.',
+        'confirmed': True,
+    },
+]
+
+
+def confirmed_statistics():
+    """Return only the statistics the school has confirmed."""
+    confirmed = [s for s in homepage_statistics if s['confirmed']]
+    if not confirmed:
+        return []
+    as_of = _stat_as_of()
+    if as_of:
+        confirmed = [dict(s, as_of=as_of) for s in confirmed]
+    else:
+        confirmed = [dict(s, as_of='') for s in confirmed]
+    return confirmed
 
 
 def get_item_by_slug(items: List[Dict], slug: str) -> Optional[Dict]:

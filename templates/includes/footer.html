@@ -3,20 +3,23 @@
     <div class="row g-4">
       <!-- Col 1: School Overview -->
       <div class="col-lg-4 col-md-6">
-        <h5>Shree Jaljala Secondary School</h5>
+        <h2 class="h5">Shree Jaljala Secondary School</h2>
         <p class="small text-muted mb-3">
           Affiliated with the Government of Nepal (Ministry of Education). Providing quality public secondary education from Class Nursery up to Class 10 (SEE level) in Panchkhapan Municipality-7, Bihibare, Sankhuwasabha.
         </p>
-        <div class="d-flex gap-3 social-icons fs-5">
-          <a href="{{ settings.facebook_url|default:'https://facebook.com' }}" target="_blank" class="text-white social-icon-link"><i class="fa-brands fa-facebook-f"></i></a>
-          <a href="{{ settings.instagram_url|default:'https://instagram.com' }}" target="_blank" class="text-white social-icon-link"><i class="fa-brands fa-instagram"></i></a>
-          <a href="{{ settings.youtube_url|default:'https://youtube.com' }}" target="_blank" class="text-white social-icon-link"><i class="fa-brands fa-youtube"></i></a>
+        {# Social links render only when the school has saved a real URL. #}
+        {% if settings.facebook_url or settings.instagram_url or settings.youtube_url %}
+        <div class="d-flex gap-2 social-icons fs-5">
+          {% if settings.facebook_url %}<a href="{{ settings.facebook_url }}" target="_blank" rel="noopener noreferrer" class="text-white social-icon-link" title="Facebook" aria-label="Shree Jaljala Secondary School on Facebook (opens in a new tab)"><i class="fa-brands fa-facebook-f" aria-hidden="true"></i></a>{% endif %}
+          {% if settings.instagram_url %}<a href="{{ settings.instagram_url }}" target="_blank" rel="noopener noreferrer" class="text-white social-icon-link" title="Instagram" aria-label="Shree Jaljala Secondary School on Instagram (opens in a new tab)"><i class="fa-brands fa-instagram" aria-hidden="true"></i></a>{% endif %}
+          {% if settings.youtube_url %}<a href="{{ settings.youtube_url }}" target="_blank" rel="noopener noreferrer" class="text-white social-icon-link" title="YouTube" aria-label="Shree Jaljala Secondary School on YouTube (opens in a new tab)"><i class="fa-brands fa-youtube" aria-hidden="true"></i></a>{% endif %}
         </div>
+        {% endif %}
       </div>
 
       <!-- Col 2: Quick Links -->
       <div class="col-lg-2 col-md-6">
-        <h5>Quick Links</h5>
+        <h2 class="h5">Quick Links</h2>
         <ul class="list-unstyled d-flex flex-column gap-2 small">
           <li><a href="/"><i class="fa-solid fa-angle-right me-1 text-warning"></i> Home</a></li>
           <li><a href="/about"><i class="fa-solid fa-angle-right me-1 text-warning"></i> About School</a></li>
@@ -28,7 +31,7 @@
 
       <!-- Col 3: Student & Parent Corner -->
       <div class="col-lg-3 col-md-6">
-        <h5>Student Corner</h5>
+        <h2 class="h5">Student Corner</h2>
         <ul class="list-unstyled d-flex flex-column gap-2 small">
           <li><a href="/notices"><i class="fa-solid fa-angle-right me-1 text-warning"></i> Latest Notices & Exams</a></li>
           <li><a href="/admission"><i class="fa-solid fa-angle-right me-1 text-warning"></i> Online Admission Form</a></li>
@@ -40,12 +43,26 @@
 
       <!-- Col 4: Contact Info -->
       <div class="col-lg-3 col-md-6">
-        <h5>Contact Us</h5>
+        <h2 class="h5">Contact Us</h2>
         <ul class="list-unstyled d-flex flex-column gap-2 small text-muted">
-          <li><i class="fa-solid fa-location-dot me-2 text-warning"></i> {{ settings.address|default:"Panchkhapan Municipality-7, Bihibare, Sankhuwasabha, Nepal" }}</li>
-          <li><i class="fa-solid fa-phone me-2 text-warning"></i> {{ settings.phone|default:"+977-9842000000 / +977-9800000000" }}</li>
-          <li><i class="fa-solid fa-envelope me-2 text-warning"></i> {{ settings.email|default:"info@shreejaljala.edu.np" }}</li>
-          <li><i class="fa-solid fa-clock me-2 text-warning"></i> Sun - Fri: 10:00 AM - 4:00 PM</li>
+          <li><i class="fa-solid fa-location-dot me-2 text-warning" aria-hidden="true"></i> {{ settings.address|default:"Panchkhapan Municipality-7, Bihibare, Sankhuwasabha, Nepal" }}</li>
+          <li>
+            <i class="fa-solid fa-phone me-2 text-warning" aria-hidden="true"></i>
+            {% if settings.phone %}
+              <a href="tel:{{ settings.phone|cut:' '|cut:'/'|cut:'-' }}" class="footer-contact-link">{{ settings.phone }}</a>
+            {% else %}
+              +977-9842000000 / +977-9800000000
+            {% endif %}
+          </li>
+          <li>
+            <i class="fa-solid fa-envelope me-2 text-warning" aria-hidden="true"></i>
+            {% if settings.email %}
+              <a href="mailto:{{ settings.email }}" class="footer-contact-link">{{ settings.email }}</a>
+            {% else %}
+              info@shreejaljala.edu.np
+            {% endif %}
+          </li>
+          <li><i class="fa-solid fa-clock me-2 text-warning" aria-hidden="true"></i> Sun - Fri: 10:00 AM - 4:00 PM</li>
         </ul>
       </div>
     </div>
@@ -66,15 +83,15 @@
 </button>
 
 <!-- Lightbox Modal -->
-<div class="modal fade lightbox-modal" id="lightboxModal" tabindex="-1" aria-hidden="true">
+<div class="modal fade lightbox-modal" id="lightboxModal" tabindex="-1" role="dialog" aria-modal="true" aria-labelledby="lightboxTitle" aria-hidden="true">
   <div class="modal-dialog modal-dialog-centered modal-lg">
     <div class="modal-content text-center">
       <div class="modal-header border-0 pb-0">
-        <h5 class="modal-title text-white" id="lightboxTitle">Image Preview</h5>
-        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+        <h2 class="modal-title h5 text-white" id="lightboxTitle">Image Preview</h2>
+        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close image preview"></button>
       </div>
       <div class="modal-body">
-        <img id="lightboxImage" src="" alt="Gallery Preview" class="img-fluid shadow-lg">
+        <img id="lightboxImage" src="" alt="" class="img-fluid shadow-lg">
       </div>
     </div>
   </div>

@@ -17,7 +17,7 @@
     {% for result in results %}
     <div class="col-md-6 col-lg-4">
       <div class="custom-card p-3 h-100 d-flex flex-column justify-content-between">
-        <h5 class="fw-bold">{{ result.title }}</h5>
+        <h2 class="h5 fw-bold">{{ result.title }}</h2>
         <p class="mb-2"><strong>Examination:</strong> {{ result.examination }}</p>
         <p class="mb-2"><strong>Class:</strong> {{ result.class_name }}</p>
         <p class="mb-2"><strong>Academic Year:</strong> {{ result.academic_year }}</p>
@@ -40,7 +40,7 @@
 {% else %}
   <div class="text-center py-5" data-aos="fade-up">
     <i class="fa-solid fa-folder-open fa-3x text-muted mb-3"></i>
-    <h5 class="text-secondary">No results have been published yet. Please check back later.</h5>
+    <h2 class="h5 text-secondary">No results have been published yet. Please check back later.</h2>
   </div>
 {% endif %}
 </div>

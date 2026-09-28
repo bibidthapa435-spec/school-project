@@ -26,16 +26,67 @@
   box-sizing: border-box;
 }
 
-/* NOTE: overflow-x must NOT be set on <html> � doing so creates a new
-   scroll container that clips position:absolute dropdown menus.
-   overflow-x:hidden on body alone (also in style.css) prevents horizontal
-   scroll without clipping the navbar dropdown. */
+/* NOTE: overflow-x must NOT be set to `hidden` on <html> - that creates
+   a scroll container which clips position:absolute dropdown menus.
+   `clip` contains the overflow WITHOUT creating a scroll container and
+   WITHOUT breaking position:sticky, so it is safe to apply here as the
+   final guard against a page-level horizontal scrollbar.
+
+   Two real sources of a few px of overflow are fixed at their origin
+   below (the notice marquee and the wide Bootstrap gutters); this is
+   only the safety net. */
 html {
   max-width: 100%;
+  overflow-x: clip;
 }
 body {
   overflow-x: hidden;
   max-width: 100%;
+}
+
+/* -------------------------------------------------------------
+   NOTICE MARQUEE
+   -------------------------------------------------------------
+   The <marquee> element is deprecated and its inline content is
+   as wide as all the notice titles, which pushed the page wider
+   than the viewport. Confine it: the bar itself never grows, and
+   the ticker scrolls inside it. */
+.notice-marquee-bar {
+  max-width: 100%;
+  overflow: hidden;
+}
+
+.notice-marquee-bar .container {
+  max-width: 100%;
+  min-width: 0;
+  flex-wrap: nowrap;
+  overflow: hidden;
+}
+
+.notice-marquee-bar marquee {
+  display: block;
+  min-width: 0;
+  max-width: 100%;
+  overflow: hidden;
+  white-space: nowrap;
+}
+
+/* -------------------------------------------------------------
+   BOOTSTRAP GUTTERS
+   -------------------------------------------------------------
+   .row carries negative side margins equal to half its gutter.
+   With the largest gutter (g-5 = 3rem) that is 1.5rem each side,
+   which can push past a narrow viewport. Clamp the row to its
+   container so the negative margin can never escape. */
+.container > .row,
+main .row {
+  max-width: 100%;
+}
+
+@media (max-width: 575.98px) {
+  .row {
+    --bs-gutter-x: 1.5rem;
+  }
 }
 
 img {
@@ -47,6 +98,132 @@ iframe {
   max-width: 100%;
 }
 
+
+/* -------------------------------------------------------------
+   NAVBAR: prevent crowding / wrapping at 1024-1200px
+   -------------------------------------------------------------
+   The audit found the 11-item menu colliding and wrapping between
+   992px and 1200px. Rather than shrink the labels (which hurts
+   legibility), the navigation collapses EARLIER, into the
+   hamburger, at 1199.98px and below. The existing structure,
+   ordering and styling are unchanged above that breakpoint. */
+@media (max-width: 1199.98px) {
+  .navbar-custom .navbar-collapse {
+    /* Same collapsed-panel treatment already used below 992px. */
+    background-color: #14315B;
+    padding: 10px 15px 15px;
+    border-radius: 0 0 8px 8px;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+  }
+}
+
+@media (max-width: 1199.98px) {
+  /* Keep the menu usable on small laptops and tablets: full-width
+     tap targets, no wrapping text, and a comfortable stack. */
+  .navbar-custom .nav-link {
+    padding: 12px 14px !important;
+    font-size: 0.9rem;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.07);
+  }
+
+  .navbar-custom .dropdown-menu {
+    position: static !important;
+    transform: none !important;
+    background-color: rgba(255, 255, 255, 0.06);
+    border: none;
+    box-shadow: none;
+    padding-left: 16px;
+    border-radius: 6px;
+    margin-top: 2px;
+  }
+
+  .navbar-custom .dropdown-item {
+    color: rgba(255, 255, 255, 0.85) !important;
+    font-size: 0.875rem;
+    padding: 10px 14px;
+    /* WCAG 2.2 AA minimum touch target. */
+    min-height: 44px;
+    display: flex;
+    align-items: center;
+  }
+}
+
+/* Desktop (>= 1200px): a single unwrapped row.
+   `flex-wrap: nowrap` plus `white-space: nowrap` guarantees the menu
+   never breaks onto a second line, and `overflow-x: auto` on the
+   container is the last-resort safety valve so a crowded row can
+   never push the page into a horizontal scrollbar. */
+@media (min-width: 1200px) {
+  .navbar-custom .container {
+    max-width: 100%;
+    flex-wrap: nowrap;
+    /* Last-resort safety valve: a crowded row scrolls inside the bar
+       instead of pushing the whole page sideways. */
+    overflow-x: auto;
+    scrollbar-width: thin;
+  }
+
+  .navbar-custom .navbar-nav {
+    flex-wrap: nowrap;
+    min-width: 0;
+  }
+
+  .navbar-custom .nav-link {
+    white-space: nowrap;
+    /* Trim the horizontal padding at 1200-1399px, where 11 uppercase
+       labels plus the CTA genuinely need the extra room. */
+    padding: 10px 12px !important;
+    font-size: 0.82rem;
+    letter-spacing: 0.3px;
+  }
+}
+
+@media (min-width: 1400px) {
+  .navbar-custom .nav-link {
+    padding: 12px 18px !important;
+    font-size: 0.95rem;
+    letter-spacing: 0.5px;
+  }
+}
+
+/* -------------------------------------------------------------
+   TOUCH TARGETS (WCAG 2.2 AA: 44x44px minimum)
+   ------------------------------------------------------------- */
+.navbar-custom .nav-link,
+.navbar-custom .dropdown-item,
+.top-bar .btn {
+  min-height: 44px;
+  display: inline-flex;
+  align-items: center;
+}
+
+.top-bar .btn {
+  padding-top: 0.35rem;
+  padding-bottom: 0.35rem;
+}
+
+/* -------------------------------------------------------------
+   STICKY NAVBAR: no jump, no white gap
+   -------------------------------------------------------------
+   The navbar is fixed to the top once the header scrolls away. The
+   body gets matching padding-top, so removing the navbar from the
+   flow does not move the page content up under it. */
+body.sticky-nav-active {
+  padding-top: var(--navbar-height, 70px);
+}
+
+/* While the mobile menu is open the navbar is tall; keep the body
+   padding in step so the page does not jump. */
+body.sticky-nav-active.nav-menu-open {
+  padding-top: 0;
+}
+
+.navbar-custom.is-sticky {
+  /* Never leave a sliver of the page showing through. */
+  max-height: 100vh;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+}
 
 /* =============================================================
    TABLET & COLLAPSED-NAVBAR  (<= 991px)

@@ -1,12 +1,14 @@
 {% extends 'base.html' %}
 {% load static %}
 
-{% block title %}Notices & Announcements | Shree Jaljala Secondary School{% endblock %}
+{% block title %}Notices &amp; Announcements | Shree Jaljala Secondary School{% endblock %}
+{% block meta_description %}Latest admission notices, examination routines, academic announcements and event schedules from Shree Jaljala Secondary School, Sankhuwasabha, Nepal.{% endblock %}
+{% block canonical %}{{ request.scheme }}://{{ request.get_host }}{% url 'notices' %}{% endblock %}
 
 {% block content %}
 <div class="bg-primary text-white py-4 mb-4" style="background-color: var(--primary-navy) !important;" data-aos="fade-up">
   <div class="container">
-    <h1 class="fw-bold mb-1">Notice Board & Announcements</h1>
+    <h1 class="fw-bold mb-1">Notice Board &amp; Announcements</h1>
     <p class="mb-0 text-light opacity-75">Stay updated with academic notices, exam routines, admissions, and event schedules.</p>
   </div>
 </div>
@@ -14,15 +16,17 @@
 <div class="container py-4">
   <!-- Search & Category Filter Form -->
   <div class="card custom-card p-3 mb-4" data-aos="fade-up">
-    <form method="GET" action="/notices" class="row g-3 align-items-center">
+    <form method="GET" action="{% url 'notices' %}" class="row g-3 align-items-center" role="search" aria-label="Search and filter notices">
       <div class="col-md-5">
+        <label for="notice-search" class="visually-hidden">Search notices by keyword</label>
         <div class="input-group">
-          <span class="input-group-text bg-white"><i class="fa-solid fa-magnifying-glass text-muted"></i></span>
-          <input type="text" name="q" class="form-control" placeholder="Search notices by keyword..." value="{{ query }}">
+          <span class="input-group-text bg-white"><i class="fa-solid fa-magnifying-glass text-muted" aria-hidden="true"></i></span>
+          <input type="search" id="notice-search" name="q" class="form-control" placeholder="Search notices by keyword..." value="{{ query }}">
         </div>
       </div>
       <div class="col-md-4">
-        <select name="category" class="form-select">
+        <label for="notice-category" class="visually-hidden">Filter by notice category</label>
+        <select id="notice-category" name="category" class="form-select">
           <option value="">All Notice Categories</option>
           {% if categories %}
             {% for cat in categories %}
@@ -32,46 +36,75 @@
         </select>
       </div>
       <div class="col-md-3 d-flex gap-2">
-        <button type="submit" class="btn btn-navy flex-grow-1"><i class="fa-solid fa-filter me-1"></i> Filter</button>
+        <button type="submit" class="btn btn-navy flex-grow-1"><i class="fa-solid fa-filter me-1" aria-hidden="true"></i> Filter</button>
         {% if query or selected_category %}
-          <a href="/notices" class="btn btn-outline-secondary"><i class="fa-solid fa-rotate-left"></i> Reset</a>
+          <a href="{% url 'notices' %}" class="btn btn-outline-secondary"><i class="fa-solid fa-rotate-left" aria-hidden="true"></i><span class="visually-hidden">Reset filters</span></a>
         {% endif %}
       </div>
     </form>
   </div>
 
-  <p class="text-muted mb-4">Showing {{ page_obj|length|default:notices|length }} notice(s)</p>
+  {# Correct singular/plural wording. #}
+  <p class="text-muted mb-4" role="status">
+    {% if notices %}
+      Showing {{ notices|length }} notice{% if notices|length != 1 %}s{% endif %}{% if query or selected_category %} matching your search{% endif %}.
+    {% else %}
+      No notices to show.
+    {% endif %}
+  </p>
 
   <div class="row g-4" data-stagger="zoom-in" data-stagger-step="90">
-    {% if page_obj or notices %}
-      {% for notice in page_obj|default:notices %}
+    {% if notices %}
+      {% for notice in notices %}
       <div class="col-md-6 col-lg-4">
-        <div class="notice-item h-100 d-flex flex-column justify-content-between">
+        <article class="notice-item h-100 d-flex flex-column justify-content-between">
           <div>
             {% if notice.image %}
-              <img src="{{ notice.image.url }}" alt="{{ notice.title }}" class="img-fluid rounded mb-3 w-100" style="height: 160px; object-fit: cover;">
+              <img src="{{ notice.image.url }}" alt="" class="img-fluid rounded mb-3 w-100"
+                   width="480" height="160" loading="lazy" decoding="async"
+                   style="height: 160px; object-fit: cover;"
+                   onerror="this.remove();">
             {% endif %}
             <div class="d-flex justify-content-between align-items-center mb-2">
               <span class="badge bg-primary text-capitalize">{{ notice.category_display|default:notice.category }}</span>
+              <time class="text-muted small" datetime="{{ notice.created_at|date:'Y-m-d' }}">{{ notice.created_at|date:"M d, Y" }}</time>
             </div>
-            <h5 class="fw-bold text-dark fs-6">{{ notice.title }}</h5>
-            <p class="text-secondary small mb-3">
-              {{ notice.description }}
-            </p>
+            <h2 class="h6 fw-bold text-dark">{{ notice.title }}</h2>
+            {% if notice.description %}
+              <p class="text-secondary small mb-3">{{ notice.description|striptags|truncatewords:22 }}</p>
+            {% endif %}
+            {% if notice.pdf_attachment %}
+              <p class="small mb-2">
+                <i class="fa-solid fa-file-pdf text-danger me-1" aria-hidden="true"></i>
+                <a href="{{ notice.pdf_attachment.url }}" target="_blank" rel="noopener noreferrer">Download PDF attachment</a>
+              </p>
+            {% endif %}
           </div>
           <div>
-            <a href="/notices/{{ notice.slug }}" class="btn btn-navy btn-sm w-100">
-              Read Full Notice <i class="fa-solid fa-arrow-right ms-1"></i>
+            <a href="{% url 'notice_detail' notice.slug %}" class="btn btn-navy btn-sm w-100">
+              Read Full Notice <i class="fa-solid fa-arrow-right ms-1" aria-hidden="true"></i>
             </a>
           </div>
-        </div>
+        </article>
       </div>
       {% endfor %}
     {% else %}
       <div class="col-12 text-center py-5" data-aos="fade-up">
-        <i class="fa-solid fa-folder-open fa-3x text-muted mb-3"></i>
-        <h5 class="text-secondary">No notices found matching your search criteria.</h5>
-        <a href="/notices" class="btn btn-outline-primary mt-2">View All Notices</a>
+        <i class="fa-solid fa-folder-open fa-3x text-muted mb-3" aria-hidden="true"></i>
+        <h2 class="h5 text-secondary">
+          {% if query or selected_category %}
+            No notices found matching your search criteria.
+          {% else %}
+            No notices have been published yet.
+          {% endif %}
+        </h2>
+        {# No "View All" button when the user is already on the All page. #}
+        {% if query or selected_category %}
+          <p class="text-muted small">Try a different keyword or category.</p>
+          <a href="{% url 'notices' %}" class="btn btn-outline-primary mt-2">View All Notices</a>
+        {% else %}
+          <p class="text-muted small">School notices will appear here once they are published.</p>
+        {% endif %}
       </div>
     {% endif %}
   </div>

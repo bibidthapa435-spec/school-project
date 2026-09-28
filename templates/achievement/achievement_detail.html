@@ -14,7 +14,7 @@
         <li class="breadcrumb-item active text-white" aria-current="page">{{ achievement.title|truncatewords:5 }}</li>
       </ol>
     </nav>
-    <h1 class="page-title">Achievement Details</h1>
+    <h1 class="page-title">{{ achievement.title }}</h1>
   </div>
 </section>
 
@@ -41,7 +41,7 @@
               {% endif %}
             </div>
 
-            <h1 class="achievement-detail-title mb-4">{{ achievement.title }}</h1>
+            <h2 class="achievement-detail-title mb-4">{{ achievement.title }}</h2>
 
             <div class="achievement-meta-info mb-4">
               {% if achievement.student_name %}

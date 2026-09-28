@@ -1,7 +1,9 @@
 {% extends 'base.html' %}
 {% load static %}
 
-{% block title %}Downloads & Resources | Shree Jaljala Secondary School{% endblock %}
+{% block title %}Downloads &amp; Resources | Shree Jaljala Secondary School{% endblock %}
+{% block meta_description %}Download syllabus, examination routines, academic calendar and admission forms from Shree Jaljala Secondary School, Panchkhapan-7, Sankhuwasabha, Nepal.{% endblock %}
+{% block canonical %}{{ request.scheme }}://{{ request.get_host }}{% url 'downloads' %}{% endblock %}
 
 {% block content %}
 <div class="bg-primary text-white py-4 mb-4" style="background-color: var(--primary-navy) !important;" data-aos="fade-up">
@@ -12,25 +14,30 @@
 </div>
 
 <div class="container py-4">
-  <!-- Filter Pills -->
-  <div class="d-flex flex-wrap gap-2 mb-4 justify-content-center" data-aos="fade-up">
-    <a href="/downloads" class="btn btn-sm {% if not selected_cat %}btn-navy{% else %}btn-outline-navy{% endif %} px-3 rounded-pill">
-      All Downloads
-    </a>
-    <a href="?cat=syllabus" class="btn btn-sm {% if selected_cat == 'syllabus' %}btn-navy{% else %}btn-outline-secondary{% endif %} px-3 rounded-pill">
-      Syllabus & Curriculum
-    </a>
-    <a href="?cat=routine" class="btn btn-sm {% if selected_cat == 'routine' %}btn-navy{% else %}btn-outline-secondary{% endif %} px-3 rounded-pill">
-      Exam Routines & Calendar
-    </a>
-    <a href="?cat=form" class="btn btn-sm {% if selected_cat == 'form' %}btn-navy{% else %}btn-outline-secondary{% endif %} px-3 rounded-pill">
-      Application Forms
-    </a>
-  </div>
+  <!-- Filter Pills: one horizontally scrollable row on mobile. -->
+  <nav class="filter-chips mb-4" aria-label="Filter downloads by category">
+    <div class="filter-chips-row justify-content-center">
+      <a href="{% url 'downloads' %}" class="btn btn-sm {% if not selected_cat %}btn-navy{% else %}btn-outline-navy{% endif %} px-3 rounded-pill{% if not selected_cat %} active{% endif %}"{% if not selected_cat %} aria-current="true"{% endif %}>
+        All Downloads
+      </a>
+      <a href="?cat=syllabus" class="btn btn-sm {% if selected_cat == 'syllabus' %}btn-navy{% else %}btn-outline-secondary{% endif %} px-3 rounded-pill{% if selected_cat == 'syllabus' %} active{% endif %}"{% if selected_cat == 'syllabus' %} aria-current="true"{% endif %}>
+        Syllabus &amp; Curriculum
+      </a>
+      <a href="?cat=routine" class="btn btn-sm {% if selected_cat == 'routine' %}btn-navy{% else %}btn-outline-secondary{% endif %} px-3 rounded-pill{% if selected_cat == 'routine' %} active{% endif %}"{% if selected_cat == 'routine' %} aria-current="true"{% endif %}>
+        Exam Routines &amp; Calendar
+      </a>
+      <a href="?cat=form" class="btn btn-sm {% if selected_cat == 'form' %}btn-navy{% else %}btn-outline-secondary{% endif %} px-3 rounded-pill{% if selected_cat == 'form' %} active{% endif %}"{% if selected_cat == 'form' %} aria-current="true"{% endif %}>
+        Application Forms
+      </a>
+    </div>
+  </nav>
 
   <div class="card custom-card p-4" data-aos="fade-up" data-aos-delay="100">
-    <div class="table-responsive">
-      <table class="table table-hover align-middle mb-0">
+    {% comment %} The table scrolls INSIDE its own container on narrow screens, so the
+       page itself never gains a horizontal scrollbar. {% endcomment %}
+    <div class="table-responsive downloads-table-wrap" tabindex="0" role="region" aria-label="Downloadable documents, scrollable">
+      <table class="table table-hover align-middle mb-0 downloads-table">
+        <caption class="visually-hidden">Downloadable school documents</caption>
         <thead class="table-dark" style="background-color: var(--primary-navy);">
           <tr>
             <th scope="col">#</th>
@@ -47,15 +54,15 @@
             <tr>
               <td>{{ forloop.counter }}</td>
               <td class="fw-bold text-dark">
-                <i class="fa-solid fa-file-pdf text-danger me-2"></i> {{ item.title }}
+                <i class="fa-solid fa-file-pdf text-danger me-2" aria-hidden="true"></i> {{ item.title }}
               </td>
               <td><span class="badge bg-secondary text-capitalize">{{ item.category_display|default:item.category }}</span></td>
               <td class="small text-muted">{{ item.file_size|default:"PDF Document" }}</td>
-              <td class="small text-muted">{{ item.created_at|date:"M d, Y" }}</td>
+              <td class="small text-muted"><time datetime="{{ item.created_at|date:'Y-m-d' }}">{{ item.created_at|date:"M d, Y" }}</time></td>
               <td class="text-end">
                 {% if item.file %}
                   <a href="{% url 'download_resource_file' item.slug %}" class="btn btn-navy btn-sm">
-                    <i class="fa-solid fa-download me-1"></i> Download
+                    <i class="fa-solid fa-download me-1" aria-hidden="true"></i> Download
                   </a>
                 {% else %}
                   <span class="text-muted small">No file</span>
@@ -65,8 +72,17 @@
             {% endfor %}
           {% else %}
             <tr>
-              <td colspan="6" class="text-center py-4 text-muted">
-                No downloadable files found in this category.
+              <td colspan="6" class="text-center py-4">
+                {% if selected_cat %}
+                  No downloadable files found in this category.
+                {% else %}
+                  No downloadable files have been added yet.
+                {% endif %}
+                {% if selected_cat %}
+                  <div class="mt-2">
+                    <a href="{% url 'downloads' %}" class="btn btn-outline-secondary btn-sm">View All Downloads</a>
+                  </div>
+                {% endif %}
               </td>
             </tr>
           {% endif %}

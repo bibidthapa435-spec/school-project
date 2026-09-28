@@ -1,7 +1,11 @@
-﻿{% extends 'base.html' %}
+{% extends 'base.html' %}
 {% load static %}
 
-{% block title %}Achievements - {{ settings.school_name|default:'Shree Jaljala Secondary School' }}{% endblock %}
+{% block title %}Achievements | {{ settings.school_name|default:'Shree Jaljala Secondary School' }}{% endblock %}
+{% block meta_description %}Student and school achievements of Shree Jaljala Secondary School, Panchkhapan Municipality-7, Bihibare, Sankhuwasabha, Nepal.{% endblock %}
+{% block og_title %}Achievements | {{ settings.school_name|default:'Shree Jaljala Secondary School' }}{% endblock %}
+{% block og_description %}Student and school achievements of Shree Jaljala Secondary School, Panchkhapan Municipality-7, Bihibare, Sankhuwasabha, Nepal.{% endblock %}
+{% block canonical %}{{ request.scheme }}://{{ request.get_host }}{% url 'achievements' %}{% endblock %}
 
 {% block content %}
 <!-- Page Header -->
@@ -63,7 +67,7 @@
                   <span class="badge bg-primary">{{ achievement.achievement_type_display }}</span>
                 </div>
 
-                <h3 class="achievement-title h5 mb-2">
+                <h2 class="achievement-title h5 mb-2">
                   <a href="{% url 'achievement_detail' achievement.slug %}" class="text-decoration-none text-dark">
                     {{ achievement.title }}
                   </a>
@@ -108,7 +112,7 @@
     {% else %}
       <div class="text-center py-5">
         <i class="fa-solid fa-trophy fa-4x text-muted mb-3"></i>
-        <h3 class="text-muted">No Achievements Found</h3>
+        <h2 class="h3 text-muted">No Achievements Found</h2>
         <p class="text-muted">Check back later for updates on our achievements.</p>
       </div>
     {% endif %}

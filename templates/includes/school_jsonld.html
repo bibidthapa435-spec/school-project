@@ -1,0 +1,28 @@
+{% load static %}
+{% comment %}
+schema.org School markup. Every value here comes from the SiteSettings
+row the school maintains in the admin (name, address, phone, email) or
+from the school's own founding year. Nothing is invented.
+Phone/email are omitted entirely when the school has not filled them in.
+{% endcomment %}
+{
+  "@context": "https://schema.org",
+  "@type": "School",
+  "name": "{{ settings.school_name|default:'Shree Jaljala Secondary School'|escapejs }}",
+  "alternateName": "SHREE JALJALA SECONDARY SCHOOL",
+  "url": "{{ request.build_absolute_uri }}",
+  "logo": "{{ request.scheme }}://{{ request.get_host }}{% static 'images/image/tilogo.png' %}",
+  "image": "{{ request.scheme }}://{{ request.get_host }}{% static 'images/image/tilogo.png' %}",
+  "address": {
+    "@type": "PostalAddress",
+    "streetAddress": "Bihibare, Panchkhapan Municipality-7",
+    "addressLocality": "Sankhuwasabha",
+    "addressRegion": "Koshi Province",
+    "addressCountry": "NP"
+  },
+  "areaServed": "Panchkhapan Municipality, Sankhuwasabha",
+  "knowsLanguage": ["ne", "en"],
+  "educationalLevel": "Secondary"
+  {% if settings.phone %}, "telephone": "{{ settings.phone|escapejs }}"{% endif %}
+  {% if settings.email %}, "email": "{{ settings.email|escapejs }}"{% endif %}
+}

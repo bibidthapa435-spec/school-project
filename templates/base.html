@@ -1,11 +1,25 @@
-﻿{% load static %}
+{% load static %}
 <!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>{% block title %}{{ title|default:"Shree Jaljala Secondary School | Panchkhapan, Sankhuwasabha" }}{% endblock %}</title>
-  <meta name="description" content="Official website of Shree Jaljala Secondary School, Panchkhapan Municipality-7, Bihibare, Sankhuwasabha, Nepal. Offering Class Nursery to Class 10 (SEE Level).">
+  <title>{% block title %}{{ settings.school_name|default:"Shree Jaljala Secondary School" }} | Panchkhapan, Sankhuwasabha{% endblock %}</title>
+  <meta name="description" content="{% block meta_description %}Official website of Shree Jaljala Secondary School, Panchkhapan Municipality-7, Bihibare, Sankhuwasabha, Nepal. Offering Class Nursery to Class 10 (SEE Level).{% endblock %}">
+
+  <!-- Canonical + Open Graph: only real, school-approved facts. -->
+  <link rel="canonical" href="{% block canonical %}{{ request.build_absolute_uri }}{% endblock %}">
+  <meta property="og:type" content="website">
+  <meta property="og:site_name" content="{{ settings.school_name|default:'Shree Jaljala Secondary School' }}">
+  <meta property="og:title" content="{% block og_title %}{{ settings.school_name|default:'Shree Jaljala Secondary School' }} | Panchkhapan, Sankhuwasabha{% endblock %}">
+  <meta property="og:description" content="{% block og_description %}Official website of Shree Jaljala Secondary School, Panchkhapan Municipality-7, Bihibare, Sankhuwasabha, Nepal. Offering Class Nursery to Class 10 (SEE Level).{% endblock %}">
+  <meta property="og:url" content="{{ request.build_absolute_uri }}">
+  <meta property="og:locale" content="en_US">
+  <meta property="og:image" content="{{ request.scheme }}://{{ request.get_host }}{% static 'images/image/tilogo.png' %}">
+  <meta name="twitter:card" content="summary_large_image">
+
+  <!-- Structured data: real school facts only (name, address, contact). -->
+  <script type="application/ld+json">{% include 'includes/school_jsonld.html' %}</script>
 
   <!-- Favicon -->
   <link rel="icon" type="image/png" href="{{ site_settings.logo_url|default:'/static/images/image/tilogo.png' }}">
@@ -31,6 +45,8 @@
   <!-- Redesign brief layer (LAST: pine/rhododendron/marigold system) -->
   <link rel="stylesheet" href="/static/css/jaljala-redesign.css">
   <link rel="stylesheet" href="/static/css/jaljala-redesign-2.css">
+  <!-- Audit fixes: accessibility, filter chips, mobile tables, forms -->
+  <link rel="stylesheet" href="/static/css/audit-fixes.css">
   <!-- Scroll-animation layer: native IntersectionObserver engine, no library -->
   <link rel="stylesheet" href="/static/css/scroll-motion.css">
   <!-- Safety net: never leave a reveal target hidden if the engine never runs -->
@@ -71,8 +87,12 @@
     {% block content %}{% endblock %}
   </main>
 
-  <!-- Login & Register Modal -->
-  {% include 'includes/auth_modal.html' %}
+  <!-- Login & Register Modal (public student portal) -->
+  <!-- Hidden: no public trigger exists and the visitor login/register
+       endpoints are not implemented, so the modal could only ever submit
+       to a 404. Backend authentication (Django admin + admin-dashboard)
+       is untouched and still reachable from the top bar. -->
+  {% if ENABLE_PUBLIC_AUTH_MODAL %}{% include 'includes/auth_modal.html' %}{% endif %}
 
   <!-- School Notice Popup Modal -->
   {% include 'includes/popup_notice.html' %}

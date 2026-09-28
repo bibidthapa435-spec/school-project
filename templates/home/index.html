@@ -7,7 +7,12 @@
 <!-- Active slider media: images/videos only, with no text or admission overlay. -->
 {% if sliders %}
 <div class="hero-slider-section">
-  <div id="schoolSlider" class="carousel slide hero-carousel" data-bs-ride="carousel" data-bs-interval="7000" aria-label="School image slider">
+  <div id="schoolSlider" class="carousel slide hero-carousel"
+       data-bs-ride="{% if sliders|length > 1 and not REDUCED_MOTION %}carousel{% else %}false{% endif %}"
+       data-bs-interval="7000"
+       {% if sliders|length == 1 %}data-bs-interval="false"{% endif %}
+       aria-label="School image slider"
+       aria-roledescription="carousel">
     {% if sliders|length > 1 %}
     <div class="carousel-indicators">
       {% for slide in sliders %}
@@ -15,7 +20,7 @@
               data-bs-target="#schoolSlider"
               data-bs-slide-to="{{ forloop.counter0 }}"
               {% if forloop.first %}class="active" aria-current="true"{% endif %}
-              aria-label="Show slide {{ forloop.counter }}"></button>
+              aria-label="Show slide {{ forloop.counter }} of {{ sliders|length }}"></button>
       {% endfor %}
     </div>
     {% endif %}
@@ -33,14 +38,18 @@
             <iframe src="{{ slide.video_embed_url }}"
                     title="School video slide {{ forloop.counter }}"
                     allow="autoplay; fullscreen; picture-in-picture"
-                    allowfullscreen></iframe>
+                    allowfullscreen loading="lazy"></iframe>
           </div>
           {% endif %}
         {% else %}
         <img src="{{ slide.display_image_url }}"
-             alt=""
+             alt="{{ slide.title|default:'Shree Jaljala Secondary School campus'|escape }} — school photograph {{ forloop.counter }} of {{ sliders|length }}"
+             class="hero-slide-img"
+             width="2048" height="1536"
              loading="{% if forloop.first %}eager{% else %}lazy{% endif %}"
-             onerror="this.onerror=null; this.src='/media/sliders/fifthphoto.jpg';">
+             {% if forloop.first %}fetchpriority="high" decoding="async"{% else %}decoding="async"{% endif %}
+             data-fallback-src="/media/sliders/fifthphoto.jpg"
+             onerror="this.onerror=null; this.src=this.dataset.fallbackSrc;">
         {% endif %}
       </div>
       {% endfor %}
@@ -75,6 +84,11 @@
   </div>
 </div>
 {% endif %}
+
+<!-- Single page H1. The hero is a media-only carousel (by design), so the
+     page's real heading lives here, visually hidden to keep the existing
+     hero appearance untouched. -->
+<h1 class="visually-hidden">Shree Jaljala Secondary School, Panchkhapan-7, Sankhuwasabha — Quality Education from Nursery to Class 10 (SEE)</h1>
 
 <!-- Welcome & Overview Section: plain fade-up (brief §2) -->
 <section class="py-5" id="about-section" data-aos="fade-up">
@@ -159,7 +173,7 @@
       <div class="row align-items-center g-4">
         <div class="col-md-4 text-center">
           <img src="{% if principal.photo %}{{ principal.photo.url }}{% else %}/media/teachers/govinda shrestha.jpg{% endif %}" alt="Portrait of {{ principal.title }}, Principal of Shree Jaljala Secondary School" class="img-fluid rounded-circle shadow" data-img-reveal style="width: 200px; height: 200px; object-fit: cover; border: 5px solid var(--accent-gold);">
-          <h5 class="fw-bold mt-3 text-navy mb-1" style="color: #0b2545;">{{ principal.title }}</h5>
+          <h4 class="h5 fw-bold mt-3 text-navy mb-1" style="color: #0b2545;">{{ principal.title }}</h5>
           <p class="text-muted small mb-0">{{ principal.position }}</p>
           <span class="badge bg-secondary mt-1">{{ principal.qualification }}</span>
         </div>
@@ -180,30 +194,28 @@
 {% endif %}
 
 <!-- Trust band: signature count-up moment (brief §3). NO fade/slide on top. -->
+{% if statistics %}
 <section class="jj-trust" aria-label="School at a glance">
+  <h2 class="visually-hidden">Shree Jaljala Secondary School at a glance</h2>
   <div class="container">
-    <div class="jj-trust-grid" data-stagger data-stagger-step="90">
+    <div class="jj-trust-grid jj-trust-grid-auto" data-stagger data-stagger-step="90">
+      {% for stat in statistics %}
       <div class="jj-trust-cell">
-        <div class="jj-trust-num"><span class="stat-number" data-count="550" data-suffix="+">550+</span></div>
-        <div class="jj-trust-label">Students, Nursery to Class 10</div>
+        <div class="jj-trust-num"><span class="stat-number" data-count="{{ stat.value }}" data-suffix="{{ stat.suffix }}">{{ stat.value }}{{ stat.suffix }}</span></div>
+        <div class="jj-trust-label">{{ stat.label }}</div>
+        {% if stat.as_of %}<div class="jj-trust-asof">{{ stat.as_of }}</div>{% endif %}
       </div>
-      <div class="jj-trust-cell">
-        <div class="jj-trust-num"><span class="stat-number" data-count="16" data-suffix="+">16+</span></div>
-        <div class="jj-trust-label">Dedicated Teachers</div>
-      </div>
-      <div class="jj-trust-cell">
-        <div class="jj-trust-num"><span class="stat-number" data-count="100" data-suffix="%">100%</span></div>
-        <div class="jj-trust-label">SEE Pass Rate</div>
-      </div>
-      <div class="jj-trust-cell">
-        <div class="jj-trust-num"><span class="stat-number" data-count="38" data-suffix="">38</span></div>
-        <div class="jj-trust-label">Years in Panchkhapan, Estd. 2045 B.S.</div>
-      </div>
+      {% endfor %}
     </div>
+    {% if as_of_note %}<p class="jj-trust-note">{{ as_of_note }}</p>{% endif %}
   </div>
 </section>
+{% endif %}
 
 <!-- School Programs (Class Nursery to Class 10) -->
+<!-- Hidden entirely when no programs are published: an empty heading plus
+     an empty grid reads as a broken page, so the whole section goes. -->
+{% if programs %}
 <section class="py-5" id="programs-section" data-aos="fade-up">
   <div class="container">
     <div class="section-title" data-scrub="title">
@@ -213,35 +225,39 @@
     </div>
 
     <div class="row g-4" data-stagger="alternate" data-stagger-step="80">
-      {% if programs %}
-        {% for program in programs %}
+      {% for program in programs %}
         <div class="col-lg-4 col-md-6">
           <div class="card custom-card h-100" data-scrub="card">
             <div class="card-img-wrapper">
-              <img src="{% if program.image %}{{ program.image.url }}{% else %}/media/programs/image 1.jpg{% endif %}" alt="Students in the {{ program.title }} classroom at Shree Jaljala" class="card-img-top" data-scrub="zoom">
+              <img src="{% if program.image %}{{ program.image.url }}{% else %}{{ FALLBACK_PROGRAM_IMAGE }}{% endif %}"
+                   alt="Students in the {{ program.title|escape }} classroom at Shree Jaljala Secondary School"
+                   class="card-img-top" data-scrub="zoom" loading="lazy" decoding="async"
+                   width="640" height="360"
+                   data-fallback-src="{{ FALLBACK_PROGRAM_IMAGE }}"
+                   onerror="this.onerror=null; this.src=this.dataset.fallbackSrc;">
             </div>
             <div class="card-body d-flex flex-column">
               <h3 class="card-title" style="font-size:1.2rem">{{ program.title }}</h3>
               <div class="d-flex justify-content-between text-muted small mb-2">
-                <span><i class="fa-regular fa-clock text-warning me-1"></i> {{ program.duration }}</span>
+                <span><i class="fa-regular fa-clock text-warning me-1" aria-hidden="true"></i> {{ program.duration }}</span>
                 <span class="badge bg-success">{{ program.fee }}</span>
               </div>
               <p class="card-text text-secondary small flex-grow-1">
                 {{ program.description }}
               </p>
               <div class="mt-3">
-                <a href="/programs/{{ program.slug }}" class="btn btn-outline-primary btn-sm w-100">
+                <a href="{% url 'program_detail' program.slug %}" class="btn btn-outline-primary btn-sm w-100">
                   Program Details
                 </a>
               </div>
             </div>
           </div>
         </div>
-        {% endfor %}
-      {% endif %}
+      {% endfor %}
     </div>
   </div>
 </section>
+{% endif %}
 
 <!-- Notices: utility section, near-instant (brief §2: fade only, 300ms) -->
 <section class="py-5 bg-light" id="notices-section" data-aos="fade-up">
@@ -251,25 +267,26 @@
         <h2 class="mb-0">Notice Board</h2>
         <p class="text-muted mb-0">Admissions, examination routines, and school events, newest first.</p>
       </div>
-      <a href="/notices" class="btn btn-navy">
+      <a href="{% url 'notices' %}" class="btn btn-navy">
         View All Notices
       </a>
     </div>
 
-    {% if notices %}
     <ol class="jj-timeline" data-stagger data-stagger-step="55">
       {% for notice in notices %}
       <li>
         <time datetime="{{ notice.created_at|date:'Y-m-d' }}">{{ notice.created_at|date:"M d, Y" }} · {{ notice.category_display|default:notice.category }}</time>
-        <a href="/notices/{{ notice.slug }}">{{ notice.title }}</a>
+        <a href="{% url 'notice_detail' notice.slug %}">{{ notice.title }}</a>
       </li>
       {% endfor %}
     </ol>
-    {% endif %}
   </div>
 </section>
 
-<!-- Teachers grid: subtle zoom-in, ~80ms stagger (brief §2) -->
+<!-- Teachers grid: subtle zoom-in, ~80ms stagger (brief §2).
+     Hidden when no teachers are published, so the page never shows a
+     heading + subtitle + "View All" button over an empty grid. -->
+{% if teachers %}
 <section class="py-5" id="teachers-section" data-aos="fade-up">
   <div class="container">
     <div class="section-title" data-scrub="title">
@@ -279,31 +296,36 @@
     </div>
 
     <div class="row g-4" data-stagger="zoom-in" data-stagger-step="80">
-      {% if teachers %}
-        {% for teacher in teachers %}
+      {% for teacher in teachers %}
         <div class="col-lg-3 col-md-4 col-sm-6">
           <div class="card custom-card teacher-card h-100" data-scrub="card">
-            <img src="{% if teacher.photo %}{{ teacher.photo.url }}{% else %}/media/teachers/govinda shrestha.jpg{% endif %}" alt="Portrait of {{ teacher.title }}, {{ teacher.position }} at Shree Jaljala" class="teacher-photo" data-scrub="zoom">
+            <img src="{% if teacher.photo %}{{ teacher.photo.url }}{% else %}{{ FALLBACK_TEACHER_PHOTO }}{% endif %}"
+                 alt="Portrait of {{ teacher.title|escape }}{% if teacher.position %}, {{ teacher.position|escape }}{% endif %}, Shree Jaljala Secondary School"
+                 class="teacher-photo" data-scrub="zoom" width="400" height="400"
+                 loading="lazy" decoding="async"
+                 data-fallback-src="{{ FALLBACK_TEACHER_PHOTO }}"
+                 onerror="this.onerror=null; this.src=this.dataset.fallbackSrc;">
             <h3 style="font-size:1.05rem" class="mb-1">{{ teacher.title }}</h3>
             <p class="text-primary small mb-1 fw-semibold">{{ teacher.position }}</p>
             <p class="text-muted small mb-2">{{ teacher.qualification }}</p>
-            <a href="/teachers/{{ teacher.slug }}" class="btn btn-sm btn-outline-secondary mt-auto">
+            <a href="{% url 'teacher_detail' teacher.slug %}" class="btn btn-sm btn-outline-secondary mt-auto">
               View Profile
             </a>
           </div>
         </div>
-        {% endfor %}
-      {% endif %}
+      {% endfor %}
     </div>
     <div class="text-center mt-4">
-      <a href="/teachers" class="btn btn-navy px-4">
+      <a href="{% url 'teachers' %}" class="btn btn-navy px-4">
         View All Faculty Members
       </a>
     </div>
   </div>
 </section>
+{% endif %}
 
-<!-- Achievements: plain fade-up (brief §2) -->
+<!-- Achievements: plain fade-up (brief §2). Hidden when there is no data. -->
+{% if achievements %}
 <section class="py-5 bg-light" id="achievements-section" data-aos="fade-up">
   <div class="container">
     <div class="section-title" data-scrub="title">
@@ -313,21 +335,25 @@
     </div>
 
     <div class="row g-4" data-stagger>
-      {% if achievements %}
-        {% for achievement in achievements %}
+      {% for achievement in achievements %}
         <div class="col-lg-3 col-md-6">
           <div class="achievement-item-home" data-scrub="card">
             {% if achievement.image %}
               <div class="achievement-img-wrap">
-                <img src="{{ achievement.image.url }}" alt="{{ achievement.title }} — Shree Jaljala achievement photo" class="achievement-img-home" data-scrub="zoom">
+                <img src="{{ achievement.image.url }}"
+                     alt="{{ achievement.title|escape }} — Shree Jaljala Secondary School achievement photo"
+                     class="achievement-img-home" data-scrub="zoom"
+                     width="400" height="180" loading="lazy" decoding="async"
+                     data-fallback-src="/static/images/image/tilogo.png"
+                     onerror="this.onerror=null; this.src=this.dataset.fallbackSrc;">
               </div>
             {% else %}
               <div class="achievement-img-wrap achievement-img-placeholder">
-                <i class="fa-solid fa-trophy"></i>
+                <i class="fa-solid fa-trophy" aria-hidden="true"></i>
               </div>
             {% endif %}
             <div class="achievement-info">
-              <div class="achievement-icon-badge">
+              <div class="achievement-icon-badge" aria-hidden="true">
                 {% if achievement.achievement_type == 'student' %}
                   <i class="fa-solid fa-user-graduate"></i>
                 {% else %}
@@ -337,32 +363,32 @@
               <h3 style="font-size:1rem">{{ achievement.title }}</h3>
               <div class="achievement-meta">
                 {% if achievement.rank_or_position %}
-                  <span><i class="fa-solid fa-medal"></i> {{ achievement.rank_or_position }}</span>
+                  <span><i class="fa-solid fa-medal" aria-hidden="true"></i> {{ achievement.rank_or_position }}</span>
                 {% endif %}
                 {% if achievement.event_name %}
-                  <span class="ms-2"><i class="fa-solid fa-award"></i> {{ achievement.event_name }}</span>
+                  <span class="ms-2"><i class="fa-solid fa-award" aria-hidden="true"></i> {{ achievement.event_name }}</span>
                 {% endif %}
               </div>
               {% if achievement.achievement_date %}
-                <p class="text-muted small mb-2"><i class="fa-regular fa-calendar"></i> {{ achievement.achievement_date|date:"M Y" }}</p>
+                <p class="text-muted small mb-2"><i class="fa-regular fa-calendar" aria-hidden="true"></i> <time datetime="{{ achievement.achievement_date|date:'Y-m-d' }}">{{ achievement.achievement_date|date:"M Y" }}</time></p>
               {% endif %}
               <p>{{ achievement.description|truncatewords:12 }}</p>
-              <a href="/achievements/{{ achievement.slug }}" class="btn btn-sm btn-outline-primary">
+              <a href="{% url 'achievement_detail' achievement.slug %}" class="btn btn-sm btn-outline-primary">
                 Read More
               </a>
             </div>
           </div>
         </div>
-        {% endfor %}
-      {% endif %}
+      {% endfor %}
     </div>
     <div class="text-center mt-4">
-      <a href="/achievements" class="btn btn-gold px-4">
+      <a href="{% url 'achievements' %}" class="btn btn-gold px-4">
         View All Achievements
       </a>
     </div>
   </div>
 </section>
+{% endif %}
 
 <style>
 .achievement-item-home {
@@ -452,7 +478,8 @@
 }
 </style>
 
-<!-- Photo Gallery Preview Section -->
+<!-- Photo Gallery Preview Section. Hidden when no photos are published. -->
+{% if gallery_items %}
 <section class="py-5 bg-light" id="gallery-section" data-aos="fade-up">
   <div class="container">
     <div class="section-title" data-scrub="title">
@@ -462,39 +489,44 @@
     </div>
 
     <div class="row g-3" data-stagger="zoom-in" data-stagger-step="80">
-      {% if gallery_items %}
-        {% for item in gallery_items %}
+      {% for item in gallery_items %}
         <div class="col-lg-3 col-md-4 col-6">
-          <a href="#" class="gallery-lightbox-trigger gallery-item" data-img="{% if item.image %}{{ item.image.url }}{% endif %}" data-title="{{ item.title }}">
+          <a href="{% url 'gallery' %}" class="gallery-lightbox-trigger gallery-item" data-img="{% if item.image %}{{ item.image.url }}{% endif %}" data-title="{{ item.title|escape }}">
             <div class="img-hover-zoom shadow-sm">
-              <img src="{% if item.image %}{{ item.image.url }}{% else %}/media/teachers/govinda shrestha.jpg{% endif %}" alt="Shree Jaljala {{ item.category_display|default:'school event' }} photo: {{ item.title }}" class="img-fluid w-100" data-scrub="zoom" style="height: 180px; object-fit: cover;">
+              <img src="{% if item.image %}{{ item.image.url }}{% else %}{{ FALLBACK_GALLERY_IMAGE }}{% endif %}"
+                   alt="{{ item.category_display|default:'School event'|escape }} photograph from Shree Jaljala Secondary School: {{ item.title|escape }}"
+                   class="img-fluid w-100" data-scrub="zoom"
+                   width="480" height="180" loading="lazy" decoding="async"
+                   style="height: 180px; object-fit: cover;"
+                   data-fallback-src="{{ FALLBACK_GALLERY_IMAGE }}"
+                   onerror="this.onerror=null; this.src=this.dataset.fallbackSrc;">
             </div>
             <div class="text-center mt-2">
               <small class="fw-bold text-dark d-block text-truncate">{{ item.title }}</small>
             </div>
           </a>
         </div>
-        {% endfor %}
-      {% endif %}
+      {% endfor %}
     </div>
     <div class="text-center mt-4">
-      <a href="/gallery" class="btn btn-gold px-4">
+      <a href="{% url 'gallery' %}" class="btn btn-gold px-4">
         Browse Full Photo Gallery
       </a>
     </div>
   </div>
 </section>
+{% endif %}
 
 <!-- Campus map: real Jaljala Secondary School Bihibare pin (brief 4) -->
-<section class="py-5 bg-light" data-aos="fade-up">
+<section class="py-5{% if gallery_items %} bg-light{% endif %}" data-aos="fade-up">
   <div class="container">
     <div class="section-title" data-scrub="title">
       <h2>School Location</h2>
-      <p class="text-muted">Panchkhapan Municipality-7, Bihibare, Sankhuwasabha, Nepal</p>
+      <p class="text-muted">{{ settings.address|default:"Panchkhapan Municipality-7, Bihibare, Sankhuwasabha, Nepal" }}</p>
       <div class="divider"></div>
     </div>
     <div class="rounded-4 overflow-hidden shadow">
-      <iframe title="Map showing Shree Jaljala Secondary School, Bihibare, Panchkhapan-7, Sankhuwasabha" src="https://www.google.com/maps?q=Jaljala%20Secondary%20School%20Bihibare%20Panchkhapan%20Sankhuwasabha%20Nepal&z=16&output=embed" width="100%" height="380" style="border:0;" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
+      <iframe title="Map showing Shree Jaljala Secondary School, Bihibare, Panchkhapan-7, Sankhuwasabha" src="https://www.google.com/maps?q=Jaljala%20Secondary%20School%20Bihibare%20Panchkhapan%20Sankhuwasabha%20Nepal&z=16&output=embed" width="100%" height="380" style="border:0; width:100%;" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
     </div>
   </div>
 </section>

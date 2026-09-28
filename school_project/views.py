@@ -1,12 +1,13 @@
 import os
 
-from django.http import FileResponse, Http404
+from django.http import FileResponse, Http404, HttpResponse
 from django.shortcuts import render, redirect, get_object_or_404
 from django.db import models
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.core.mail import send_mail
 from django.conf import settings
+from django.urls import reverse
 from django.utils import timezone
 
 from results.models import Result
@@ -17,6 +18,7 @@ from school_project.data import (
     department_choices,
     notice_category_choices,
     gallery_category_choices,
+    confirmed_statistics,
 )
 
 from school_app.models import (
@@ -43,7 +45,27 @@ from school_app.forms import (
 # BASE CONTEXT
 # ============================================================
 
-def get_base_context(extra=None):
+def _prefers_reduced_motion(request):
+    """True when the visitor asked the OS for reduced motion.
+
+    Modern browsers send `Sec-Prefers-Reduced-Motion` / the older
+    `Prefer: reduce` hint on every request (Chrome 108+, Safari 16.4+,
+    Firefox 115+). The CSS `@media (prefers-reduced-motion: reduce)`
+    blocks already cover older browsers; this only lets the template stop
+    the Bootstrap carousel from auto-advancing in the first place.
+
+    Returns False when no request is available (e.g. a template rendered
+    outside a real HTTP cycle, as in the unit tests).
+    """
+    if request is None:
+        return False
+    header = request.META.get('HTTP_SEC_PREFERS_REDUCED_MOTION', '')
+    if header.strip().lower() == 'reduce':
+        return True
+    return 'reduce' in request.META.get('HTTP_PREFER', '').lower()
+
+
+def get_base_context(extra=None, request=None):
     site_settings = SiteSettings.objects.first()
 
     if site_settings is None:
@@ -84,6 +106,32 @@ def get_base_context(extra=None):
         ),
 
         'showPreloader': True,
+
+        # Only statistics the school has explicitly confirmed. Unconfirmed
+        # numbers (enrolment, pass rate) are never published.
+        'statistics': confirmed_statistics(),
+
+        # Server-side view of the visitor's motion preference. Bootstrap's
+        # carousel is configured from this so a reduced-motion visitor never
+        # gets an auto-advancing slider. CSS and JS read the same media
+        # query, so this only removes the JavaScript-driven motion.
+        'REDUCED_MOTION': _prefers_reduced_motion(request),
+        # Google OAuth is NOT configured on this project (no
+        # allauth/socialaccount in INSTALLED_APPS and no /login/google
+        # route). The buttons are removed from the auth modal so no link
+        # can ever lead to a 404. Set SOCIAL_AUTH_ENABLED=1 only after
+        # Google OAuth credentials AND the callback routes exist.
+        'ENABLE_PUBLIC_AUTH_MODAL': os.environ.get(
+            'ENABLE_PUBLIC_AUTH_MODAL', ''
+        ).strip().lower() in {'1', 'true', 'yes'},
+
+        # Real, already-published school photographs used only when a
+        # database record has no image (or the image 404s). These are NOT
+        # stock images - they are the school's own committed media files.
+        # Spaces are percent-encoded because the filenames contain them.
+        'FALLBACK_TEACHER_PHOTO': '/media/teachers/govinda%20shrestha.jpg',
+        'FALLBACK_GALLERY_IMAGE': '/media/gallery/school%20gate.jpg',
+        'FALLBACK_PROGRAM_IMAGE': '/media/programs/program_1.png',
     }
 
     if extra:
@@ -152,7 +200,7 @@ def home(request):
         'gallery_items': gallery_items,
         'achievements': achievements_qs,
         'testimonials': school_data.get('testimonials', []),
-    })
+    }, request=request)
 
     return render(
         request,
@@ -819,6 +867,103 @@ Please review this message in the Django Admin panel.
             'form': form
         })
     )
+
+
+# ============================================================
+# SEO
+# ============================================================
+
+def _canonical_origin(request):
+    """Scheme + host of the current request, used to build absolute URLs."""
+    return f'{request.scheme}://{request.get_host()}'
+
+
+def robots_txt(request):
+    """robots.txt built from the real routes.
+
+    Admin, dashboard and the login surfaces are disallowed so search
+    engines only ever index public school pages.
+    """
+    lines = [
+        'User-agent: *',
+        'Disallow: /admin/',
+        'Disallow: /admin-dashboard/',
+        'Disallow: /admin-portal/',
+        'Disallow: /login',
+        'Disallow: /register',
+        '',
+        f'Sitemap: {_canonical_origin(request)}{reverse("sitemap")}',
+        '',
+    ]
+    return HttpResponse('\n'.join(lines), content_type='text/plain')
+
+
+def sitemap(request):
+    """XML sitemap of the public pages plus every published item.
+
+    Only records with status=True are listed, so unpublished content
+    never appears in search results.
+    """
+    origin = _canonical_origin(request)
+    today = timezone.now().date()
+
+    def entry(location, lastmod=None, changefreq='monthly', priority='0.6'):
+        return {
+            'loc': f'{origin}{location}',
+            'lastmod': (lastmod or today).isoformat(),
+            'changefreq': changefreq,
+            'priority': priority,
+        }
+
+    static_pages = [
+        ('home', '1.0', 'weekly'),
+        ('about', '0.7', 'monthly'),
+        ('principal_message', '0.6', 'yearly'),
+        ('facilities', '0.6', 'monthly'),
+        ('programs', '0.8', 'monthly'),
+        ('teachers', '0.8', 'weekly'),
+        ('achievements', '0.7', 'weekly'),
+        ('gallery', '0.7', 'weekly'),
+        ('notices', '0.8', 'daily'),
+        ('admission', '0.9', 'monthly'),
+        ('downloads', '0.6', 'monthly'),
+        ('contact', '0.7', 'yearly'),
+    ]
+
+    urls = [
+        entry(reverse(name), changefreq=freq, priority=priority)
+        for name, priority, freq in static_pages
+    ]
+    urls.append(entry(reverse('results:list'), changefreq='monthly', priority='0.6'))
+
+    # Published detail pages.
+    for model, url_name in (
+        (Teacher, 'teacher_detail'),
+        (Program, 'program_detail'),
+        (Achievement, 'achievement_detail'),
+        (Notice, 'notice_detail'),
+    ):
+        for obj in model.objects.filter(status=True):
+            urls.append(
+                entry(
+                    reverse(url_name, args=[obj.slug]),
+                    changefreq='weekly',
+                    priority='0.5',
+                )
+            )
+
+    body = ['<?xml version="1.0" encoding="UTF-8"?>',
+            '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">']
+    for u in urls:
+        body.append('  <url>')
+        body.append(f'    <loc>{u["loc"]}</loc>')
+        body.append(f'    <lastmod>{u["lastmod"]}</lastmod>')
+        body.append(f'    <changefreq>{u["changefreq"]}</changefreq>')
+        body.append(f'    <priority>{u["priority"]}</priority>')
+        body.append('  </url>')
+    body.append('</urlset>')
+
+    return HttpResponse('\n'.join(body), content_type='application/xml')
 
 
 def admin_portal(request):

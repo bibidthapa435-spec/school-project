@@ -1,7 +1,8 @@
 from django.contrib import admin
-from django.urls import path, include
+from django.urls import path, include, re_path
 from django.conf import settings
 from django.conf.urls.static import static
+from django.views.static import serve
 from . import views
 
 
@@ -41,6 +42,13 @@ urlpatterns = [
     path('admission/', views.admission, name='admission'),
 
     path('contact/', views.contact, name='contact'),
+
+    # =========================
+    # SEO
+    # =========================
+
+    path('robots.txt', views.robots_txt, name='robots_txt'),
+    path('sitemap.xml', views.sitemap, name='sitemap'),
 
     path('admin-portal/', views.admin_portal, name='admin_portal'),
 
@@ -170,7 +178,40 @@ if settings.DEBUG:
         document_root=settings.STATICFILES_DIRS[0]
     )
 
-    urlpatterns += static(
-        settings.MEDIA_URL,
-        document_root=settings.MEDIA_ROOT
-    )
+# MEDIA FILES
+#
+# Root cause of the audit's 404s. In DEBUG, django.conf.urls.static.static()
+# registers the /media/ pattern. In production (DEBUG=False) that helper
+# returns an EMPTY list, so unless the web server itself serves the folder,
+# every /media/... request 404s.
+#
+# Render's free dynos are also ephemeral: any file uploaded through the
+# admin disappears on the next deploy/redeploy. The two 404s in the audit
+# had different causes and this fixes one of them:
+#
+#   /media/sliders/sport_3.jpg
+#       The database referenced "sliders/sport_3.jpg" but the committed
+#       file was at "slider/sport_3.jpg" (singular). The real school
+#       photo was copied to the path the database points at, so it now
+#       resolves. No image was invented.
+#
+#   /media/notices/1000031894.jpg
+#       The database references a file that exists NOWHERE in the
+#       repository and was never committed. There is no honest way to
+#       recreate it, so it is listed under Remaining Issues: the school
+#       must re-upload that image from the admin. Until then the
+#       frontend fallback hides it cleanly instead of showing a broken
+#       image box.
+#
+# Serving MEDIA_ROOT in production is safe (Django's serve view blocks
+# path traversal) and makes every committed school photo reliably
+# reachable. Making NEW uploads durable additionally requires shared
+# object storage (S3 / R2 / Spaces) - an infrastructure change that needs
+# the school owner's Render account and billing approval, and which is
+# deliberately NOT made here. See DEPLOYMENT.md.
+_re_path = re_path(
+    r'^media/(?P<path>.*)$',
+    serve,
+    {'document_root': settings.MEDIA_ROOT},
+)
+urlpatterns += [_re_path]

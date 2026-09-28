@@ -1,67 +1,84 @@
 <!-- Top Contact Bar -->
 <div class="top-bar">
   <div class="container d-flex flex-wrap justify-content-between align-items-center">
-    <div class="d-flex align-items-center flex-wrap gap-3">
-<span><i class="fa-solid fa-location-dot me-1 text-warning"></i> {{ settings.address|default:"Panchkhapan Municipality-7, Bihibare, Sankhuwasabha, Nepal" }}</span>
+    <div class="d-flex align-items-center flex-wrap gap-3 top-bar-contact">
+      <span><i class="fa-solid fa-location-dot me-1 text-warning" aria-hidden="true"></i> {{ settings.address|default:"Panchkhapan Municipality-7, Bihibare, Sankhuwasabha, Nepal" }}</span>
 
-<span><i class="fa-solid fa-phone me-1 text-warning"></i> {{ settings.phone|default:"+977-9842000000 / +977-9800000000" }}</span>
+      {% if settings.phone %}
+        <span><i class="fa-solid fa-phone me-1 text-warning" aria-hidden="true"></i> <a href="tel:{{ settings.phone|cut:' '|cut:'/'|cut:'-' }}" class="top-bar-link">{{ settings.phone }}</a></span>
+      {% else %}
+        <span><i class="fa-solid fa-phone me-1 text-warning" aria-hidden="true"></i> +977-9842000000 / +977-9800000000</span>
+      {% endif %}
 
-<span><i class="fa-solid fa-envelope me-1 text-warning"></i> {{ settings.email|default:"info@shreejaljala.edu.np" }}</span>
+      {% if settings.email %}
+        <span><i class="fa-solid fa-envelope me-1 text-warning" aria-hidden="true"></i> <a href="mailto:{{ settings.email }}" class="top-bar-link">{{ settings.email }}</a></span>
+      {% else %}
+        <span><i class="fa-solid fa-envelope me-1 text-warning" aria-hidden="true"></i> info@shreejaljala.edu.np</span>
+      {% endif %}
     </div>
     <div class="d-flex align-items-center gap-3 mt-2 mt-md-0">
+      {% comment %} Social links render only when the school has saved a real URL. The
+         SiteSettings model has no social fields yet, so these stay hidden
+         rather than linking to bare facebook.com / instagram.com. {% endcomment %}
+      {% if settings.facebook_url or settings.instagram_url or settings.youtube_url %}
       <div class="social-icons">
-<a href="{{ settings.facebook_url|default:'https://facebook.com' }}" target="_blank" title="Facebook"><i class="fa-brands fa-facebook-f"></i></a>
-<a href="{{ settings.instagram_url|default:'https://instagram.com' }}" target="_blank" title="Instagram"><i class="fa-brands fa-instagram"></i></a>
-<a href="{{ settings.youtube_url|default:'https://youtube.com' }}" target="_blank" title="YouTube"><i class="fa-brands fa-youtube"></i></a>
+        {% if settings.facebook_url %}<a href="{{ settings.facebook_url }}" target="_blank" rel="noopener noreferrer" title="Facebook" aria-label="Shree Jaljala Secondary School on Facebook (opens in a new tab)"><i class="fa-brands fa-facebook-f" aria-hidden="true"></i></a>{% endif %}
+        {% if settings.instagram_url %}<a href="{{ settings.instagram_url }}" target="_blank" rel="noopener noreferrer" title="Instagram" aria-label="Shree Jaljala Secondary School on Instagram (opens in a new tab)"><i class="fa-brands fa-instagram" aria-hidden="true"></i></a>{% endif %}
+        {% if settings.youtube_url %}<a href="{{ settings.youtube_url }}" target="_blank" rel="noopener noreferrer" title="YouTube" aria-label="Shree Jaljala Secondary School on YouTube (opens in a new tab)"><i class="fa-brands fa-youtube" aria-hidden="true"></i></a>{% endif %}
       </div>
+      {% endif %}
       <div class="ms-3 ps-3 border-start border-secondary d-flex align-items-center">
         <div class="dropdown">
           <button class="btn btn-sm btn-gold text-dark fw-bold dropdown-toggle" type="button" id="topbarLoginDropdown" data-bs-toggle="dropdown" aria-expanded="false" style="font-size:0.78rem; border-radius:20px;">
-            <i class="fa-solid fa-right-to-bracket me-1"></i> Login
+            <i class="fa-solid fa-right-to-bracket me-1" aria-hidden="true"></i> Login
           </button>
           <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="topbarLoginDropdown">
-            <li><a class="dropdown-item" href="/admin-dashboard/"><i class="fa-solid fa-lock me-2"></i> Admin Login</a></li>
+            <li><a class="dropdown-item" href="{% url 'admin_dashboard' %}"><i class="fa-solid fa-lock me-2" aria-hidden="true"></i> Admin Login</a></li>
           </ul>
         </div>
       </div>
     </div>
   </div>
 </div>
-</div>
 
 <!-- College / School Main Header -->
 <div class="brand-header">
   <div class="container d-flex justify-content-between align-items-center flex-wrap gap-3">
-    <div class="d-flex align-items-center gap-3">
-      <img src="{{ settings.logo_url|default:'/static/images/image/tilogo.png' }}" alt="{{ settings.school_name|default:'Shree Jaljala Secondary School' }} Logo" class="school-logo" onerror="this.onerror=null; this.src='/static/images/image/tilogo.png';">
+    <div class="d-flex align-items-center gap-3 brand-identity">
+      <img src="{{ settings.logo_url|default:'/static/images/image/tilogo.png' }}" alt="" width="75" height="75" class="school-logo" decoding="async" onerror="this.onerror=null; this.src='/static/images/image/tilogo.png';">
       <div>
-      <h1 class="school-title mb-0">श्री जलजला माध्यमिक विद्यालय</h1>
+      {% comment %} Not an <h1>: the page title owns the single H1. Same classes, so the
+         visual appearance is unchanged. {% endcomment %}
+      <p class="school-title mb-0" lang="ne">श्री जलजला माध्यमिक विद्यालय</p>
       <div class="school-subtitle">SHREE JALJALA SECONDARY SCHOOL</div>
     <small class="text-dark fw-bold">Estd. {{ settings.estd|default:"2045 B.S." }} (1988 A.D.) | Panchkhapan-7, Sankhuwasabha</small>
           </div>
     </div>
     <div class="d-flex align-items-center gap-2 brand-admission-cta">
-      <a href="/admission" class="btn btn-gold admission-glow-btn">
-        <i class="fa-solid fa-file-pen me-2"></i> ONLINE ADMISSION
+      <a href="{% url 'admission' %}" class="btn btn-gold admission-glow-btn">
+        <i class="fa-solid fa-file-pen me-2" aria-hidden="true"></i> ONLINE ADMISSION
       </a>
     </div>
   </div>
 </div>
 
-<!-- Navigation Bar -->
-<nav class="navbar navbar-expand-lg navbar-dark navbar-custom" id="mainNav">
+<!-- Navigation Bar
+     NB: navbar-expand-xl (not -lg) so the menu collapses at 1199.98px and
+     below. With -lg the 11-item row was still expanded at 1024px, where it
+     wrapped and overlapped. The structure and labels are unchanged. -->
+<nav class="navbar navbar-expand-xl navbar-dark navbar-custom" id="mainNav" aria-label="Main navigation">
   <div class="container">
-    <a class="navbar-brand d-lg-none font-weight-bold text-white" href="/">
+    <a class="navbar-brand d-xl-none font-weight-bold text-white" href="{% url 'home' %}">
       Jaljala Secondary School
     </a>
-    <button class="navbar-toggler border-0 p-2" style="min-height:44px;min-width:44px;" type="button" data-bs-toggle="collapse" data-bs-target="#mainNavbar" aria-controls="mainNavbar" aria-expanded="false" aria-label="Toggle navigation">
+    <button class="navbar-toggler border-0 p-2" style="min-height:44px;min-width:44px;" type="button" data-bs-toggle="collapse" data-bs-target="#mainNavbar" aria-controls="mainNavbar" aria-expanded="false" aria-label="Toggle navigation menu">
       <span class="navbar-toggler-icon"></span>
     </button>
 
     <div class="collapse navbar-collapse" id="mainNavbar">
       <ul class="navbar-nav me-auto mb-2 mb-lg-0">
         <li class="nav-item">
-          <a class="nav-link {% if request.path == '/' or path == '/' %}active{% endif %}" href="/">
+          <a class="nav-link {% if request.path == '/' or path == '/' %}active{% endif %}" href="{% url 'home' %}"{% if request.path == '/' %} aria-current="page"{% endif %}>
             HOME
           </a>
         </li>
@@ -70,53 +87,53 @@
             ABOUT US
           </a>
           <ul class="dropdown-menu" aria-labelledby="aboutDropdown">
-            <li><a class="dropdown-item" href="/about">School History & Mission</a></li>
-            <li><a class="dropdown-item" href="/principal-message">Principal's Message</a></li>
-            <li><a class="dropdown-item" href="/facilities">Infrastructure & Facilities</a></li>
+            <li><a class="dropdown-item" href="{% url 'about' %}">School History & Mission</a></li>
+            <li><a class="dropdown-item" href="{% url 'principal_message' %}">Principal's Message</a></li>
+            <li><a class="dropdown-item" href="{% url 'facilities' %}">Infrastructure & Facilities</a></li>
           </ul>
         </li>
         <li class="nav-item">
-          <a class="nav-link {% if 'program' in request.path or 'program' in path %}active{% endif %}" href="/programs">
+          <a class="nav-link {% if 'program' in request.path or 'program' in path %}active{% endif %}" href="{% url 'programs' %}">
             PROGRAM
           </a>
         </li>
         <li class="nav-item">
-          <a class="nav-link {% if 'teacher' in request.path or 'teacher' in path %}active{% endif %}" href="/teachers">
+          <a class="nav-link {% if 'teacher' in request.path or 'teacher' in path %}active{% endif %}" href="{% url 'teachers' %}">
             TEACHERS
           </a>
         </li>
         <li class="nav-item">
-          <a class="nav-link {% if 'achievement' in request.path or 'achievement' in path %}active{% endif %}" href="/achievements">
+          <a class="nav-link {% if 'achievement' in request.path or 'achievement' in path %}active{% endif %}" href="{% url 'achievements' %}">
             ACHIEVEMENTS
           </a>
         </li>
         <li class="nav-item">
-          <a class="nav-link {% if 'gallery' in request.path or 'gallery' in path %}active{% endif %}" href="/gallery">
+          <a class="nav-link {% if 'gallery' in request.path or 'gallery' in path %}active{% endif %}" href="{% url 'gallery' %}">
             GALLERY
           </a>
         </li>
         <li class="nav-item">
-          <a class="nav-link {% if 'notice' in request.path or 'notice' in path %}active{% endif %}" href="/notices">
+          <a class="nav-link {% if 'notice' in request.path or 'notice' in path %}active{% endif %}" href="{% url 'notices' %}">
             NOTICES
           </a>
         </li>
         <li class="nav-item">
-          <a class="nav-link {% if 'results' in request.path or 'results' in path %}active{% endif %}" href="/results">
+          <a class="nav-link {% if 'results' in request.path or 'results' in path %}active{% endif %}" href="{% url 'results:list' %}">
             RESULTS
           </a>
         </li>
         <li class="nav-item">
-          <a class="nav-link {% if 'admission' in request.path or 'admission' in path %}active{% endif %}" href="/admission">
+          <a class="nav-link {% if 'admission' in request.path or 'admission' in path %}active{% endif %}" href="{% url 'admission' %}">
             ADMISSION
           </a>
         </li>
         <li class="nav-item">
-          <a class="nav-link {% if 'download' in request.path or 'download' in path %}active{% endif %}" href="/downloads">
+          <a class="nav-link {% if 'download' in request.path or 'download' in path %}active{% endif %}" href="{% url 'downloads' %}">
             DOWNLOADS
           </a>
         </li>
         <li class="nav-item">
-          <a class="nav-link {% if 'contact' in request.path or 'contact' in path %}active{% endif %}" href="/contact">
+          <a class="nav-link {% if 'contact' in request.path or 'contact' in path %}active{% endif %}" href="{% url 'contact' %}">
             CONTACT
           </a>
         </li>

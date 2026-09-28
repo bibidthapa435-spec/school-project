@@ -1,6 +1,18 @@
 // Main JavaScript for Jaljala Secondary School Portal
 document.addEventListener('DOMContentLoaded', function () {
 
+  // Single source of truth for the motion preference, read by the
+  // counters, the slider and the gallery. Declared once here and
+  // reused below.
+  const prefersReducedMotion = window.matchMedia(
+    '(prefers-reduced-motion: reduce)'
+  ).matches;
+
+  // Small helper used by the carousel logic below.
+  const isReducedMotion = () => window.matchMedia(
+    '(prefers-reduced-motion: reduce)'
+  ).matches;
+
   // Initialize AOS (Animate on Scroll) — removed per redesign brief
   // (one deliberate hero moment only; no fade-in-on-scroll).
   
@@ -12,12 +24,22 @@ document.addEventListener('DOMContentLoaded', function () {
     const brandHeader = document.querySelector('.brand-header');
 
     if (navbar) {
-      // Store the navbar's original height for body padding (prevents layout jump)
-      const navbarHeight = navbar.offsetHeight;
-      document.documentElement.style.setProperty('--navbar-height', navbarHeight + 'px');
-
       let isSticky = false;
       let ticking = false;
+
+      // The body padding must match the navbar's CURRENT height at the
+      // moment it becomes fixed, otherwise the page content jumps by the
+      // difference (the "sticky navbar jump" the audit reported). It is
+      // also re-measured on resize, because the bar changes height when
+      // the viewport crosses the collapse breakpoint.
+      const syncNavbarHeight = () => {
+        document.documentElement.style.setProperty(
+          '--navbar-height',
+          navbar.offsetHeight + 'px'
+        );
+      };
+
+      syncNavbarHeight();
 
       // Calculate the scroll threshold (top bar + brand header height)
       const getScrollThreshold = () => {
@@ -30,6 +52,7 @@ document.addEventListener('DOMContentLoaded', function () {
       const activateSticky = () => {
         if (isSticky) return;
         isSticky = true;
+        syncNavbarHeight();
         navbar.classList.add('is-sticky');
         document.body.classList.add('sticky-nav-active');
       };
@@ -67,13 +90,28 @@ document.addEventListener('DOMContentLoaded', function () {
         }
       }, { passive: true });
 
-      // Handle resize to update navbar height
+      // Keep the body padding in step with the navbar on resize, and
+      // re-evaluate stickiness because the header height also changed.
+      let resizeTimer;
       window.addEventListener('resize', function () {
-        if (isSticky) {
-          const newHeight = navbar.offsetHeight;
-          document.documentElement.style.setProperty('--navbar-height', newHeight + 'px');
-        }
+        syncNavbarHeight();
+        clearTimeout(resizeTimer);
+        resizeTimer = setTimeout(handleScroll, 100);
       });
+
+      // While the collapsed mobile menu is open the bar is much taller
+      // than the reserved padding. Drop the reservation for the duration
+      // so the menu is never clipped and the page does not jump.
+      const collapseEl = document.getElementById('mainNavbar');
+      if (collapseEl) {
+        collapseEl.addEventListener('shown.bs.collapse', function () {
+          document.body.classList.add('nav-menu-open');
+        });
+        collapseEl.addEventListener('hidden.bs.collapse', function () {
+          document.body.classList.remove('nav-menu-open');
+          syncNavbarHeight();
+        });
+      }
     }
 
     // Back to top button
@@ -89,7 +127,12 @@ document.addEventListener('DOMContentLoaded', function () {
     });
 
     backToTopBtn.addEventListener('click', function () {
-      window.scrollTo({ top: 0, behavior: 'smooth' });
+      // Honour the motion preference: no smooth scroll for a visitor
+      // who asked for reduced motion.
+      window.scrollTo({
+        top: 0,
+        behavior: prefersReducedMotion ? 'auto' : 'smooth'
+      });
     });
   }
 
@@ -128,6 +171,79 @@ document.addEventListener('DOMContentLoaded', function () {
     });
   });
 
+  // ---------------------------------------------------------------
+  // Hero slider: pause auto-advance on hover and on keyboard focus,
+  // and never auto-advance for a reduced-motion visitor.
+  // Bootstrap pauses on hover by default but NOT on focus, which is
+  // the gap the audit found.
+  // ---------------------------------------------------------------
+  const heroSlider = document.getElementById('schoolSlider');
+  if (heroSlider && window.bootstrap) {
+    const carousel = bootstrap.Carousel.getOrCreateInstance(heroSlider, {
+      interval: 7000,
+      ride: false
+    });
+
+    const pause = () => carousel.pause();
+    const resume = () => {
+      // Only resume if the visitor has not asked for reduced motion.
+      if (heroSlider.dataset.bsRide === 'carousel' && !isReducedMotion()) {
+        carousel.cycle();
+      }
+    };
+
+    ['mouseenter', 'focusin'].forEach(evt =>
+      heroSlider.addEventListener(evt, pause)
+    );
+    ['mouseleave', 'focusout'].forEach(evt =>
+      heroSlider.addEventListener(evt, resume)
+    );
+
+    // Stop the ride entirely if the preference flips on mid-session.
+    const motionQuery = window.matchMedia('(prefers-reduced-motion: reduce)');
+    if (motionQuery.addEventListener) {
+      motionQuery.addEventListener('change', function (e) {
+        if (e.matches) carousel.pause();
+      });
+    }
+  }
+
+  // ---------------------------------------------------------------
+  // Global broken-image safety net.
+  // Some uploaded media referenced by the database is missing (the
+  // audit found /media/sliders/sport_3.jpg and
+  // /media/notices/1000031894.jpg returning 404). A broken image
+  // must never leave an ugly empty box: if the element has a
+  // data-fallback-src, use it once; if the fallback also fails,
+  // remove the element so the layout closes up cleanly.
+  // Uses capture=true so it also catches errors from images whose
+  // own onerror attribute has not yet run.
+  // ---------------------------------------------------------------
+  document.addEventListener(
+    'error',
+    function (event) {
+      const el = event.target;
+      if (!el || el.tagName !== 'IMG') return;
+
+      const fallback = el.getAttribute('data-fallback-src');
+      if (fallback && el.src !== fallback && !el.dataset.fallbackTried) {
+        el.dataset.fallbackTried = '1';
+        el.src = fallback;
+        return;
+      }
+
+      // Nothing left to try: drop it rather than show a broken icon.
+      // Preserve the space when the image has an explicit aspect box.
+      if (el.classList.contains('teacher-photo') ||
+          el.classList.contains('school-logo')) {
+        el.style.visibility = 'hidden';
+      } else {
+        el.remove();
+      }
+    },
+    true
+  );
+
   // Gallery Lightbox Modal
   const galleryLinks = document.querySelectorAll('.gallery-lightbox-trigger');
   const lightboxModal = document.getElementById('lightboxModal');
@@ -161,7 +277,6 @@ document.addEventListener('DOMContentLoaded', function () {
   // when the trust band enters the viewport. Replaces the old scroll+setInterval
   // version so both do not fight over the same .stat-number spans.
   const statCounters = document.querySelectorAll('.stat-number[data-count]');
-  const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
   function animateCount(el, target, suffix, duration) {
     if (prefersReducedMotion) {
@@ -199,8 +314,6 @@ document.addEventListener('DOMContentLoaded', function () {
   // Gallery scroll-triggered animation using IntersectionObserver
   function initGalleryAnimation() {
     // Check if user prefers reduced motion
-    const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-    
     if (prefersReducedMotion) {
       // Skip animation for users who prefer reduced motion
       document.querySelectorAll('.gallery-item-animate').forEach(item => {
