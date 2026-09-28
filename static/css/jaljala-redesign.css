@@ -71,7 +71,7 @@ a:hover{color:var(--color-accent-deep)}
    responsive.css dropdown items {color:rgba(255,255,255,.75)!important}).
    Those out-rank the plain remaps above, and white-on-light dropdown text is the
    worst failure of the set (1.05:1) — so restate them here with !important. */
-.navbar-custom.is-sticky,.navbar-custom.sticky.show{background:var(--color-primary)!important;
+.navbar-custom.is-sticky{background:var(--color-primary)!important;
   box-shadow:0 4px 16px rgba(0,0,0,.12)!important}
 .navbar-custom .navbar-collapse{background-color:var(--color-primary)!important;
   border-top:1px solid rgba(255,255,255,.14)!important}

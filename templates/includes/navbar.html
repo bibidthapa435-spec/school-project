@@ -76,7 +76,9 @@
     </button>
 
     <div class="collapse navbar-collapse" id="mainNavbar">
-      <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+      <!-- mx-auto (not me-auto) centres the row in the bar; the brand is
+           hidden at xl+ where the links are widest, so they stay centred. -->
+      <ul class="navbar-nav mx-auto mb-2 mb-lg-0">
         <li class="nav-item">
           <a class="nav-link {% if request.path == '/' or path == '/' %}active{% endif %}" href="{% url 'home' %}"{% if request.path == '/' %} aria-current="page"{% endif %}>
             HOME

@@ -18,7 +18,9 @@ document.addEventListener('DOMContentLoaded', function () {
   
   // Back to top button
 
-    // Sticky Navbar - becomes fixed when scrolled past, always stays visible
+    // Sticky Navbar - pinned to the top of the viewport once the top bar
+    // and brand header have scrolled away, and it stays there for the
+    // rest of the page.
     const navbar = document.querySelector('#mainNav') || document.querySelector('nav.navbar-custom') || document.querySelector('.navbar-custom');
     const topBar = document.querySelector('.top-bar');
     const brandHeader = document.querySelector('.brand-header');
@@ -26,6 +28,11 @@ document.addEventListener('DOMContentLoaded', function () {
     if (navbar) {
       let isSticky = false;
       let ticking = false;
+      // The scroll threshold only changes when the header is re-laid-out
+      // (resize, font load) — not on every scroll frame. Caching it keeps
+      // the handler down to a single comparison and avoids two forced
+      // layout reads on every tick.
+      let scrollThreshold = 0;
 
       // The body padding must match the navbar's CURRENT height at the
       // moment it becomes fixed, otherwise the page content jumps by the
@@ -48,10 +55,14 @@ document.addEventListener('DOMContentLoaded', function () {
         return topBarHeight + brandHeight;
       };
 
-      // Activate sticky mode - navbar becomes fixed at top with animation
+      scrollThreshold = getScrollThreshold();
+
+      // Activate sticky mode - navbar becomes fixed at top
       const activateSticky = () => {
         if (isSticky) return;
         isSticky = true;
+        // Measure BEFORE switching to `position: fixed`, while the bar is
+        // still in normal flow and its height still reflects the layout.
         syncNavbarHeight();
         navbar.classList.add('is-sticky');
         document.body.classList.add('sticky-nav-active');
@@ -65,12 +76,10 @@ document.addEventListener('DOMContentLoaded', function () {
         document.body.classList.remove('sticky-nav-active');
       };
 
-      // Scroll handler - simple threshold check, no direction detection
+      // Scroll handler - simple threshold check, no direction detection,
+      // so the bar can never hide itself again while scrolling down.
       const handleScroll = () => {
-        const currentScrollY = window.scrollY;
-        const threshold = getScrollThreshold();
-
-        if (currentScrollY > threshold) {
+        if (window.scrollY > scrollThreshold) {
           // Past the original navbar position - make it sticky
           activateSticky();
         } else {
@@ -90,10 +99,17 @@ document.addEventListener('DOMContentLoaded', function () {
         }
       }, { passive: true });
 
+      // A page restored mid-scroll (refresh, back/forward cache, a deep
+      // link straight to an anchor) never fires a scroll event, so the
+      // navbar would sit in the flow while the header is already gone.
+      // Evaluate once on load to settle the initial state.
+      handleScroll();
+
       // Keep the body padding in step with the navbar on resize, and
       // re-evaluate stickiness because the header height also changed.
       let resizeTimer;
       window.addEventListener('resize', function () {
+        scrollThreshold = getScrollThreshold();
         syncNavbarHeight();
         clearTimeout(resizeTimer);
         resizeTimer = setTimeout(handleScroll, 100);

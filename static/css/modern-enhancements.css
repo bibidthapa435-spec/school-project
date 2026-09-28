@@ -462,8 +462,9 @@
 }
 
 /* ===== Enhanced Navbar Glassmorphism ===== */
-.navbar-custom.is-sticky,
-.navbar-custom.sticky.show {
+/* Glassmorphism for the PINNED navbar. `is-sticky` is the only state
+   main.js ever applies — the old `.sticky.show` selector is gone. */
+.navbar-custom.is-sticky {
   background: rgba(20, 49, 91, 0.92) !important;
   backdrop-filter: blur(16px);
   -webkit-backdrop-filter: blur(16px);

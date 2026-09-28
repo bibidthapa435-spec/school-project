@@ -1,0 +1,435 @@
+/* ===========================================================================
+   Academic Programs carousel (home page)
+   ---------------------------------------------------------------------------
+   Image-dominant cards on a transform-driven infinite loop.
+
+   Why its own file instead of extending home.css:
+     the redesign layer (jaljala-redesign-2.css) forces
+     `.custom-card, .card { border-radius: 8px !important }` and
+     `.card-img-top { aspect-ratio: 4/3; object-fit: cover }` with
+     !important. This carousel deliberately does NOT reuse those class
+     names, so the reference look cannot be undone by an existing rule.
+
+   Layout contract
+     .jj-pc__frame      positioning context for the arrow controls
+     .jj-pc__viewport   full-bleed box; reserves the outer arrow gutter
+     .jj-pc__window     the real clip: exactly the .container content width
+     .jj-pc__track      flex row, moved only with translate3d
+     .jj-pc__slide      flex: 0 0 <per-view width>
+     .jj-pc__card       aspect-ratio box; image fills it, copy overlays
+
+   Only transform / opacity / scale animate, so nothing triggers layout.
+   =========================================================================== */
+
+.jj-pc {
+  /* Slides per view. JS reads these exact tokens to stay in sync with CSS. */
+  --jj-pc-per: 3;
+  --jj-pc-gap: 28px;
+  /* Arrow size, also used to position the controls in the side gutter. */
+  --jj-pc-arrow: 52px;
+}
+
+.jj-pc__frame {
+  position: relative;
+}
+
+.jj-pc__viewport {
+  /* Bleed the row past the .container for the reference's edge-to-edge feel,
+     then cancel the bleed at the exact viewport width so no horizontal
+     scrollbar can ever appear.
+
+     Deliberately NO overflow here. `overflow: hidden` clips at the PADDING
+     box, so on this full-bleed box it would happily let the neighbouring
+     slides show through the side gutters - the "half a card on each side"
+     artefact. The clip that matters is .jj-pc__window below. */
+  margin-inline: calc(50% - 50vw);
+  padding-inline: max(24px, calc(50vw - 50% + 24px));
+}
+
+/* The real clip box. Its width is exactly the .container content width and
+   .jj-pc__track tiles --jj-pc-per whole cards into it, so a page shows
+   exactly that many FULL cards - never a fraction of the next one. */
+.jj-pc__window {
+  overflow: hidden;
+}
+
+.jj-pc__track {
+  display: flex;
+  align-items: stretch;
+  gap: var(--jj-pc-gap);
+  margin: 0;
+  padding: 6px 0 10px;          /* room for the hover lift + shadow */
+  list-style: none;
+  /* JS sets the transform. */
+  transform: translate3d(0, 0, 0);
+  transition: transform 620ms cubic-bezier(.22, .61, .36, 1);
+}
+
+.jj-pc__track.is-settling {
+  /* Applied only for the single synchronous flush that re-seats the track at a
+     loop seam. JS removes it on the very next animation frame; if that ever
+     failed, the row would freeze mid-slide, so `none` is paired with a short
+     transition rather than `transition: none` being left to hang around. */
+  transition: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .jj-pc__track {
+    transition: none;
+  }
+}
+
+.jj-pc__slide {
+  /* Calculated, never hard-coded: (width - gaps) / per-view, so exactly
+     --jj-pc-per cards tile the clip box with no leftover strip - a leftover
+     strip is what would let a sliver of the next card show at the edge.
+     Only a MINIMUM is applied: an upper bound would leave the row short of
+     the clip box and pull a fourth card into view. */
+  flex: 0 0 max(240px, calc((100% - (var(--jj-pc-per) - 1) * var(--jj-pc-gap)) / var(--jj-pc-per)));
+  min-width: 0;
+  display: flex;
+}
+
+.jj-pc__card {
+  position: relative;
+  flex: 1 1 auto;
+  min-width: 0;
+  /* Near-square, matching the reference: the cards there are only slightly
+     taller than wide (~0.94), not the 4:5 portrait used in the first pass.
+     `object-fit: cover` below does the filling, so the ratio only sizes the
+     box. */
+  aspect-ratio: 16 / 17;
+  border-radius: 16px;
+  overflow: hidden;
+  background: var(--color-primary, #1F3A34);
+  box-shadow: 0 10px 30px rgba(28, 26, 22, .12);
+  transition: transform 380ms cubic-bezier(.22, .61, .36, 1),
+              box-shadow 380ms ease;
+}
+
+@media (hover: hover) {
+  .jj-pc__card:hover {
+    transform: translateY(-6px);
+    box-shadow: 0 20px 44px rgba(28, 26, 22, .2);
+  }
+}
+
+.jj-pc__img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  /* Fills the card completely. `center` keeps the focal point - the school
+     building / students - mid-frame instead of cropping it to a corner. */
+  object-fit: cover;
+  object-position: center;
+  transition: transform 620ms cubic-bezier(.22, .61, .36, 1);
+}
+
+@media (hover: hover) {
+  .jj-pc__card:hover .jj-pc__img {
+    transform: scale(1.08);
+  }
+}
+
+.jj-pc__scrim {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  /* Transparent across the top, dark at the base. The mid stop sits where the
+     title begins, so white text always has a dark backing. */
+  background: linear-gradient(180deg,
+    rgba(20, 18, 14, 0) 0%,
+    rgba(20, 18, 14, 0) 34%,
+    rgba(20, 18, 14, .38) 52%,
+    rgba(20, 18, 14, .78) 74%,
+    rgba(20, 18, 14, .92) 100%);
+}
+
+.jj-pc__body {
+  position: absolute;
+  inset: auto 0 0 0;
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;          /* centred, as in the reference */
+  text-align: center;
+  gap: 8px;
+  padding: 20px 26px 22px;      /* symmetric: copy is centred, not indented */
+  color: #fff;
+}
+
+.jj-pc__meta {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;      /* chips follow the centred title */
+  gap: 6px;
+  margin: 0;
+  max-width: 100%;
+}
+
+.jj-pc__title {
+  margin: 0;
+  color: #fff !important;               /* beats the h3 palette rule */
+  font-family: var(--font-head);
+  font-size: clamp(1.05rem, 1.35vw, 1.3rem);
+  font-weight: 700;
+  line-height: 1.25;
+  text-shadow: 0 1px 10px rgba(0, 0, 0, .5);
+  /* Long admin-entered titles clamp to 2 lines so every card in a row keeps
+     an identical height and the arrow row stays aligned. */
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.jj-pc__text {
+  margin: 0;
+  color: rgba(255, 255, 255, .88) !important;
+  font-size: .84rem;
+  line-height: 1.45;
+  /* Guarantees the overlay copy can never outgrow the card, whatever the
+     admin typed into the description field. */
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  text-shadow: 0 1px 6px rgba(0, 0, 0, .45);
+}
+
+.jj-pc__go {
+  position: absolute;
+  right: 20px;
+  bottom: 22px;
+  z-index: 2;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  background: #fff;
+  color: var(--color-primary, #1F3A34);
+  font-size: .95rem;
+  text-decoration: none;
+  box-shadow: 0 6px 18px rgba(0, 0, 0, .3);
+  transition: transform 320ms cubic-bezier(.22, .61, .36, 1),
+              background-color 320ms ease,
+              color 320ms ease;
+}
+
+/* Stretched hit area: the whole card links to the program, so the arrow is
+   purely the visual affordance. The ::after is absolutely positioned inside
+   the already-absolute <a>, so it adds no layout. */
+.jj-pc__go::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+}
+
+.jj-pc__go i {
+  transition: transform 320ms cubic-bezier(.22, .61, .36, 1);
+}
+
+@media (hover: hover) {
+  .jj-pc__card:hover .jj-pc__go {
+    transform: scale(1.1);
+    background: var(--color-highlight, #E8A33D);
+    color: var(--color-ink, #2C2A24);
+  }
+  /* Slight rightward nudge, as in the reference. */
+  .jj-pc__card:hover .jj-pc__go i {
+    transform: translateX(3px);
+  }
+}
+
+.jj-pc__go:focus-visible {
+  outline: 3px solid var(--color-highlight, #E8A33D) !important;
+  outline-offset: 3px;
+}
+
+/* Ring the whole card when the stretched link takes focus, so a keyboard user
+   can see which slide is targeted rather than only the small arrow. */
+.jj-pc__card:focus-within {
+  outline: 3px solid var(--color-highlight, #E8A33D);
+  outline-offset: 3px;
+  border-radius: 16px;
+}
+
+/* ---------- Prev / next controls ---------------------------------------- */
+.jj-pc__nav {
+  position: absolute;
+  top: 50%;
+  z-index: 3;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: var(--jj-pc-arrow);
+  height: var(--jj-pc-arrow);
+  margin-top: calc(var(--jj-pc-arrow) / -2);
+  padding: 0;
+  border: 1px solid var(--color-line, #E4DCCB);
+  border-radius: 50%;
+  background: var(--color-surface, #fff);
+  color: var(--color-primary, #1F3A34);
+  font-size: 1rem;
+  cursor: pointer;
+  /* Sits in the gutter beside the first/last card, so it never covers the
+     overlay copy. */
+  box-shadow: 0 6px 20px rgba(28, 26, 22, .16);
+  transition: transform 260ms ease, background-color 260ms ease,
+              color 260ms ease;
+}
+
+.jj-pc__nav--prev {
+  left: 0;
+  transform: translateX(-50%);
+}
+
+.jj-pc__nav--next {
+  right: 0;
+  left: auto;
+  transform: translateX(50%);
+}
+
+@media (hover: hover) {
+  .jj-pc__nav:hover {
+    background: var(--color-primary, #1F3A34);
+    border-color: var(--color-primary, #1F3A34);
+    color: #fff;
+  }
+  .jj-pc__nav--prev:hover {
+    transform: translateX(calc(-50% - 6px));
+  }
+  .jj-pc__nav--next:hover {
+    transform: translateX(calc(50% + 6px));
+  }
+}
+
+.jj-pc__nav:focus-visible {
+  outline: 3px solid var(--color-highlight, #E8A33D) !important;
+  outline-offset: 3px;
+}
+
+/* ---------- Static fallback (fewer programs than fit on screen) ----------
+   When the school has published N programs and N <= the per-view count there
+   is nothing to scroll, so JS hides the arrows and adds this class. The
+   slides then divide the row evenly instead of each claiming a per-view
+   width, which would leave a gap on the right. */
+.jj-pc--static .jj-pc__track {
+  transform: none;
+}
+
+.jj-pc--static .jj-pc__slide {
+  flex: 1 1 0;
+  min-width: 0;
+}
+
+.jj-pc--static .jj-pc__nav {
+  display: none;
+}
+
+/* ---------- Breakpoints ---------------------------------------------------
+   --jj-pc-per is the single source of truth: CSS uses it for the slide width
+   and program-carousel.js reads it to know how far to step. 3 desktop /
+   2 tablet / 1 mobile, as briefed. */
+@media (max-width: 1199.98px) {
+  .jj-pc {
+    --jj-pc-per: 2;
+    --jj-pc-gap: 24px;
+  }
+}
+
+@media (max-width: 767.98px) {
+  .jj-pc {
+    --jj-pc-per: 1;
+    --jj-pc-gap: 18px;
+    --jj-pc-arrow: 44px;
+  }
+  /* A single near-square card on a phone would make the section very tall, so
+     the box relaxes toward landscape; the image still fills it completely. */
+  .jj-pc__card {
+    aspect-ratio: 4 / 3.2;
+  }
+  .jj-pc__viewport {
+    padding-inline: max(18px, calc(50vw - 50% + 18px));
+  }
+  .jj-pc__text {
+    -webkit-line-clamp: 2;
+    line-clamp: 2;
+  }
+  /* Symmetric padding: the overlay copy is centred, so it must not be
+     indented to clear the arrow any more. */
+  .jj-pc__body {
+    padding: 16px 20px 18px;
+  }
+  .jj-pc__go {
+    right: 16px;
+    bottom: 18px;
+    width: 40px;
+    height: 40px;
+  }
+}
+
+@media (max-width: 575.98px) {
+  .jj-pc {
+    --jj-pc-arrow: 40px;
+  }
+  .jj-pc__nav {
+    font-size: .9rem;
+  }
+}
+
+/* ---------- Reduced motion -----------------------------------------------
+   The auto-advance timer is never started in JS for these visitors; here the
+   manual transition is shortened so paging still feels responsive. */
+@media (prefers-reduced-motion: reduce) {
+  .jj-pc__track,
+  .jj-pc__card,
+  .jj-pc__img,
+  .jj-pc__go,
+  .jj-pc__go i,
+  .jj-pc__nav {
+    transition-duration: 1ms;
+  }
+  .jj-pc__card:hover,
+  .jj-pc__card:hover .jj-pc__img,
+  .jj-pc__card:hover .jj-pc__go,
+  .jj-pc__card:hover .jj-pc__go i,
+  .jj-pc__nav--prev:hover,
+  .jj-pc__nav--next:hover {
+    transform: none;
+  }
+}
+
+.jj-pc__chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 3px 10px;
+  border-radius: 999px;
+  /* Translucent white over the dark scrim, so duration/fee stay legible
+     without introducing a second competing brand colour. */
+  background: rgba(255, 255, 255, .18);
+  border: 1px solid rgba(255, 255, 255, .28);
+  color: #fff;
+  font-size: .72rem;
+  font-weight: 600;
+  line-height: 1.5;
+  letter-spacing: .01em;
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+  max-width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.jj-pc__chip--fee {
+  background: rgba(166, 49, 75, .82);   /* --color-accent */
+  border-color: rgba(232, 163, 39, .55); /* --color-highlight */
+}

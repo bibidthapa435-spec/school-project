@@ -49,6 +49,9 @@
   <link rel="stylesheet" href="/static/css/audit-fixes.css">
   <!-- Scroll-animation layer: native IntersectionObserver engine, no library -->
   <link rel="stylesheet" href="/static/css/scroll-motion.css">
+  <!-- Academic Programs carousel (home). Loaded LAST so its card styling wins
+       over the legacy .custom-card / .card-img-top rules. -->
+  <link rel="stylesheet" href="/static/css/program-carousel.css">
   <!-- Safety net: never leave a reveal target hidden if the engine never runs -->
   <noscript><style>
     [data-aos],[data-img-reveal],[data-stagger]>*{opacity:1!important;
@@ -108,6 +111,8 @@
   <script src="/static/js/popup.js"></script>
   <!-- Scroll-animation engine: reveals, stagger, nav highlight, parallax -->
   <script src="/static/js/scroll-motion.js"></script>
+  <!-- Academic Programs carousel: clone-based infinite loop, vanilla JS -->
+  <script src="/static/js/program-carousel.js"></script>
 </body>
 </html>
 

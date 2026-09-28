@@ -119,36 +119,53 @@ blockquote {
   font-weight: 500;
 }
 
-/* Sticky Navbar */
+/* =============================================================
+   STICKY NAVBAR
+   main.js adds `.is-sticky` once the top bar + brand header have
+   scrolled away. The bar must then stay pinned at the top of the
+   viewport for the rest of the page and never animate itself away
+   again, so nothing below may translate or fade it out.
+   ============================================================= */
 .navbar-custom {
   background-color: #14315B !important;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12);
-  transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.4s ease, box-shadow 0.3s ease;
+  transition: box-shadow 0.3s ease;
+  /* Centred menu: the list is auto-margined on both sides and the
+     collapsed panel centres it too, so the links sit in the middle
+     of the bar at every breakpoint. */
+  justify-content: center;
 }
 
-.navbar-custom.sticky-top {
-  top: 0;
-  z-index: 1030;
+.navbar-custom .navbar-collapse {
+  justify-content: center;
 }
 
-/* Sticky Navbar - Fixed position when scrolling */
+.navbar-custom .navbar-nav {
+  margin-left: auto !important;
+  margin-right: auto !important;
+}
+
+/* Pinned state. `width: 100%` is required because `left`/`right` are
+   ignored for a fixed box that also has an intrinsic width from
+   Bootstrap's `.navbar > .container` sizing. */
 .navbar-custom.is-sticky {
   position: fixed;
   top: 0;
   left: 0;
   right: 0;
-  z-index: 9999;
-  animation: stickySlideDown 0.9s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  width: 100%;
+  max-width: 100%;
+  z-index: 1040;
+  /* A short cross-fade only. The bar must never translate — that is
+     what previously made it look like it was scrolling on/off. */
+  animation: stickyFadeIn 0.2s ease-out both;
 }
 
-/* Slide-down + fade-in animation when navbar becomes sticky */
-@keyframes stickySlideDown {
+@keyframes stickyFadeIn {
   from {
-    transform: translateY(-100%);
-    opacity: 0;
+    opacity: 0.6;
   }
   to {
-    transform: translateY(0);
     opacity: 1;
   }
 }
@@ -256,27 +273,14 @@ body.sticky-nav-active {
   transform: translateY(-2px);
 }
 
-/* Sticky Navbar Animation */
-.navbar-custom.sticky {
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  opacity: 0;
-  transform: translateY(-100%);
-  transition: transform 500ms ease-out, opacity 500ms ease-out;
-  z-index: 99999; /* ensure navbar sits above all content */
-}
-
-.navbar-custom.sticky.show {
-  opacity: 1;
-  transform: translateY(0);
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
-  transition: transform 500ms ease-out, opacity 500ms ease-out, box-shadow 500ms ease-out;
-}
-
-/* When sticky, ensure dropdowns float above other elements */
-.navbar-custom.sticky .dropdown-menu {
+/* Dropdowns must escape the bar once it is pinned, so they are raised
+   above the page content. Scoped to the class main.js actually toggles
+   (`.is-sticky`). The old `.sticky` / `.sticky.show` variant here was
+   dead code — nothing ever added that class — and it set
+   `opacity: 0; transform: translateY(-100%)`, so any stray `.sticky`
+   silently made the whole navbar vanish. It has been removed in favour
+   of the single `.is-sticky` state above. */
+.navbar-custom.is-sticky .dropdown-menu {
   z-index: 100000;
   pointer-events: auto;
 }
