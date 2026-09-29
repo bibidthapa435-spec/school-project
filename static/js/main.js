@@ -223,26 +223,26 @@ document.addEventListener('DOMContentLoaded', function () {
   window.dismissPreloader = function() {
     const preloader = document.getElementById('school-preloader');
     if (preloader && !preloader.classList.contains('fade-out')) {
+      // The pre-paint flag is what holds the overlay on screen
+      // (html.jj-splash in style.css), so it goes first: while it is still
+      // set, the fade-out class underneath could not win.
+      document.documentElement.classList.remove('jj-splash');
       preloader.classList.add('fade-out');
       setTimeout(() => { preloader.style.display = 'none'; }, 600);
     }
   };
 
-  // Preloader splash: show on first load and when the Home link is clicked
+  // Splash screen. Whether this load shows it was already decided in <head>,
+  // before the page was painted (first visit of the session, or a click on
+  // Home), and flagged as `jj-splash` on <html>. Deciding again here - which
+  // is what this block used to do - put the splash on screen seconds after
+  // the site on a cold load. All that is left is taking it down again.
   const preloader = document.getElementById('school-preloader');
   if (preloader) {
-    const shouldShowPreloader = sessionStorage.getItem('show-preloader') === '1' || !sessionStorage.getItem('preloader-seen');
-    if (shouldShowPreloader) {
-      preloader.style.display = 'flex';
+    if (document.documentElement.classList.contains('jj-splash')) {
       preloader.classList.add('visible');
       preloader.classList.remove('fade-out');
-      sessionStorage.setItem('preloader-seen', '1');
-      sessionStorage.removeItem('show-preloader');
-      setTimeout(() => {
-        preloader.classList.add('fade-out');
-        preloader.classList.remove('visible');
-        setTimeout(() => { preloader.style.display = 'none'; }, 650);
-      }, 1850);
+      setTimeout(() => window.dismissPreloader(), 1850);
     } else {
       preloader.style.display = 'none';
     }
@@ -250,7 +250,11 @@ document.addEventListener('DOMContentLoaded', function () {
 
   document.querySelectorAll('a[href="/"]').forEach(link => {
     link.addEventListener('click', function () {
-      sessionStorage.setItem('show-preloader', '1');
+      try {
+        sessionStorage.setItem('show-preloader', '1');
+      } catch (e) {
+        // Storage blocked: the Home click simply will not replay the splash.
+      }
     });
   });
 

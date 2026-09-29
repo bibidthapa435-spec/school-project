@@ -77,6 +77,40 @@
       }, 2500);
     })();
   </script>
+  <script>
+    // Same trick for the splash screen, and for the same reason: it has to be
+    // on screen from the FIRST paint. Revealing it from static/js/main.js -
+    // which sits at the end of <body>, behind the Bootstrap CDN bundle -
+    // painted the page first on a cold load, let the visitor read the site
+    // for a few seconds, and only then dropped the splash over it. The flag
+    // below is set while the head is still parsing, so the first paint is
+    // already the splash; style.css reveals the overlay off it, and main.js
+    // only takes it down again.
+    (function () {
+      try {
+        var replay = sessionStorage.getItem('show-preloader') === '1';
+        if (!replay && sessionStorage.getItem('preloader-seen')) return;
+        document.documentElement.classList.add('jj-splash');
+        // Mark the session HERE, not in main.js: a page whose script never
+        // ran must not splash again on the next page either.
+        sessionStorage.setItem('preloader-seen', '1');
+        sessionStorage.removeItem('show-preloader');
+        // Watchdog: if main.js never takes the splash down (a script error,
+        // a blocked file), release the page once everything has loaded.
+        window.addEventListener('load', function () {
+          setTimeout(function () {
+            if (!document.documentElement.classList.contains('jj-splash')) return;
+            document.documentElement.classList.remove('jj-splash');
+            var overlay = document.getElementById('school-preloader');
+            if (overlay) overlay.classList.add('fade-out');
+          }, 3000);
+        });
+      } catch (e) {
+        // Storage blocked: leave the overlay hidden rather than cover a
+        // page that nothing would be able to uncover.
+      }
+    })();
+  </script>
 </head>
 <body>
   <a class="skip-link" href="#main-content">Skip to main content</a>

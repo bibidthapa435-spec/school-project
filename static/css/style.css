@@ -686,6 +686,17 @@ footer .social-icons a:hover {
   pointer-events: auto;
 }
 
+/* Pre-paint splash state. base.html's <head> adds `jj-splash` to <html>
+   while the document is still parsing, so the browser's FIRST paint is the
+   splash itself - on a cold load the page used to paint first and the
+   overlay only arrived once the scripts at the end of <body> had run.
+   `:not(.fade-out)` keeps the dismissal below in charge of taking it away. */
+html.jj-splash #school-preloader.preloader-overlay:not(.fade-out) {
+  opacity: 1;
+  visibility: visible;
+  pointer-events: auto;
+}
+
 #school-preloader.fade-out {
   opacity: 0;
   visibility: hidden;

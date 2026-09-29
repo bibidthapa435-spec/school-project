@@ -993,3 +993,111 @@ class NavOrderTests(SimpleTestCase):
             'order, the way the home page tells the story',
         )
 
+
+class SplashPreloaderTests(SimpleTestCase):
+    """The splash screen has to be the FIRST paint, not a second act.
+
+    The regression: the overlay markup sat at the top of <body>, but
+    style.css held it at `opacity: 0; visibility: hidden` until
+    static/js/main.js - the second-to-last script, behind the Bootstrap CDN
+    bundle, and only running on DOMContentLoaded - decided to show it. On a
+    cold load (nothing cached, the CDN still downloading) the page therefore
+    painted first, the visitor read the site for a few seconds, and only then
+    did the splash drop over it and fade away again.
+
+    The decision now happens in <head>, while the document is still parsing:
+    an inline flag script marks <html> with `jj-splash` when the splash is due
+    (first visit of the session, or a click on Home), style.css reveals the
+    overlay off that class, and main.js only ever takes it down again.
+    """
+
+    OVERLAY_FLAG = "document.documentElement.classList.add('jj-splash')"
+
+    @classmethod
+    def setUpClass(cls):
+        super().setUpClass()
+        from pathlib import Path
+
+        root = Path(__file__).resolve().parent.parent
+        cls.base = (root / 'templates' / 'base.html').read_text(encoding='utf-8')
+        cls.css = (root / 'static' / 'css' / 'style.css').read_text(
+            encoding='utf-8'
+        )
+        cls.js = (root / 'static' / 'js' / 'main.js').read_text(
+            encoding='utf-8'
+        )
+        cls.head = cls.base[:cls.base.index('</head>')]
+        cls.body = cls.base[cls.base.index('</head>'):]
+
+    def _style_rule(self, selector):
+        """The full `selector {...}` block from style.css."""
+        match = re.search(
+            re.escape(selector) + r'\s*\{([^}]*)\}', self.css,
+        )
+        self.assertIsNotNone(match, f'{selector} is missing from style.css')
+        return match.group(0)
+
+    def test_the_splash_is_decided_in_the_head_before_the_first_paint(self):
+        self.assertIn(self.OVERLAY_FLAG, self.head)
+        self.assertNotIn(
+            self.OVERLAY_FLAG, self.body,
+            'the flag has to be set before <body> is parsed, or the page '
+            'paints first and the splash lands on top of a visible site',
+        )
+
+    def test_the_css_reveals_the_overlay_off_that_flag(self):
+        rule = self._style_rule(
+            'html.jj-splash #school-preloader.preloader-overlay:not(.fade-out)'
+        )
+        self.assertIn('opacity: 1', rule)
+        self.assertIn('visibility: visible', rule)
+        self.assertIn(
+            'pointer-events: auto', rule,
+            'the overlay is only up while the flag is set, so it must not '
+            'swallow clicks once it is gone',
+        )
+
+    def test_main_js_only_takes_the_splash_down(self):
+        self.assertIn(
+            "document.documentElement.classList.contains('jj-splash')", self.js
+        )
+        self.assertIn(
+            "document.documentElement.classList.remove('jj-splash')", self.js
+        )
+        self.assertNotIn(
+            "getItem('preloader-seen')", self.js,
+            'main.js deciding again at the end of <body> is exactly what put '
+            'the splash on screen seconds after the site',
+        )
+
+    def test_the_head_script_records_the_session_so_it_splashes_once(self):
+        self.assertIn(
+            "sessionStorage.setItem('preloader-seen', '1')", self.head
+        )
+        self.assertIn("removeItem('show-preloader')", self.head)
+        # A click on Home still replays the splash on the page it loads.
+        self.assertIn("addEventListener('click'", self.js)
+        self.assertIn("setItem('show-preloader', '1')", self.js)
+
+    def test_a_script_that_never_runs_cannot_leave_the_page_covered(self):
+        self.assertIn("window.addEventListener('load'", self.head)
+        watchdog = self.head[
+            self.head.index("window.addEventListener('load'"):
+        ]
+        self.assertIn('3000', watchdog)
+        self.assertIn(
+            "contains('jj-splash')", watchdog,
+            'the watchdog must only fire while the splash is still up, never '
+            'over a dismissal that already happened',
+        )
+        self.assertIn("classList.remove('jj-splash')", watchdog)
+
+    def test_the_overlay_opens_the_body_before_the_page_content(self):
+        overlay = self.body.index("include 'includes/preloader.html'")
+        navbar = self.body.index("include 'includes/navbar.html'")
+        self.assertLess(
+            overlay, navbar,
+            'the overlay has to be parsed first, so that the first paint it '
+            'belongs to is the splash',
+        )
+
