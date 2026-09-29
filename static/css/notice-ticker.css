@@ -1,0 +1,305 @@
+/* ============================================================
+   LATEST NOTICES TICKER  (loaded LAST in base.html)
+   ------------------------------------------------------------
+   WHY A SEPARATE FILE: jaljala-redesign-2.css is loaded late and
+   styles .notice-marquee-bar with !important. Overriding it from an
+   earlier stylesheet is impossible, so this file loads after it and
+   wins the cascade cleanly.
+
+   COLOURS ARE INHERITED, NOT RE-INVENTED. The pine band and the
+   marigold pill come from jaljala-redesign-2.css (which measured
+   them for WCAG AA: cream #EFE7D6 = 9.97:1, marigold #E8A33D =
+   5.68:1). This file only fixes LAYOUT and adds the new parts.
+
+   HEIGHT IS LOAD-BEARING: scroll-motion.css section 8 pins the hero
+   and relies on this bar being at least --jj-pin (40px) tall to
+   cover the seam. min-height is set, height stays auto, so a long
+   title can never be clipped.
+   ============================================================ */
+
+.notice-marquee-bar {
+  display: block;
+  /* Was `padding:.6rem 0`; the inner row owns the height now. */
+  padding-block: 0;
+  /* Never slim below the 40px pin window. */
+  min-height: 52px;
+  height: auto;
+}
+
+/* ---- Centred container: this is the alignment fix ----
+   The old markup used `.container`, which jaljala-redesign-2.css
+   forced to `width:100%` - that is why the badge sat hard against
+   the left edge of the screen while the navbar sat in a centred
+   1200px container. */
+.notice-marquee-bar__inner {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  width: 100%;
+  max-width: 1200px;
+  margin-inline: auto;
+  /* Same horizontal padding as the navbar's .container. */
+  padding-inline: 12px;
+  min-height: 52px;
+  overflow: visible;   /* was `overflow:hidden` - never needed here */
+  flex-wrap: nowrap;
+}
+
+@media (min-width: 576px)  { .notice-marquee-bar__inner { padding-inline: 16px; } }
+@media (min-width: 768px)  { .notice-marquee-bar__inner { padding-inline: 24px; } }
+@media (min-width: 1400px) { .notice-marquee-bar__inner { padding-inline: 32px; } }
+
+/* ============================================================
+   LEFT: gold pill, pulsing dot, divider
+   ============================================================ */
+.notice-marquee-bar__lead {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex: 0 0 auto;
+}
+
+.notice-marquee-bar__badge {
+  /* Inherits the marigold pill from jaljala-redesign-2.css. */
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  flex: 0 0 auto;
+  white-space: nowrap;
+}
+
+/* Pulsing red "live" dot. opacity + scale only - both are cheap,
+   composited properties, so this never triggers layout. */
+.notice-marquee-bar__dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: #E5484D;
+  box-shadow: 0 0 0 0 rgba(229, 72, 77, 0.6);
+  animation: jjTickerPulse 2s ease-out infinite;
+  flex: 0 0 auto;
+}
+
+@keyframes jjTickerPulse {
+  0%   { opacity: 1;    transform: scale(1);    box-shadow: 0 0 0 0 rgba(229,72,77,0.55); }
+  70%  { opacity: 0.85; transform: scale(1.15); box-shadow: 0 0 0 7px rgba(229,72,77,0); }
+  100% { opacity: 1;    transform: scale(1);    box-shadow: 0 0 0 0 rgba(229,72,77,0); }
+}
+
+.notice-marquee-bar__divider {
+  width: 1px;
+  height: 20px;
+
+/* ============================================================
+   MIDDLE: the scrolling ticker
+   ============================================================ */
+.notice-marquee-bar__viewport {
+  flex: 1 1 auto;
+  min-width: 0;
+  overflow: hidden;
+  /* Soft edges so titles dissolve instead of being sliced off. */
+  -webkit-mask-image: linear-gradient(90deg, transparent 0, #000 40px,
+                      #000 calc(100% - 40px), transparent 100%);
+          mask-image: linear-gradient(90deg, transparent 0, #000 40px,
+                      #000 calc(100% - 40px), transparent 100%);
+}
+
+.notice-marquee-bar__track {
+  display: flex;
+  align-items: center;
+  width: max-content;
+  animation: jjTickerScroll 36s linear infinite;
+}
+
+.notice-marquee-bar__list {
+  display: flex;
+  align-items: center;
+  gap: 28px;
+  margin: 0;
+  padding: 0 14px 0 0;
+  list-style: none;
+}
+
+.notice-marquee-bar__item {
+  display: inline-flex;
+  align-items: center;
+  flex: 0 0 auto;
+  white-space: nowrap;
+}
+
+/* Gold separator dot between notices. The first item of each group
+   has none, so the loop seam is clean. */
+.notice-marquee-bar__item + .notice-marquee-bar__item::before {
+  content: "\2022";
+  color: var(--color-highlight, #E8A33D);
+  margin-right: 28px;
+  font-weight: 700;
+  flex: 0 0 auto;
+}
+
+.notice-marquee-bar__link {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  color: #EFE7D6 !important;   /* 9.97:1 on the pine band */
+  text-decoration: none;
+  font-weight: 600;
+  font-size: 0.9rem;
+  border-bottom: 1px solid transparent;
+  transition: color 0.2s ease, border-color 0.2s ease;
+}
+.notice-marquee-bar__link:hover,
+.notice-marquee-bar__link:focus-visible {
+  color: var(--color-highlight, #E8A33D) !important;
+  border-bottom-color: var(--color-highlight, #E8A33D);
+}
+
+.notice-marquee-bar__icon { flex: 0 0 auto; font-size: 0.95em; }
+.notice-marquee-bar__title { color: #FFFFFF; }
+.notice-marquee-bar__date {
+  color: rgba(239, 231, 214, 0.72);
+  font-weight: 500;
+  font-size: 0.8rem;
+  white-space: nowrap;
+}
+.notice-marquee-bar__date::before { content: "\00b7"; margin-right: 6px; }
+
+/* ============================================================
+   RIGHT: pause toggle + View All
+   ============================================================ */
+.notice-marquee-bar__actions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex: 0 0 auto;
+}
+
+.notice-marquee-bar__pause {
+  width: 32px;
+  height: 32px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid rgba(232, 163, 61, 0.5);
+  border-radius: 50%;
+  background: transparent;
+  color: var(--color-highlight, #E8A33D);
+  cursor: pointer;
+  font-size: 0.7rem;
+  transition: background-color 0.2s ease, border-color 0.2s ease;
+}
+.notice-marquee-bar__pause:hover {
+  background: rgba(232, 163, 61, 0.14);
+  border-color: var(--color-highlight, #E8A33D);
+}
+/* One icon at a time, driven by aria-pressed. */
+.notice-marquee-bar__pause [data-icon-play] { display: none; }
+.notice-marquee-bar__pause[aria-pressed="true"] [data-icon-pause] { display: none; }
+.notice-marquee-bar__pause[aria-pressed="true"] [data-icon-play] { display: inline-block; }
+
+.notice-marquee-bar__all {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 14px;
+  border: 1px solid var(--color-highlight, #E8A33D);
+  border-radius: 999px;
+  color: var(--color-highlight, #E8A33D) !important;
+  font-size: 0.8rem;
+  font-weight: 700;
+  text-decoration: none;
+  white-space: nowrap;
+  transition: background-color 0.2s ease, color 0.2s ease;
+}
+.notice-marquee-bar__all:hover,
+.notice-marquee-bar__all:focus-visible {
+  background: var(--color-highlight, #E8A33D);
+  color: var(--color-primary, #1F3A34) !important;
+}
+
+/* Visible focus for every interactive element in the bar. */
+.notice-marquee-bar a:focus-visible,
+.notice-marquee-bar button:focus-visible {
+  outline: 3px solid var(--color-highlight, #E8A33D);
+  outline-offset: 2px;
+  border-radius: 4px;
+}
+
+/* ============================================================
+   MOBILE (< 768px)
+   ============================================================ */
+@media (max-width: 767.98px) {
+  .notice-marquee-bar__inner { gap: 10px; }
+
+  /* Badge collapses to icon + short "NOTICES" text. */
+  .notice-marquee-bar__badge-full { display: none; }
+  .notice-marquee-bar__badge-short { display: inline; }
+
+  /* Divider and pause button hidden. */
+  .notice-marquee-bar__divider,
+  .notice-marquee-bar__pause { display: none; }
+
+  /* "View All" becomes just an arrow. */
+  .notice-marquee-bar__all-text { display: none; }
+  .notice-marquee-bar__all { padding: 6px 10px; font-size: 0.9rem; }
+
+  /* Marquee takes the full remaining width; date is dropped. */
+  .notice-marquee-bar__viewport { flex: 1 1 auto; }
+  .notice-marquee-bar__date { display: none; }
+
+  /* Narrower mask so the fade matches the smaller viewport. */
+  .notice-marquee-bar__viewport {
+    -webkit-mask-image: linear-gradient(90deg, transparent 0, #000 18px,
+                        #000 calc(100% - 18px), transparent 100%);
+            mask-image: linear-gradient(90deg, transparent 0, #000 18px,
+                        #000 calc(100% - 18px), transparent 100%);
+  }
+}
+
+/* ============================================================
+   REDUCED MOTION
+   The marquee stops entirely; the list becomes horizontally
+   scrollable so every notice is still reachable by keyboard.
+   ============================================================ */
+@media (prefers-reduced-motion: reduce) {
+  .notice-marquee-bar__track { animation: none !important; }
+  .notice-marquee-bar__dot { animation: none !important; }
+
+  .notice-marquee-bar__viewport {
+    overflow-x: auto;
+    overflow-y: hidden;
+    -webkit-overflow-scrolling: touch;
+    -webkit-mask-image: none;
+            mask-image: none;
+  }
+  .notice-marquee-bar__track { width: auto; }
+  /* The duplicated group would be read twice; hide it in this mode. */
+  .notice-marquee-bar__list[aria-hidden="true"] { display: none; }
+  .notice-marquee-bar__list { padding-right: 0; }
+}
+
+
+@keyframes jjTickerScroll {
+  from { transform: translate3d(0, 0, 0); }
+  to   { transform: translate3d(-50%, 0, 0); }  /* -50% == one group */
+}
+
+/* Pause on hover and on keyboard focus. */
+.notice-marquee-bar__viewport:hover .notice-marquee-bar__track,
+.notice-marquee-bar__viewport:focus-within .notice-marquee-bar__track,
+.notice-marquee-bar.is-paused .notice-marquee-bar__track {
+  animation-play-state: paused;
+}
+
+/* Single notice: static, no animation, aligned left. */
+.notice-marquee-bar__list--static {
+  padding-left: 0;
+  animation: none;
+}
+
+  background: rgba(232, 163, 61, 0.45);
+  flex: 0 0 auto;
+}
+
+/* Short label is hidden until the mobile breakpoint. */
+.notice-marquee-bar__badge-short { display: none; }

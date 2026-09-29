@@ -68,22 +68,90 @@
   </div>
 </div>
 {% endif %}
+{% load notice_tags %}
 {% if notices or MARQUEE_NOTICES %}
-<div class="notice-marquee-bar">
-  <div class="container d-flex align-items-center">
-    <span class="notice-badge me-3">
-      <i class="fa-solid fa-bullhorn me-1"></i> LATEST NOTICES
-    </span>
-    <marquee behavior="scroll" direction="left" scrollamount="6" onmouseover="this.stop();" onmouseout="this.start();">
-      {% for notice in notices|default:MARQUEE_NOTICES %}
-        <a href="/notices/{{ notice.slug }}" class="me-5 text-decoration-none">
-          📢 <strong>{{ notice.title }}</strong>
-        </a>
-      {% endfor %}
-    </marquee>
+{% with ticker_items=notices|ticker_items %}
+<div class="notice-marquee-bar" role="region" aria-label="Latest notices">
+  <div class="notice-marquee-bar__inner container">
+
+    <!-- Left: gold pill + pulsing live dot + divider -->
+    <div class="notice-marquee-bar__lead">
+      <span class="notice-marquee-bar__badge">
+        <span class="notice-marquee-bar__dot" aria-hidden="true"></span>
+        <i class="fa-solid fa-bullhorn" aria-hidden="true"></i>
+        <span class="notice-marquee-bar__badge-full">LATEST NOTICES</span>
+        <span class="notice-marquee-bar__badge-short">NOTICES</span>
+      </span>
+      <span class="notice-marquee-bar__divider" aria-hidden="true"></span>
+    </div>
+
+    <!-- Middle: the ticker. A single notice is rendered static, centred
+         left, with no animation at all. -->
+    <div class="notice-marquee-bar__viewport">
+      {% if ticker_items|length > 1 %}
+      <div class="notice-marquee-bar__track">
+        {# Two identical groups make the loop seamless; the second is aria-hidden so a screen reader hears each notice once. #}
+        {% for copy in "12" %}
+        <ul class="notice-marquee-bar__list"
+            {% if not forloop.first %}aria-hidden="true"{% endif %}>
+          {% for notice in ticker_items %}
+          <li class="notice-marquee-bar__item">
+            <a href="{% url 'notice_detail' notice.slug %}"
+               class="notice-marquee-bar__link"
+               {% if not forloop.parentloop.first %}tabindex="-1"{% endif %}>
+              <span class="notice-marquee-bar__icon" aria-hidden="true">&#128227;</span>
+              <span class="notice-marquee-bar__title">{{ notice.title }}</span>
+              <time class="notice-marquee-bar__date" datetime="{{ notice.created_at|date:'Y-m-d' }}">
+                {{ notice.created_at|date:"j M Y" }}
+              </time>
+            </a>
+          </li>
+          {% endfor %}
+        </ul>
+        {% endfor %}
+      </div>
+      {% else %}
+      <ul class="notice-marquee-bar__list notice-marquee-bar__list--static">
+        {% for notice in ticker_items %}
+        <li class="notice-marquee-bar__item">
+          <a href="{% url 'notice_detail' notice.slug %}"
+             class="notice-marquee-bar__link">
+            <span class="notice-marquee-bar__icon" aria-hidden="true">&#128227;</span>
+            <span class="notice-marquee-bar__title">{{ notice.title }}</span>
+            <time class="notice-marquee-bar__date" datetime="{{ notice.created_at|date:'Y-m-d' }}">
+              {{ notice.created_at|date:"j M Y" }}
+            </time>
+          </a>
+        </li>
+        {% endfor %}
+      </ul>
+      {% endif %}
+    </div>
+
+    <!-- Right: pause toggle + View All -->
+    <div class="notice-marquee-bar__actions">
+      {% if ticker_items|length > 1 %}
+      <button type="button"
+              class="notice-marquee-bar__pause"
+              data-ticker-toggle
+              aria-pressed="false"
+              aria-label="Pause the notices ticker">
+        <i class="fa-solid fa-pause" data-icon-pause aria-hidden="true"></i>
+        <i class="fa-solid fa-play" data-icon-play aria-hidden="true"></i>
+      </button>
+      {% endif %}
+      <a href="{% url 'notices' %}" class="notice-marquee-bar__all">
+        <span class="notice-marquee-bar__all-text">View All</span>
+        <span class="notice-marquee-bar__all-arrow" aria-hidden="true">&rarr;</span>
+        <span class="visually-hidden">View all notices</span>
+      </a>
+    </div>
+
   </div>
 </div>
+{% endwith %}
 {% endif %}
+
 
 <!-- Single page H1. The hero is a media-only carousel (by design), so the
      page's real heading lives here, visually hidden to keep the existing

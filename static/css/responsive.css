@@ -148,32 +148,90 @@ iframe {
   }
 }
 
-/* Desktop (>= 1200px): a single unwrapped row.
-   `flex-wrap: nowrap` plus `white-space: nowrap` guarantees the menu
-   never breaks onto a second line, and `overflow-x: auto` on the
-   container is the last-resort safety valve so a crowded row can
-   never push the page into a horizontal scrollbar. */
+/* Desktop (>= 1200px): a single unwrapped row, never a scrollbar.
+   `flex-wrap: nowrap` plus `white-space: nowrap` keeps the menu on one
+   line, and the container is explicitly `overflow: visible`.
+
+   Why `overflow: visible` and not the previous `overflow-x: auto`:
+   per CSS Overflow 3, when one axis is `auto` and the other is
+   `visible`, the `visible` axis COMPUTES to `auto`. So `overflow-x: auto`
+   silently made this a scroll container on BOTH axes. The 44px touch
+   targets (WCAG 2.2) are taller than the bar's content box, so a
+   VERTICAL scrollbar rendered inside the navbar on every desktop
+   screen. The menu fits at >= 1200px, so nothing needs to scroll -
+   the page scrolls, never the bar.
+
+   `scrollbar-width` / `::-webkit-scrollbar` below are a safety net so
+   a stray scrollbar can never reappear here. */
 @media (min-width: 1200px) {
+  .navbar-custom,
+  .navbar-custom .container,
+  .navbar-custom .navbar-collapse,
+  .navbar-custom .navbar-nav,
+  .navbar-custom .nav-item {
+    height: auto;
+    max-height: none;
+    overflow: visible;
+    /* Safety net: even if something later reintroduces overflow,
+       the bar must not paint a scrollbar. */
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+  }
+
+  .navbar-custom::-webkit-scrollbar,
+  .navbar-custom .container::-webkit-scrollbar,
+  .navbar-custom .navbar-collapse::-webkit-scrollbar,
+  .navbar-custom .navbar-nav::-webkit-scrollbar,
+  .navbar-custom .nav-item::-webkit-scrollbar {
+    width: 0;
+    height: 0;
+    display: none;
+  }
+
   .navbar-custom .container {
     max-width: 100%;
     flex-wrap: nowrap;
-    /* Last-resort safety valve: a crowded row scrolls inside the bar
-       instead of pushing the whole page sideways. */
-    overflow-x: auto;
-    scrollbar-width: thin;
+  }
+
+  /* The row is centred and never wraps. */
+  .navbar-custom .navbar-collapse {
+    display: flex !important;   /* beat Bootstrap's .collapse:not(.show) */
+    flex-basis: auto;
+    align-items: center;
   }
 
   .navbar-custom .navbar-nav {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
     flex-wrap: nowrap;
     min-width: 0;
+    height: auto;
+  }
+
+  /* ABOUT US and any other dropdown overlay the page instead of
+     expanding the bar. Bootstrap already positions it absolutely;
+     this pins it explicitly and lifts it above the content. */
+  .navbar-custom .nav-item.dropdown {
+    position: relative;
+  }
+
+  .navbar-custom .nav-item.dropdown > .dropdown-menu {
+    position: absolute !important;
+    top: 100%;
+    left: 0;
+    transform: none !important;
+    z-index: 1050;
+    max-height: none;
+    overflow: visible;
   }
 
   .navbar-custom .nav-link {
     white-space: nowrap;
-    /* Trim the horizontal padding at 1200-1399px, where 11 uppercase
-       labels plus the CTA genuinely need the extra room. */
-    padding: 10px 12px !important;
-    font-size: 0.82rem;
+    /* clamp() so the row breathes between 1200px and 1400px instead of
+       relying on a scrollbar to absorb a crowded row. */
+    padding: 10px clamp(6px, 0.85vw, 12px) !important;
+    font-size: clamp(0.78rem, 0.72vw, 0.86rem);
     letter-spacing: 0.3px;
   }
 }
@@ -183,6 +241,30 @@ iframe {
     padding: 12px 18px !important;
     font-size: 0.95rem;
     letter-spacing: 0.5px;
+  }
+}
+
+/* -------------------------------------------------------------
+   MOBILE / TABLET (< 1200px): the collapsed panel is the ONLY
+   thing allowed to scroll, and it scrolls invisibly.
+   The hamburger itself is untouched, so all links still work.
+   ------------------------------------------------------------- */
+@media (max-width: 1199.98px) {
+  .navbar-custom .navbar-collapse.show {
+    max-height: calc(100vh - 80px);
+    max-height: calc(100dvh - 80px);
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    -webkit-overflow-scrolling: touch;
+    /* Scroll still works; the bar is simply not drawn. */
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+  }
+
+  .navbar-custom .navbar-collapse.show::-webkit-scrollbar {
+    width: 0;
+    height: 0;
+    display: none;
   }
 }
 
@@ -221,8 +303,24 @@ body.sticky-nav-active.nav-menu-open {
 .navbar-custom.is-sticky {
   /* Never leave a sliver of the page showing through. */
   max-height: 100vh;
-  overflow-y: auto;
+  /* The pinned bar must NEVER scroll. This rule previously declared
+     `overflow-y: auto`, so once the header scrolled away and the bar
+     turned `is-sticky`, a second vertical scrollbar appeared inside the
+     navbar - even at desktop width. The pinned bar is short and its
+     content is one centred row, so it has nothing to scroll: the
+     collapsed mobile panel (max-width: 1199.98px) is the only thing
+     that is allowed to scroll. */
+  overflow-y: visible;
   overscroll-behavior: contain;
+  /* Safety net: never paint a scrollbar on the bar itself. */
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+
+.navbar-custom.is-sticky::-webkit-scrollbar {
+  width: 0;
+  height: 0;
+  display: none;
 }
 
 /* =============================================================

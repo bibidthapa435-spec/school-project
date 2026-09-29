@@ -16,6 +16,42 @@ document.addEventListener('DOMContentLoaded', function () {
   // Initialize AOS (Animate on Scroll) — removed per redesign brief
   // (one deliberate hero moment only; no fade-in-on-scroll).
   
+  // ---------------------------------------------------------------
+  // Latest notices ticker: pause / play toggle.
+  //
+  // The marquee itself is pure CSS, so it still scrolls with JS
+  // disabled — this only wires the explicit pause button. If the
+  // button is absent (single notice, or the mobile breakpoint where
+  // it is hidden) this is a no-op.
+  // ---------------------------------------------------------------
+  (function initNoticeTicker() {
+    const bar = document.querySelector('.notice-marquee-bar');
+    if (!bar) return;
+
+    const toggle = bar.querySelector('[data-ticker-toggle]');
+    if (!toggle) return;
+
+    // Respect the OS preference: start paused and say so, so the
+    // button's initial state matches what is actually happening.
+    let paused = isReducedMotion();
+
+    function apply() {
+      bar.classList.toggle('is-paused', paused);
+      toggle.setAttribute('aria-pressed', String(paused));
+      toggle.setAttribute(
+        'aria-label',
+        paused ? 'Play the notices ticker' : 'Pause the notices ticker'
+      );
+    }
+
+    apply();
+
+    toggle.addEventListener('click', function () {
+      paused = !paused;
+      apply();
+    });
+  })();
+
   // Back to top button
 
     // Sticky Navbar - pinned to the top of the viewport once the top bar
