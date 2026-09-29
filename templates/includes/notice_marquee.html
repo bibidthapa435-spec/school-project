@@ -1,17 +1,44 @@
 {% if notices or MARQUEE_NOTICES %}
-<div class="notice-marquee-bar">
-  <div class="container d-flex align-items-center">
-    <span class="notice-badge me-3">
-      <i class="fa-solid fa-bullhorn me-1"></i> LATEST NOTICES
-    </span>
-    <marquee behavior="scroll" direction="left" scrollamount="6" onmouseover="this.stop();" onmouseout="this.start();">
-      {% for notice in notices|default:MARQUEE_NOTICES %}
-        <a href="/notices/{{ notice.slug }}" class="text-dark me-5 text-decoration-none">
-          📢 <strong>{{ notice.title }}</strong>
-        </a>
-      {% endfor %}
-    </marquee>
+{% with ticker_notices=notices|default:MARQUEE_NOTICES %}
+<div class="notice-marquee-bar" role="region" aria-label="Latest notices">
+  <div class="notice-marquee-bar__inner">
+    <div class="notice-marquee-bar__lead">
+      <span class="notice-badge notice-marquee-bar__badge">
+        <i class="fa-solid fa-bullhorn me-1" aria-hidden="true"></i>
+        <span class="notice-marquee-bar__badge-full">LATEST NOTICES</span>
+        <span class="notice-marquee-bar__badge-short" aria-hidden="true">NOTICES</span>
+      </span>
+      <span class="notice-marquee-bar__dot" aria-hidden="true"></span>
+      <span class="notice-marquee-bar__divider" aria-hidden="true"></span>
+    </div>
+    <div class="notice-marquee-bar__viewport">
+      <div class="notice-marquee-bar__track" data-ticker-track>
+        <ul class="notice-marquee-bar__list">
+          {% for notice in ticker_notices %}
+          <li class="notice-marquee-bar__item">
+            <a href="{% url 'notice_detail' notice.slug %}" class="notice-marquee-bar__link">
+              <span class="notice-marquee-bar__icon" aria-hidden="true">📢</span>
+              <span class="notice-marquee-bar__title">{{ notice.title }}</span>
+              {% if notice.created_at %}<span class="notice-marquee-bar__date">{{ notice.created_at|date:"M d, Y" }}</span>{% endif %}
+            </a>
+          </li>
+          {% endfor %}
+        </ul>
+        <ul class="notice-marquee-bar__list" aria-hidden="true">
+          {% for notice in ticker_notices %}
+          <li class="notice-marquee-bar__item">
+            <a href="{% url 'notice_detail' notice.slug %}" class="notice-marquee-bar__link" tabindex="-1" aria-hidden="true">
+              <span class="notice-marquee-bar__icon" aria-hidden="true">📢</span>
+              <span class="notice-marquee-bar__title">{{ notice.title }}</span>
+              {% if notice.created_at %}<span class="notice-marquee-bar__date">{{ notice.created_at|date:"M d, Y" }}</span>{% endif %}
+            </a>
+          </li>
+          {% endfor %}
+        </ul>
+      </div>
+    </div>
   </div>
 </div>
+{% endwith %}
 {% endif %}
 

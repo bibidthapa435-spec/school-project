@@ -1,0 +1,208 @@
+/* ==========================================================================
+   ONLINE ADMISSION  +  ENROLL YOUR CHILD  -  rhododendron face, marigold rim,
+   a slow marigold "respiration" glow
+   --------------------------------------------------------------------------
+   The two admission conversion points share this one class, so the effect can
+   never drift apart again:
+
+     templates/includes/navbar.html  ->  a.btn.jj-admission-cta  (brand header)
+     templates/home/index.html       ->  a.btn.jj-admission-cta  (hero CTA)
+
+   Palette: the school's own tokens, read straight off jaljala-redesign.css -
+   only TWO hues, so nothing competes for the eye:
+
+     face  --color-accent       #A6314B  (rhododendron)
+     face  --color-accent-deep  #8C2740  (second gradient stop)
+     rim   --color-highlight    #E8A33D  (marigold)
+     halo  #E8A33D with a deeper amber #C9871F (--accent-gold-hover) under-glow
+
+   Crimson + marigold is the pair the rest of the site already speaks:
+   .btn-primary, .jj-btn-primary and .btn-gold all wear --color-accent. Pine
+   stays structural (top bar, sticky nav, the neighbouring .btn-navy "Read Full
+   History"), so this CTA is the one accent-coloured button in the header and
+   does not blend into the button next to it on the hero. An earlier pass wore
+   a pine face with a gold rim and a crimson halo - three hues at once - which
+   read as busy and off-brand.
+
+   Behaviour: a slow 3.6s ease-in-out breath. The rim glow and the halo swell
+   and brighten to a clear peak, then fall back to a quiet ember - 3x the
+   opacity and a visibly larger bloom at the top of the breath. Nothing
+   blinks, flashes or strobes.
+
+   Two layers breathe in step, because one alone read as "hardly any glow" on
+   a cream navbar:
+     * the button's own rim glow  - @keyframes jjCtaFaceBreathe
+     * the halo behind it         - @keyframes jjCtaBreathe
+   And the breath is deliberately WIDE: at the top it is roughly 3x the
+   opacity of the ember, and the bloom grows from 12/22/34px to 18/36/54px,
+   so the pulse cannot be missed on a phone-sized button.
+
+   Why the halo lives on ::after and why hover avoids box-shadow: an ANIMATED
+   box-shadow out-ranks a normal declaration in the cascade, so both
+   box-shadows belong to the animations. Hover therefore answers with
+   transform / filter / border-color, which the keyframes never touch.
+
+   Loaded last in templates/base.html so it owns these two buttons outright.
+   Contract pinned by school_project/tests.py::AdmissionCtaGlowTests.
+   ========================================================================== */
+
+:root {
+  --jj-cta-crimson: #A6314B;       /* face - site token --color-accent    */
+  --jj-cta-crimson-deep: #8C2740;  /* face - --color-accent-deep (stop 2) */
+  --jj-cta-gold: #E8A33D;          /* rim - site token --color-highlight  */
+  --jj-cta-gold-bright: #FFD780;   /* hover / focus rim, hottest breath   */
+  --jj-cta-amber: #C9871F;         /* halo under-glow (--accent-gold-hover) */
+  --jj-cta-white: #FFF8EA;         /* label (warm white)                  */
+  --jj-cta-icon: #F5C978;          /* leading icon / trailing arrow       */
+}
+
+.jj-admission-cta {
+  position: relative;
+  isolation: isolate;            /* keeps the -1 halo behind the label */
+  z-index: 1;
+  overflow: visible !important;  /* the halo must never be clipped */
+  color: var(--jj-cta-white) !important;
+  font-weight: 700;
+  letter-spacing: .04em;
+  background-color: var(--jj-cta-crimson) !important;  /* fallback: no gradient */
+  background-image: linear-gradient(135deg, var(--jj-cta-crimson) 0%, var(--jj-cta-crimson-deep) 100%) !important;
+  border: 2px solid var(--jj-cta-gold) !important;  /* the golden rim */
+  /* Quiet end of the breath: a warm ember, never a flat button. The drop
+     shadow is a deep rhododendron shade rather than grey or green, so it
+     still belongs to the face it lifts. */
+  box-shadow:
+    0 6px 18px rgba(60, 12, 24, .40),
+    0 0 10px 1px rgba(232, 163, 61, .40);
+  transition: transform .28s ease, border-color .3s ease, filter .3s ease;
+  animation: jjCtaFaceBreathe 3.6s ease-in-out infinite;
+}
+
+/* Layer 1 of the breath - the rim glow: ember -> full warm bloom -> ember. */
+@keyframes jjCtaFaceBreathe {
+  0%, 100% {
+    box-shadow:
+      0 6px 18px rgba(60, 12, 24, .40),
+      0 0 10px 1px rgba(232, 163, 61, .40);
+  }
+  50% {
+    box-shadow:
+      0 9px 26px rgba(60, 12, 24, .48),
+      0 0 22px 5px rgba(232, 163, 61, .85);
+  }
+}
+
+/* Layer 2 of the breath - the halo: a marigold bloom over a deeper amber
+   under-glow, hugging the rim. It swells as well as brightens, so the pulse
+   reads on the cream navbar and on the dark hero alike. */
+.jj-admission-cta::after {
+  content: '';
+  position: absolute;
+  inset: -3px;
+  z-index: -1;
+  border-radius: inherit;
+  /* Quiet end - the ember the breath falls back to. */
+  box-shadow:
+    0 0 12px 2px rgba(232, 163, 61, .45),
+    0 0 22px 6px rgba(232, 163, 61, .20),
+    0 0 34px 10px rgba(201, 135, 31, .16);
+  opacity: .3;
+  pointer-events: none;
+  animation: jjCtaBreathe 3.6s ease-in-out infinite;
+  transition: filter .3s ease;
+}
+
+/* Slow inhale -> clear peak -> slow exhale, on a loop (never a blink). */
+@keyframes jjCtaBreathe {
+  0%, 100% {
+    opacity: .30;
+    transform: scale(1);
+    box-shadow:
+      0 0 12px 2px rgba(232, 163, 61, .45),
+      0 0 22px 6px rgba(232, 163, 61, .20),
+      0 0 34px 10px rgba(201, 135, 31, .16);
+  }
+  50% {
+    opacity: 1;
+    transform: scale(1.045);
+    box-shadow:
+      0 0 18px 5px rgba(255, 215, 128, .95),
+      0 0 36px 12px rgba(232, 163, 61, .55),
+      0 0 54px 18px rgba(201, 135, 31, .32);
+  }
+}
+
+/* Hover: brighten, lift ~2px, hotter rim. The keyframes own both box-shadows,
+   so the extra light is added with filter - which they never animate - rather
+   than with a box-shadow that could never win the cascade. */
+.jj-admission-cta:hover {
+  color: var(--jj-cta-white) !important;
+  border-color: var(--jj-cta-gold-bright) !important;
+  transform: translateY(-2px);
+  filter: brightness(1.08) saturate(1.06);
+}
+
+/* The halo answers the pointer on top of whatever breath it is mid-way
+   through, because filter multiplies the animated opacity instead of
+   competing with it. */
+.jj-admission-cta:hover::after {
+  filter: brightness(1.35) saturate(1.15);
+}
+
+/* Keyboard focus: a solid marigold outline - deliberately an outline and not a
+   box-shadow, because both box-shadows here belong to the breathing
+   animations and would paint straight over a shadow-based ring. */
+.jj-admission-cta:focus-visible {
+  outline: 3px solid var(--jj-cta-gold-bright) !important;
+  outline-offset: 3px;
+  color: var(--jj-cta-white) !important;
+  border-color: var(--jj-cta-gold-bright) !important;
+  transform: translateY(-2px);
+}
+
+/* Leading icon / trailing arrow: warm gold, drifting right on hover. */
+.jj-admission-cta :is(i, .fa-solid, .fa-regular, .fa-brands) {
+  color: var(--jj-cta-icon);
+  transition: transform .28s ease;
+}
+
+.jj-admission-cta:hover :is(i, .fa-solid, .fa-regular, .fa-brands),
+.jj-admission-cta:focus-visible :is(i, .fa-solid, .fa-regular, .fa-brands) {
+  transform: translateX(3px);
+}
+
+/* Phones: the bloom keeps its full strength - a small screen is the last place
+   to dim the one element that has to catch the eye - and only the halo's
+   offset is trimmed so it hugs the button. */
+@media (max-width: 575.98px) {
+  .jj-admission-cta::after {
+    inset: -2px;
+  }
+}
+
+/* Reduced motion: no breathing and no lift - one steady warm glow instead,
+   set between the two ends of the breath so the button still looks lit. */
+@media (prefers-reduced-motion: reduce) {
+  .jj-admission-cta,
+  .jj-admission-cta::after {
+    animation: none !important;
+  }
+  .jj-admission-cta {
+    box-shadow:
+      0 6px 18px rgba(60, 12, 24, .42),
+      0 0 16px 3px rgba(232, 163, 61, .55);
+  }
+  .jj-admission-cta::after {
+    opacity: .55;
+  }
+  .jj-admission-cta,
+  .jj-admission-cta::after,
+  .jj-admission-cta :is(i, .fa-solid, .fa-regular, .fa-brands) {
+    transition-property: border-color, color, filter;
+  }
+  .jj-admission-cta:hover,
+  .jj-admission-cta:focus-visible,
+  .jj-admission-cta:hover :is(i, .fa-solid, .fa-regular, .fa-brands),
+  .jj-admission-cta:focus-visible :is(i, .fa-solid, .fa-regular, .fa-brands) {
+    transform: none;
+  }
+}

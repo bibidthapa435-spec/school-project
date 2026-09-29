@@ -163,6 +163,18 @@ footer .text-white{color:#fff!important}
 footer .social-icons a{background:rgba(255,255,255,.12)}
 footer .social-icon-link:hover,footer .social-icon-link:focus{background:var(--color-highlight)!important;
   color:var(--color-primary)!important}
+/* Footer affiliation badge: white rounded badge so the Nepal national
+   emblem reads on the dark pine footer. Hidden automatically (onerror)
+   until the emblem file is saved as static/images/logo/nepal-emblem.png. */
+.footer-affiliation{margin-top:.9rem}
+.footer-affiliation__logo{display:inline-flex;align-items:center;justify-content:center;
+  background:#fff;border-radius:12px;padding:6px;
+  box-shadow:0 2px 10px rgba(0,0,0,.25)}
+.footer-affiliation__logo img{display:block;width:72px;height:72px;object-fit:contain;
+  background:#fff;border-radius:8px}
+.footer-affiliation__text{color:#EFE7D6!important;line-height:1.4}
+.footer-affiliation__text strong{color:#fff!important}
+.footer-affiliation__text .text-muted{color:#EFE7D6!important}
 /* Hero: single settle-in moment (~400ms load entrance, NOT data-aos) */
 @keyframes jjSettle{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:none}}
 .jj-hero-inner{animation:jjSettle .4s ease-out both}

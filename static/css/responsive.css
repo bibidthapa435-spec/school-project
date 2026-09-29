@@ -45,12 +45,14 @@ body {
 }
 
 /* -------------------------------------------------------------
-   NOTICE MARQUEE
+   NOTICE MARQUEE (legacy <marquee> + modern CSS ticker)
    -------------------------------------------------------------
-   The <marquee> element is deprecated and its inline content is
+   The legacy <marquee> element is deprecated and its inline content is
    as wide as all the notice titles, which pushed the page wider
    than the viewport. Confine it: the bar itself never grows, and
-   the ticker scrolls inside it. */
+   the ticker scrolls inside it. The modern ticker uses the same guard:
+   only .notice-marquee-bar__viewport may clip; the flex row itself
+   must stay visible so badge/divider/View All never get cut off. */
 .notice-marquee-bar {
   max-width: 100%;
   overflow: hidden;
@@ -69,6 +71,21 @@ body {
   max-width: 100%;
   overflow: hidden;
   white-space: nowrap;
+}
+
+/* Modern CSS ticker: only the viewport clips (hides overflow outside the
+   scrolling area); the inner flex row stays visible so the fixed badge,
+   divider and View All are never cut off on desktop or mobile. */
+.notice-marquee-bar__inner {
+  max-width: 100%;
+  min-width: 0;
+  overflow: visible;
+}
+
+.notice-marquee-bar__viewport {
+  min-width: 0;
+  max-width: 100%;
+  overflow: hidden;
 }
 
 /* -------------------------------------------------------------
@@ -150,17 +167,14 @@ iframe {
 
 /* Desktop (>= 1200px): a single unwrapped row.
    `flex-wrap: nowrap` plus `white-space: nowrap` guarantees the menu
-   never breaks onto a second line, and `overflow-x: auto` on the
-   container is the last-resort safety valve so a crowded row can
-   never push the page into a horizontal scrollbar. */
+   never breaks onto a second line. NOTE: no overflow-x here — an
+   overflow container clips position:absolute dropdowns (About Us) and
+   adds an inner horizontal scrollbar to the navbar itself. */
 @media (min-width: 1200px) {
   .navbar-custom .container {
     max-width: 100%;
     flex-wrap: nowrap;
-    /* Last-resort safety valve: a crowded row scrolls inside the bar
-       instead of pushing the whole page sideways. */
-    overflow-x: auto;
-    scrollbar-width: thin;
+    overflow: visible;
   }
 
   .navbar-custom .navbar-nav {
@@ -175,6 +189,30 @@ iframe {
     padding: 10px 12px !important;
     font-size: 0.82rem;
     letter-spacing: 0.3px;
+  }
+
+  /* The dropdown must always escape the bar — desktop hover, keyboard
+     focus, Bootstrap click (.show) and the pinned (.is-sticky) state.
+     The generic base rule sets opacity:0/visibility:hidden, so the
+     visible state is restated here (after every layer that touches
+     .dropdown-menu) as the fix for "About Us hover shows nothing". */
+  .navbar-custom .nav-item.dropdown:hover > .dropdown-menu,
+  .navbar-custom .nav-item.dropdown:focus-within > .dropdown-menu,
+  .navbar-custom .nav-item.dropdown.show > .dropdown-menu,
+  .navbar-custom.is-sticky .nav-item.dropdown:hover > .dropdown-menu,
+  .navbar-custom.is-sticky .nav-item.dropdown:focus-within > .dropdown-menu,
+  .navbar-custom.is-sticky .nav-item.dropdown.show > .dropdown-menu {
+    display: block;
+    opacity: 1;
+    visibility: visible;
+    transform: translateY(0);
+    pointer-events: auto;
+  }
+
+  .navbar-custom .nav-item.dropdown > .dropdown-menu,
+  .navbar-custom.is-sticky .nav-item.dropdown > .dropdown-menu {
+    z-index: 100000;
+    overflow: visible;
   }
 }
 
@@ -219,10 +257,24 @@ body.sticky-nav-active.nav-menu-open {
 }
 
 .navbar-custom.is-sticky {
-  /* Never leave a sliver of the page showing through. */
-  max-height: 100vh;
-  overflow-y: auto;
-  overscroll-behavior: contain;
+  /* Expanded (desktop) menu: NEVER clip the bar itself. The old
+     `max-height:100vh + overflow-y:auto` turned the whole navbar into
+     a scroll container — that was the thin vertical scrollbar on the
+     right edge of the screenshot — and any overflow container also
+     clips the absolute About Us dropdown. */
+  max-height: none;
+  overflow: visible;
+}
+
+/* Collapsed hamburger menu only (<=1199.98px): the open panel can be
+   taller than the screen, so just that panel scrolls inside itself. */
+@media (max-width: 1199.98px) {
+  .navbar-custom.is-sticky {
+    max-height: 100vh;
+    overflow-y: auto;
+    overflow-x: hidden;
+    overscroll-behavior: contain;
+  }
 }
 
 /* =============================================================

@@ -1,3 +1,4 @@
+{% load static %}
 <footer data-aos="fade" style="background: linear-gradient(135deg, var(--color-primary) 0%, #2E4F45 100%); position: relative; overflow: hidden;">
   <div class="container" style="position: relative; z-index: 1;">
     <div class="row g-4">
@@ -7,6 +8,15 @@
         <p class="small text-muted mb-3">
           Affiliated with the Government of Nepal (Ministry of Education). Providing quality public secondary education from Class Nursery up to Class 10 (SEE level) in Panchkhapan Municipality-7, Bihibare, Sankhuwasabha.
         </p>
+        <div class="footer-affiliation d-flex align-items-center gap-3">
+          <span class="footer-affiliation__logo">
+            <img src="{% static 'images/logo/nepal-emblem.svg' %}" alt="National Emblem of Nepal (Government of Nepal)" width="72" height="72" loading="lazy" decoding="async" onerror="this.closest('.footer-affiliation').style.display='none';">
+          </span>
+          <span class="footer-affiliation__text small">
+            <strong>Affiliated by Government of Nepal</strong><br>
+            <span class="text-muted">National Emblem of Nepal</span>
+          </span>
+        </div>
         {# Social links render only when the school has saved a real URL. #}
         {% if settings.facebook_url or settings.instagram_url or settings.youtube_url %}
         <div class="d-flex gap-2 social-icons fs-5">

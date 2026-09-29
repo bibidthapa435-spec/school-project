@@ -79,6 +79,18 @@ a:hover{color:var(--color-accent-deep)}
 .navbar-custom .dropdown-item{color:var(--color-ink)!important}
 .navbar-custom .dropdown-item:hover,.navbar-custom .dropdown-item:focus{background:#F0E9DA!important;
   color:var(--color-accent-deep)!important}
+/* Top-bar Login dropdown: the strip rule two blocks up paints *every* link in
+   the bar white, and the Admin Login item lives inside the bar as well - so the
+   one item the trigger opens rendered white on Bootstrap's white panel. On the
+   running site the menu opened as an empty-looking box (item + lock both
+   invisible, ~1.05:1). Same treatment as .navbar-custom's dropdown, so both
+   header panels read the same way. (.top-bar a is 0-1-1 and sits earlier in the
+   sheet; .top-bar .dropdown-item is 0-2-0 and sits later, so the item wins.) */
+.top-bar .dropdown-menu{background:var(--color-surface)!important;border:1px solid var(--color-line)!important;
+  box-shadow:0 10px 24px rgba(44,42,36,.18)}
+.top-bar .dropdown-item{color:var(--color-ink)!important}
+.top-bar .dropdown-item:hover,.top-bar .dropdown-item:focus{background:#F0E9DA!important;
+  color:var(--color-accent-deep)!important}
 /* Hero: ONE left-aligned treatment */
 .jj-hero{position:relative;background:var(--color-primary);overflow:hidden;min-height:560px;display:flex;align-items:center}
 .jj-hero .container{position:relative;z-index:2;width:100%}
@@ -164,7 +176,15 @@ a:hover{color:var(--color-accent-deep)}
 .alert-info{background:#EDF1EF!important;border-color:#CFDAD6!important;color:var(--color-primary)!important}
 .alert-warning{background:#FBF0DC!important;border-color:#EBD3A4!important;color:var(--color-ink)!important}
 
-/* ONLINE ADMISSION CTA: animated marigold / aqua light around one button. */
+/* Admission CTA ring/shadow engine.
+
+   The navbar ONLINE ADMISSION button used to run its own copy of this light
+   ring (a marigold/aqua conic sweep scoped to .brand-admission-cta). Both
+   admission CTAs, that button and the home-hero "Enroll Your Child" button,
+   now share the calm pine/marigold breathing glow in static/css/admission-cta.css,
+   so this engine is kept only for the admit-form submit button
+   (.jj-admission-glow below).
+   school_project/tests.py::AdmissionCtaGlowTests pins that split. */
 @property --jj-admission-angle {
   syntax: '<angle>';
   inherits: false;
@@ -173,83 +193,6 @@ a:hover{color:var(--color-accent-deep)}
 
 .brand-admission-cta {
   overflow: visible;
-}
-
-.brand-admission-cta .admission-glow-btn {
-  position: relative;
-  isolation: isolate;
-  z-index: 1;
-  overflow: visible !important;
-  color: #fff !important;
-  font-weight: 700;
-  letter-spacing: .04em;
-  background: linear-gradient(135deg, #A6314B 0%, #8C2740 100%) !important;
-  border: 1px solid #FFD166 !important;
-  box-shadow:
-    0 0 10px 2px rgba(255, 209, 102, .72),
-    0 0 22px 6px rgba(85, 230, 213, .24),
-    0 5px 16px rgba(31, 58, 52, .24);
-  animation: jjAdmissionGlow 1.9s ease-in-out infinite;
-  transition: transform .2s ease, filter .2s ease;
-}
-
-.brand-admission-cta .admission-glow-btn::before {
-  content: '';
-  position: absolute;
-  inset: -3px;
-  z-index: 2;
-  padding: 3px;
-  border-radius: inherit;
-  background: conic-gradient(
-    from var(--jj-admission-angle),
-    #FFD166 0deg,
-    #FFF7D6 55deg,
-    #55E6D5 100deg,
-    #FF8FAB 155deg,
-    #FFD166 360deg
-  );
-  -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
-          mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
-  -webkit-mask-composite: xor;
-          mask-composite: exclude;
-  pointer-events: none;
-  animation: jjAdmissionRing 2.4s linear infinite;
-}
-
-.brand-admission-cta .admission-glow-btn::after {
-  content: '';
-  position: absolute;
-  inset: -6px;
-  z-index: -1;
-  padding: 6px;
-  border-radius: inherit;
-  background: conic-gradient(
-    from var(--jj-admission-angle),
-    #FFD166 0deg,
-    #FFF7D6 55deg,
-    #55E6D5 100deg,
-    #FF8FAB 155deg,
-    #FFD166 360deg
-  );
-  -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
-          mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
-  -webkit-mask-composite: xor;
-          mask-composite: exclude;
-  filter: blur(7px);
-  opacity: .7;
-  pointer-events: none;
-  animation: jjAdmissionRing 2.4s linear infinite;
-}
-
-.brand-admission-cta .admission-glow-btn:hover {
-  color: #fff !important;
-  filter: brightness(1.08) saturate(1.06);
-  transform: translateY(-2px) scale(1.015);
-}
-
-.brand-admission-cta .admission-glow-btn:focus-visible {
-  outline: 3px solid #FFF7D6 !important;
-  outline-offset: 3px;
 }
 
 @keyframes jjAdmissionRing {
@@ -362,15 +305,11 @@ a:hover{color:var(--color-accent-deep)}
 
 
 @media (prefers-reduced-motion: reduce) {
-  .brand-admission-cta .admission-glow-btn,
-  .brand-admission-cta .admission-glow-btn::before,
-  .brand-admission-cta .admission-glow-btn::after,
   .jj-admission-glow,
   .jj-admission-glow::before,
   .jj-admission-glow::after {
     animation: none !important;
   }
-  .brand-admission-cta .admission-glow-btn:hover,
   .jj-admission-glow:hover {
     transform: none;
   }

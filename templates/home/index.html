@@ -69,20 +69,7 @@
 </div>
 {% endif %}
 {% if notices or MARQUEE_NOTICES %}
-<div class="notice-marquee-bar">
-  <div class="container d-flex align-items-center">
-    <span class="notice-badge me-3">
-      <i class="fa-solid fa-bullhorn me-1"></i> LATEST NOTICES
-    </span>
-    <marquee behavior="scroll" direction="left" scrollamount="6" onmouseover="this.stop();" onmouseout="this.start();">
-      {% for notice in notices|default:MARQUEE_NOTICES %}
-        <a href="/notices/{{ notice.slug }}" class="me-5 text-decoration-none">
-          📢 <strong>{{ notice.title }}</strong>
-        </a>
-      {% endfor %}
-    </marquee>
-  </div>
-</div>
+{% include 'includes/notice_marquee.html' %}
 {% endif %}
 
 <!-- Single page H1. The hero is a media-only carousel (by design), so the
@@ -146,7 +133,7 @@
           <a href="/about" class="btn btn-navy">
             Read Full History
           </a>
-          <a href="/admission" class="btn jj-btn-primary jj-admission-glow">
+          <a href="/admission" class="btn jj-admission-cta">
             Enroll Your Child
           </a>
         </div>
@@ -234,9 +221,9 @@
            reference, while the heading above stays in the normal container. -->
       <div class="jj-pc__viewport" data-jj-pc-viewport
            role="region" aria-roledescription="carousel" aria-label="Academic programs">
-        {# The clip box. Clipping the full-bleed viewport itself would clip at
+        {% comment %} The clip box. Clipping the full-bleed viewport itself would clip at
            its padding box and expose half a neighbouring card in each side
-           gutter; this clips the row to exactly one full page. #}
+           gutter; this clips the row to exactly one full page. {% endcomment %}
         <div class="jj-pc__window">
           <ul class="jj-pc__track" data-jj-pc-track>
             {% for program in programs %}
@@ -276,9 +263,9 @@
                       <p class="jj-pc__text">{{ program.description|striptags|truncatechars:110 }}</p>
                     {% endif %}
 
-                    {# One link per card. The stretched ::after makes the whole
+                    {% comment %} One link per card. The stretched ::after makes the whole
                        card the hit area while the arrow stays the visible
-                       affordance, so there are no nested interactives. #}
+                       affordance, so there are no nested interactives. {% endcomment %}
                     <a class="jj-pc__go" href="{% url 'program_detail' program.slug %}"
                        aria-label="Program details: {{ program.title|escape }}">
                       <i class="fa-solid fa-arrow-right" aria-hidden="true"></i>

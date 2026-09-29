@@ -29,8 +29,9 @@
       {% endif %}
       <div class="ms-3 ps-3 border-start border-secondary d-flex align-items-center">
         <div class="dropdown">
+          {# An open padlock, not the old right-to-bracket arrow or the key that was tried after it: the trigger shows the latch, the menu item behind it keeps the closed lock. #}
           <button class="btn btn-sm btn-gold text-dark fw-bold dropdown-toggle" type="button" id="topbarLoginDropdown" data-bs-toggle="dropdown" aria-expanded="false" style="font-size:0.78rem; border-radius:20px;">
-            <i class="fa-solid fa-right-to-bracket me-1" aria-hidden="true"></i> Login
+            <i class="fa-solid fa-unlock-keyhole me-1" aria-hidden="true"></i> Login
           </button>
           <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="topbarLoginDropdown">
             <li><a class="dropdown-item" href="{% url 'admin_dashboard' %}"><i class="fa-solid fa-lock me-2" aria-hidden="true"></i> Admin Login</a></li>
@@ -55,7 +56,7 @@
           </div>
     </div>
     <div class="d-flex align-items-center gap-2 brand-admission-cta">
-      <a href="{% url 'admission' %}" class="btn btn-gold admission-glow-btn">
+      <a href="{% url 'admission' %}" class="btn jj-admission-cta">
         <i class="fa-solid fa-file-pen me-2" aria-hidden="true"></i> ONLINE ADMISSION
       </a>
     </div>
@@ -100,6 +101,11 @@
           </a>
         </li>
         <li class="nav-item">
+          <a class="nav-link {% if 'notice' in request.path or 'notice' in path %}active{% endif %}" href="{% url 'notices' %}">
+            NOTICES
+          </a>
+        </li>
+        <li class="nav-item">
           <a class="nav-link {% if 'teacher' in request.path or 'teacher' in path %}active{% endif %}" href="{% url 'teachers' %}">
             TEACHERS
           </a>
@@ -112,11 +118,6 @@
         <li class="nav-item">
           <a class="nav-link {% if 'gallery' in request.path or 'gallery' in path %}active{% endif %}" href="{% url 'gallery' %}">
             GALLERY
-          </a>
-        </li>
-        <li class="nav-item">
-          <a class="nav-link {% if 'notice' in request.path or 'notice' in path %}active{% endif %}" href="{% url 'notices' %}">
-            NOTICES
           </a>
         </li>
         <li class="nav-item">

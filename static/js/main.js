@@ -13,6 +13,73 @@ document.addEventListener('DOMContentLoaded', function () {
     '(prefers-reduced-motion: reduce)'
   ).matches;
 
+  // ---------------------------------------------------------------
+  // Latest Notices ticker: seamless right-to-left loop.
+  // The track holds TWO identical lists and the CSS slides 0 -> -50%,
+  // so one loop = exactly one list width. Speed is px/sec (not a fixed
+  // duration), so 1 notice and 5 notices scroll at the same pace.
+  // Pure CSS still scrolls with JS disabled; this only tunes duration
+  // and pauses the loop for reduced-motion users.
+  // ---------------------------------------------------------------
+  (function initNoticeTicker() {
+    const track = document.querySelector('[data-ticker-track]');
+    if (!track) return;
+    const bar = track.closest('.notice-marquee-bar');
+    const viewport = track.closest('.notice-marquee-bar__viewport');
+    const PX_PER_SECOND = 90;
+
+    function applyDuration() {
+      const first = track.querySelector('.notice-marquee-bar__list');
+      if (!first || !first.offsetWidth || !viewport) return;
+      // Total travel per loop = enter offset (off-screen right) + one list
+      // width (-50%). Duration covers that distance at a constant px/sec,
+      // so short/long titles scroll at the same pace, like a <marquee>.
+      const distance = viewport.offsetWidth + first.offsetWidth;
+      track.style.setProperty('--ticker-enter', viewport.offsetWidth + 'px');
+      const seconds = Math.max(12, distance / PX_PER_SECOND);
+      track.style.setProperty('--ticker-duration', seconds.toFixed(2) + 's');
+    }
+
+    function ensureWidth() {
+      // A single short title can be narrower than the viewport, which would
+      // leave an empty gap in the -50% loop. Repeat that title INSIDE each
+      // list until one list fills the viewport; both lists stay identical
+      // so the loop seam never shows.
+      if (!viewport) return;
+      const lists = track.querySelectorAll('.notice-marquee-bar__list');
+      if (!lists.length) return;
+      const first = lists[0];
+      let guard = 0;
+      while (first.offsetWidth < viewport.offsetWidth + 200 && guard < 5) {
+        first.querySelectorAll('.notice-marquee-bar__item').forEach((item) => {
+          first.appendChild(item.cloneNode(true));
+        });
+        guard += 1;
+      }
+      // Second list mirrors the first so the -50% jump is pixel-identical.
+      // Its links are removed from tab order (the first list already
+      // exposes every notice to keyboard users).
+      if (lists[1]) {
+        lists[1].innerHTML = first.innerHTML;
+        lists[1].querySelectorAll('a').forEach((a) => a.setAttribute('tabindex', '-1'));
+      }
+    }
+
+    function syncReducedMotion() {
+      if (bar) bar.classList.toggle('is-paused', isReducedMotion());
+    }
+
+    // Measure after fonts/layout settle so the first loop is exact.
+    function refresh() { ensureWidth(); applyDuration(); }
+    if (document.fonts && document.fonts.ready) {
+      document.fonts.ready.then(refresh);
+    }
+    window.addEventListener('load', refresh);
+    window.addEventListener('resize', refresh);
+    refresh();
+    syncReducedMotion();
+  })();
+
   // Initialize AOS (Animate on Scroll) — removed per redesign brief
   // (one deliberate hero moment only; no fade-in-on-scroll).
   
