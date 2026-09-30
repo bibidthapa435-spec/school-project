@@ -844,7 +844,6 @@
 
 .teacher-card:hover .teacher-photo {
   transform: scale(1.05);
-  border-color: var(--accent-gold);
 }
 
 /* Teacher Card - Transparent for Dark Background */

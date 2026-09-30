@@ -141,7 +141,7 @@
 
       <div class="col-lg-6">
         <div class="position-relative">
-          <img src="/static/images/image/firstphoto.jpg" alt="Students and teachers gathered in the Shree Jaljala school courtyard in Bihibare" class="img-fluid rounded-4 shadow-lg w-100" data-img-reveal onerror="this.src='/media/slider/slide_2.jpg'">
+          <img src="/static/images/image/firstphoto.jpg" alt="Students and teachers gathered in the Shree Jaljala school courtyard in Bihibare" class="img-fluid rounded-4 shadow-lg w-100" data-img-reveal loading="lazy" decoding="async" onerror="this.src='/media/slider/slide_2.jpg'">
           <div class="position-absolute bottom-0 start-0 bg-warning text-dark p-3 m-3 rounded-3 shadow font-weight-bold">
             <i class="fa-solid fa-award fa-2x me-2 align-middle"></i>
             <span class="align-middle">38+ Years of Educational Legacy (Estd. 2045 B.S.)</span>
@@ -159,7 +159,7 @@
     <div class="custom-card p-4 p-md-5 rounded-4" data-aos="scale-in">
       <div class="row align-items-center g-4">
         <div class="col-md-4 text-center">
-          <img src="{% if principal.photo %}{{ principal.photo.url }}{% else %}/media/teachers/govinda shrestha.jpg{% endif %}" alt="Portrait of {{ principal.title }}, Principal of Shree Jaljala Secondary School" class="img-fluid rounded-circle shadow" data-img-reveal style="width: 200px; height: 200px; object-fit: cover; border: 5px solid var(--accent-gold);">
+          <img src="{% if principal.photo %}{{ principal.photo.url }}{% else %}/media/teachers/govinda shrestha.jpg{% endif %}" alt="Portrait of {{ principal.title }}, Principal of Shree Jaljala Secondary School" class="img-fluid rounded-circle shadow" data-img-reveal loading="lazy" decoding="async" style="width: 200px; height: 200px; object-fit: cover; border: 5px solid var(--accent-gold);">
           <h4 class="h5 fw-bold mt-3 text-navy mb-1" style="color: #0b2545;">{{ principal.title }}</h5>
           <p class="text-muted small mb-0">{{ principal.position }}</p>
           <span class="badge bg-secondary mt-1">{{ principal.qualification }}</span>

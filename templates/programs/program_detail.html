@@ -9,7 +9,7 @@
     <nav aria-label="breadcrumb">
       <ol class="breadcrumb mb-2 text-white opacity-75 small">
         <li class="breadcrumb-item"><a href="/" class="text-white">Home</a></li>
-        <li class="breadcrumb-item"><a href="/programs" class="text-white">Programs</a></li>
+        <li class="breadcrumb-item"><a href="{% url 'programs' %}" class="text-white">Programs</a></li>
         <li class="breadcrumb-item active text-warning" aria-current="page">{{ program.title }}</li>
       </ol>
     </nav>
@@ -22,7 +22,10 @@
   <div class="row g-4">
     <div class="col-lg-8" data-aos="fade-right">
       <div class="card custom-card p-4 mb-4">
-        <img src="{% if program.image %}{{ program.image.url }}{% else %}/media/programs/image 1.jpg{% endif %}" alt="{{ program.title }}" class="img-fluid rounded-3 mb-4 w-100" data-img-reveal style="max-height: 400px; object-fit: cover;">
+        <img src="{% if program.image %}{{ program.image.url }}{% else %}{{ FALLBACK_PROGRAM_IMAGE }}{% endif %}" alt="{{ program.title|escape }} at Shree Jaljala Secondary School" class="img-fluid rounded-3 mb-4 w-100" data-img-reveal loading="lazy" decoding="async" style="max-height: 400px; object-fit: cover;"
+             width="640" height="360"
+             data-fallback-src="{{ FALLBACK_PROGRAM_IMAGE }}"
+             onerror="this.onerror=null; this.src=this.dataset.fallbackSrc;">
         
         <h2 class="h4 fw-bold text-navy mb-3" style="color: #0b2545;">Program Overview</h2>
         <div class="fs-6 text-secondary lh-lg mb-4" style="white-space: pre-line;">
@@ -49,10 +52,10 @@
         </div>
 
         <div class="d-flex gap-3">
-          <a href="/admission" class="btn btn-gold">
+          <a href="{% url 'admission' %}" class="btn btn-gold">
             Apply for Admission Online <i class="fa-solid fa-arrow-right ms-1"></i>
           </a>
-          <a href="/programs" class="btn btn-outline-secondary">
+          <a href="{% url 'programs' %}" class="btn btn-outline-secondary">
             Back to All Programs
           </a>
         </div>
@@ -69,7 +72,7 @@
               <div class="pb-3 border-bottom">
                 <h3 class="h6 fw-bold text-dark mb-1 small">{{ op.title }}</h3>
                 <p class="text-muted small mb-1">{{ op.duration }}</p>
-                <a href="/programs/{{ op.slug }}" class="small text-primary font-weight-bold">View Program &raquo;</a>
+                <a href="{% url 'program_detail' op.slug %}" class="small text-primary font-weight-bold">View Program &raquo;</a>
               </div>
             {% endfor %}
           {% endif %}

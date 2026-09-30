@@ -100,7 +100,6 @@ main [style*="#0b2545"],.modal [style*="#0b2545"]{color:var(--color-primary)!imp
   border-radius:8px!important;box-shadow:none!important}
 .custom-card:hover,.card:hover{border-color:var(--color-highlight)!important}
 .card-img-top,.teacher-photo,.gallery-item img{aspect-ratio:4/3;object-fit:cover}
-.teacher-photo{border:3px solid var(--color-highlight)}
 .gallery-item,.img-hover-zoom{border-radius:8px;overflow:hidden}
 .gallery-item img{transition:transform .3s ease}
 .gallery-item:hover img{transform:scale(1.04)}
@@ -163,15 +162,12 @@ footer .text-white{color:#fff!important}
 footer .social-icons a{background:rgba(255,255,255,.12)}
 footer .social-icon-link:hover,footer .social-icon-link:focus{background:var(--color-highlight)!important;
   color:var(--color-primary)!important}
-/* Footer affiliation badge: white rounded badge so the Nepal national
-   emblem reads on the dark pine footer. Hidden automatically (onerror)
-   until the emblem file is saved as static/images/logo/nepal-emblem.png. */
+/* Footer affiliation badge: the emblem sits directly on the dark pine
+   footer with no white plate behind it. Hidden automatically (onerror)
+   until the emblem file is saved as static/images/logo/nepal-emblem.svg. */
 .footer-affiliation{margin-top:.9rem}
-.footer-affiliation__logo{display:inline-flex;align-items:center;justify-content:center;
-  background:#fff;border-radius:12px;padding:6px;
-  box-shadow:0 2px 10px rgba(0,0,0,.25)}
-.footer-affiliation__logo img{display:block;width:72px;height:72px;object-fit:contain;
-  background:#fff;border-radius:8px}
+.footer-affiliation__logo{display:inline-flex;align-items:center;justify-content:center}
+.footer-affiliation__logo img{display:block;width:72px;height:72px;object-fit:contain}
 .footer-affiliation__text{color:#EFE7D6!important;line-height:1.4}
 .footer-affiliation__text strong{color:#fff!important}
 .footer-affiliation__text .text-muted{color:#EFE7D6!important}

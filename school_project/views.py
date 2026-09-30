@@ -354,9 +354,11 @@ def gallery(request):
         ''
     )
 
-    gallery_items = GalleryPhoto.objects.filter(
+    published = GalleryPhoto.objects.filter(
         status=True
-    ).order_by(
+    )
+
+    gallery_items = published.order_by(
         'display_order',
         '-created_at'
     )
@@ -366,13 +368,38 @@ def gallery(request):
             category=selected_cat
         )
 
+    items = list(gallery_items)
+
+    # Published photos per category, so the filter chips can show real counts
+    # instead of every category looking equally full.
+    counts = dict(
+        published.values('category')
+        .annotate(total=models.Count('id'))
+        .values_list('category', 'total')
+    )
+
+    categories = [
+        {
+            'id': category_id,
+            'label': label,
+            'count': counts.get(category_id, 0),
+        }
+        for category_id, label in gallery_category_choices
+    ]
+
     return render(
         request,
         'gallery/gallery_list.html',
         get_base_context({
-            'gallery_items': list(gallery_items),
-            'categories': gallery_category_choices,
+            'gallery_items': items,
+            'categories': categories,
             'selected_cat': selected_cat,
+            'selected_cat_label': dict(gallery_category_choices).get(
+                selected_cat,
+                ''
+            ),
+            'shown_photos': len(items),
+            'total_photos': sum(counts.values()),
         })
     )
 

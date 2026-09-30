@@ -573,7 +573,7 @@ class AdmissionCtaGlowTests(SimpleTestCase):
 
     def test_stylesheet_is_loaded_after_the_layers_it_replaces(self):
         self.assertIn(
-            '<link rel="stylesheet" href="/static/css/admission-cta.css">',
+            "{% static_v 'css/admission-cta.css' %}",
             self.base_html,
         )
         # Later in the document wins at equal specificity, so this layer has
@@ -994,6 +994,114 @@ class NavOrderTests(SimpleTestCase):
         )
 
 
+class GalleryPhotoColourTests(SimpleTestCase):
+    """Gallery photos must render in full colour, always.
+
+    Regression history: `.g-tile__img` once carried `filter: grayscale(1)` and
+    only dropped it on `:hover`, so every photo sat on the page as a
+    black-and-white thumbnail until the pointer happened to land on it. The
+    orange category badge beside it stayed coloured the whole time, which is
+    what made it obvious the effect was applied to the `<img>` and not to the
+    photo itself - the underlying files have always been colour.
+
+    Two things are pinned here. First, no filter may desaturate a tile image.
+    Second - and this is the half that actually bit - the stylesheet has to be
+    re-fetchable: base.html used to hard-code `/static/css/gallery.css`, so the
+    URL never changed and browsers served the grayscale copy indefinitely,
+    long after the rule was gone from source.
+    """
+
+    @classmethod
+    def setUpClass(cls):
+        super().setUpClass()
+        from pathlib import Path
+
+        root = Path(__file__).resolve().parent.parent
+        cls.sheet = (root / 'static' / 'css' / 'gallery.css').read_text(encoding='utf-8')
+        # Comments name the very properties under test, so selectors are looked
+        # up in a comment-free copy.
+        cls.plain = re.sub(r'/\*.*?\*/', '', cls.sheet, flags=re.S)
+        cls.base = (root / 'templates' / 'base.html').read_text(encoding='utf-8')
+
+    def _block(self, selector):
+        idx = self.plain.find(selector)
+        self.assertNotEqual(idx, -1, f'missing rule for {selector}')
+        return self.plain[idx:self.plain.find('}', idx)]
+
+    def test_tile_images_are_not_desaturated(self):
+        """No rule that matches a tile photo may set a desaturating filter."""
+        self.assertNotIn(
+            'grayscale', self.plain,
+            'gallery.css desaturates photos again; they are colour photographs',
+        )
+        # sepia/brightness/contrast are checked on the image rules themselves so
+        # a future "slightly muted" tweak cannot quietly reintroduce the look.
+        for prop in ('sepia(', 'saturate(', 'brightness(', 'contrast('):
+            self.assertNotIn(
+                prop, self._block('.g-tile__img'),
+                f'.g-tile__img must not apply {prop}',
+            )
+
+    def test_tile_images_pin_the_neutral_filter(self):
+        """`filter: none` is declared, so no later rule can reach the photo."""
+        self.assertIn(
+            'filter: none', self._block('.g-tile__img'),
+            'declare filter:none on .g-tile__img to pin the colour rendering',
+        )
+
+    def test_no_scrim_or_overlay_darkens_the_photo(self):
+        """The caption reads via text-shadow; the image carries no colour wash."""
+        self.assertNotIn(
+            '.g-tile__scrim', self.plain,
+            'the dark scrim layer is gone from the markup and must stay gone',
+        )
+
+    def test_gallery_stylesheet_url_is_cache_busted(self):
+        """base.html must not hard-code the gallery.css URL.
+
+        This is the half of the bug a code review of gallery.css alone cannot
+        catch: the stylesheet was correct on disk while every visitor still saw
+        the grayscale version, because the URL was identical to the one they had
+        cached.
+        """
+        self.assertNotIn(
+            '"/static/css/gallery.css"', self.base,
+            'base.html hard-codes gallery.css; use {% static_v %} so edits deploy',
+        )
+        self.assertIn(
+            "{% static_v 'css/gallery.css' %}", self.base,
+            'base.html must load gallery.css through the versioning tag',
+        )
+
+    def test_every_local_asset_in_base_html_is_cache_busted(self):
+        """No local CSS/JS may slip back to a hard-coded, unversioned URL."""
+        bare = re.findall(r'(?:href|src)="/static/[^"]+"', self.base)
+        self.assertEqual(
+            bare, [],
+            'these local assets are hard-coded and will be served stale: '
+            + ', '.join(bare),
+        )
+
+    def test_static_v_appends_the_file_mtime(self):
+        """The tag ties the URL to the file, so an edit changes the URL."""
+        from school_app.templatetags.static_assets import static_v
+
+        url = static_v('css/gallery.css')
+        self.assertTrue(
+            url.startswith('/static/css/gallery.css'),
+            f'unexpected static path: {url}',
+        )
+        self.assertIn('?v=', url)
+        self.assertNotEqual(url, '/static/css/gallery.css')
+
+    def test_static_v_degrades_gracefully_for_a_missing_file(self):
+        """A missing asset yields a plain URL, not an exception."""
+        from school_app.templatetags.static_assets import static_v
+
+        self.assertEqual(
+            static_v('css/does-not-exist.css'),
+            '/static/css/does-not-exist.css',
+        )
 class SplashPreloaderTests(SimpleTestCase):
     """The splash screen has to be the FIRST paint, not a second act.
 
@@ -1100,4 +1208,104 @@ class SplashPreloaderTests(SimpleTestCase):
             'the overlay has to be parsed first, so that the first paint it '
             'belongs to is the splash',
         )
+
+
+
+class StaffPhotoRingTests(SimpleTestCase):
+    """Staff portraits sit on the page without a ring drawn around them.
+
+    Regression history: `.teacher-photo` was drawn as a circle with a 3px
+    marigold ring, and the profile portrait added a second one inline
+    (`border: 4px solid var(--accent-gold)`). Two circles in a row then
+    framed every staff photo - the ring on the faculty grid and the ring on
+    the profile page - and on a white-background headshot like the
+    chairperson's the ring read as a drawn-on circle rather than as a photo,
+    because there was nothing inside it but backdrop.
+
+    The crop stays circular (`border-radius: 50%` / `rounded-circle`); only
+    the ring is gone. The photos themselves are untouched - these are the
+    school's own committed files, never re-cropped or re-encoded to suit a
+    border.
+
+    Both halves are pinned: no stylesheet may put a border back on a staff
+    photo, and the profile portrait must not carry an inline one either.
+    """
+
+    @classmethod
+    def setUpClass(cls):
+        super().setUpClass()
+        from pathlib import Path
+
+        root = Path(__file__).resolve().parent.parent
+        cls.css_dir = root / 'static' / 'css'
+        # Comments name the very properties under test, so the sheets are
+        # read in a comment-free copy.
+        cls.sheets = {
+            path.name: re.sub(r'/\*.*?\*/', '', path.read_text(encoding='utf-8'))
+            for path in sorted(cls.css_dir.glob('*.css'))
+        }
+        cls.detail = (
+            root / 'templates' / 'teacher' / 'teacher_detail.html'
+        ).read_text(encoding='utf-8')
+
+    def _staff_photo_blocks(self):
+        """Every declaration block in every sheet that styles a staff photo."""
+        for name, sheet in self.sheets.items():
+            for match in re.finditer(r'([^{}]*teacher-photo[^{}]*)\{([^}]*)\}', sheet):
+                yield name, match.group(1).strip(), match.group(2)
+
+    def test_no_stylesheet_puts_a_border_on_a_staff_photo(self):
+        """The ring is gone from the grid, not merely made thinner."""
+        offenders = [
+            f'{name} {{{selector}}}'
+            for name, selector, body in self._staff_photo_blocks()
+            if re.search(r'\bborder(?:-[a-z]+)?\s*:', body)
+            and not re.search(r'\bborder\s*:\s*(?:none|0)\b', body)
+        ]
+        self.assertEqual(
+            offenders, [],
+            'a staff photo is framed by a ring again: ' + ', '.join(offenders),
+        )
+
+    def test_the_hover_state_cannot_bring_the_ring_back(self):
+        """The hover rule once only recoloured the ring - a live re-add path."""
+        hover = [
+            body for _, selector, body in self._staff_photo_blocks()
+            if ':hover' in selector
+        ]
+        for body in hover:
+            self.assertNotIn(
+                'border-color', body,
+                'a :hover rule may not recolour a border the photo no longer has',
+            )
+
+    def test_the_profile_portrait_carries_no_inline_border(self):
+        """The detail page set its own ring, so the sheet was never enough."""
+        self.assertNotIn(
+            '--accent-gold', self.detail,
+            'the profile portrait draws its own gold ring again',
+        )
+
+    def test_the_portraits_stay_round(self):
+        """Only the ring was asked for - the circular crop is the design."""
+        # The grid keeps its circle in CSS...
+        sheets = '\n'.join(self.sheets.values())
+        self.assertIn(
+            'border-radius: 50%', sheets,
+            'the circular crop was lost; only the ring was to be removed',
+        )
+        # ...and the profile portrait keeps Bootstrap's own class.
+        self.assertIn('rounded-circle', self.detail)
+
+    def test_the_photo_files_themselves_are_untouched(self):
+        """A headshot is never re-encoded to fit a border."""
+        from pathlib import Path
+
+        media = Path(__file__).resolve().parent.parent / 'media' / 'teachers'
+        photos = sorted(media.glob('*.jpg'))
+        self.assertTrue(photos, 'the committed staff photos must stay in place')
+        for photo in photos:
+            self.assertGreater(
+                photo.stat().st_size, 0, f'{photo.name} is empty on disk',
+            )
 

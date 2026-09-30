@@ -6,70 +6,101 @@
 {% block canonical %}{{ request.scheme }}://{{ request.get_host }}{% url 'gallery' %}{% endblock %}
 
 {% block content %}
-<div class="bg-primary text-white py-4 mb-4" style="background-color: var(--primary-navy) !important;" data-aos="fade-up">
+<!-- Page head: same pine/marigold band + breadcrumb used across the site. -->
+<section class="g-head" data-aos="fade-up">
   <div class="container">
-    <h1 class="fw-bold mb-1">School Photo Gallery</h1>
-    <p class="mb-0 text-light opacity-75">Capturing memorable moments, annual sports, Saraswati Puja, and science lab activities.</p>
+    <nav class="g-crumbs" aria-label="Breadcrumb">
+      <ol>
+        <li><a href="/">Home</a></li>
+        <li><a href="{% url 'gallery' %}">Gallery</a></li>
+        {% if selected_cat_label %}
+          <li><span aria-current="page">{{ selected_cat_label }}</span></li>
+        {% endif %}
+      </ol>
+    </nav>
+    <h1>School Photo Gallery</h1>
+    <p class="g-head__lead">Capturing memorable moments — campus life, Saraswati Puja, annual sports, classroom learning and our science &amp; computer labs.</p>
+    <p class="g-head__count mb-0">
+      <i class="fa-regular fa-images" aria-hidden="true"></i>
+      {{ total_photos }} photo{{ total_photos|pluralize }} published
+    </p>
   </div>
-</div>
+</section>
 
-<div class="container py-4">
-  <!-- Category Filter Pills: one horizontally scrollable row on mobile. -->
-  <nav class="filter-chips mb-4" aria-label="Filter photos by category">
+<div class="container pb-5">
+  <!-- Category filter chips with per-category counts (one scrollable row on mobile). -->
+  <nav class="filter-chips mb-3" aria-label="Filter photos by category">
     <div class="filter-chips-row justify-content-center">
       <a href="{% url 'gallery' %}" class="btn btn-sm {% if not selected_cat %}btn-navy{% else %}btn-outline-navy{% endif %} px-3 rounded-pill{% if not selected_cat %} active{% endif %}"{% if not selected_cat %} aria-current="true"{% endif %}>
-        All Photos
+        All Photos <span class="g-chip__n">{{ total_photos }}</span>
       </a>
       {% if categories %}
         {% for cat in categories %}
-          <a href="{% url 'gallery' %}?cat={{ cat.0 }}" class="btn btn-sm {% if selected_cat == cat.0 %}btn-navy{% else %}btn-outline-secondary{% endif %} px-3 rounded-pill{% if selected_cat == cat.0 %} active{% endif %}"{% if selected_cat == cat.0 %} aria-current="true"{% endif %}>
-            {{ cat.1 }}
+          <a href="{% url 'gallery' %}?cat={{ cat.id }}" class="btn btn-sm {% if selected_cat == cat.id %}btn-navy{% else %}btn-outline-secondary{% endif %} px-3 rounded-pill{% if selected_cat == cat.id %} active{% endif %}"{% if selected_cat == cat.id %} aria-current="true"{% endif %}>
+            {{ cat.label }} <span class="g-chip__n">{{ cat.count }}</span>
           </a>
         {% endfor %}
       {% endif %}
     </div>
   </nav>
 
-  <div class="row g-4" data-stagger="zoom-in" data-stagger-step="70">
+  <p class="g-meta">
+    <span>
+      {% if selected_cat_label %}
+        Showing <strong>{{ shown_photos }}</strong> of {{ total_photos }} photo{{ total_photos|pluralize }} in <strong>{{ selected_cat_label }}</strong>.
+      {% else %}
+        Showing all <strong>{{ shown_photos }}</strong> published photo{{ shown_photos|pluralize }}.
+      {% endif %}
+    </span>
+    <span>Select any photo to open it larger.</span>
+  </p>
+
+  <!-- Scroll: fade-up + staggered cascade, one tile after another. The engine
+       caps the cascade at 6 steps, so a long gallery never crawls. -->
+  <div class="g-mosaic" data-stagger="fade-up" data-stagger-step="60">
     {% if gallery_items %}
       {% for item in gallery_items %}
-      <div class="col-lg-3 col-md-4 col-sm-6">
-        <a href="#" class="gallery-lightbox-trigger text-decoration-none" data-img="{% if item.image %}{{ item.image.url }}{% endif %}" data-title="{{ item.title|escape }}" aria-label="Open larger photo: {{ item.title|escape }}">
-          <div class="card custom-card h-100 overflow-hidden">
-            <div class="card-img-wrapper" style="height: 220px;">
-              <img src="{% if item.image %}{{ item.image.url }}{% else %}{{ FALLBACK_GALLERY_IMAGE }}{% endif %}"
-                   alt="{{ item.get_category_display|default:'School event'|escape }} photograph from Shree Jaljala Secondary School: {{ item.title|escape }}"
-                   class="img-fluid w-100 h-100 object-fit-cover"
-                   width="480" height="220" loading="lazy" decoding="async"
-                   data-fallback-src="{{ FALLBACK_GALLERY_IMAGE }}"
-                   onerror="this.onerror=null; this.src=this.dataset.fallbackSrc;">
-            </div>
-            <div class="card-body p-3">
-              <span class="badge bg-secondary mb-1 text-capitalize" style="font-size: 0.7rem;">{{ item.get_category_display|default:item.category }}</span>
-              <h2 class="h6 card-title fw-bold text-dark mb-1 text-truncate">{{ item.title }}</h2>
-              {% if item.description %}
-                <p class="card-text text-muted small text-truncate mb-0">{{ item.description }}</p>
-              {% endif %}
-            </div>
-          </div>
+        {% comment %}The whole tile is a single link: JavaScript opens the shared lightbox; without JavaScript it still opens the full-size photo.{% endcomment %}
+        <a class="g-tile gallery-lightbox-trigger"
+           href="{% if item.image %}{{ item.image.url }}{% else %}{{ FALLBACK_GALLERY_IMAGE }}{% endif %}"
+           data-img="{% if item.image %}{{ item.image.url }}{% else %}{{ FALLBACK_GALLERY_IMAGE }}{% endif %}"
+           data-title="{{ item.title|escape }}"
+           data-category="{{ item.get_category_display|default:item.category|escape }}"
+           data-desc="{{ item.description|default:''|escape }}"
+           data-alt="{{ item.get_category_display|default:'School event'|escape }} photograph from Shree Jaljala Secondary School: {{ item.title|escape }}"
+           data-index="{{ forloop.counter0 }}"
+           aria-label="Open larger photo: {{ item.title|escape }}">
+          <img class="g-tile__img"
+               src="{% if item.image %}{{ item.image.url }}{% else %}{{ FALLBACK_GALLERY_IMAGE }}{% endif %}"
+               alt="{{ item.get_category_display|default:'School event'|escape }} photograph from Shree Jaljala Secondary School: {{ item.title|escape }}"
+               width="600" height="450" loading="lazy" decoding="async"
+               data-fallback-src="{{ FALLBACK_GALLERY_IMAGE }}"
+               onerror="this.onerror=null; this.src=this.dataset.fallbackSrc;">
+          <span class="g-tile__zoom" aria-hidden="true"><i class="fa-solid fa-expand"></i></span>
+          <span class="g-tile__body">
+            <span class="g-tile__cat">{{ item.get_category_display|default:item.category }}</span>
+            <span class="g-tile__title">{{ item.title }}</span>
+            {% if item.description %}
+              <span class="g-tile__desc">{{ item.description }}</span>
+            {% endif %}
+          </span>
         </a>
-      </div>
       {% endfor %}
     {% else %}
-      <div class="col-12 text-center py-5">
-        <i class="fa-solid fa-images fa-3x text-muted mb-3" aria-hidden="true"></i>
-        <h2 class="h5 text-secondary">
-          {% if selected_cat %}
-            No gallery photos found in this category.
+      <div class="g-empty">
+        <i class="fa-regular fa-images fa-3x mb-3" aria-hidden="true"></i>
+        <h2 class="h4 mb-2">
+          {% if selected_cat_label %}
+            No photos in {{ selected_cat_label }} yet.
           {% else %}
             No photos have been added yet.
           {% endif %}
         </h2>
-        {% if selected_cat %}
-          <p class="text-muted small">Try another category, or view every photo.</p>
-          <a href="{% url 'gallery' %}" class="btn btn-navy mt-2">View All Gallery Items</a>
+        {% if selected_cat_label %}
+          <p class="text-muted mb-3">This category is still waiting for its first upload. Try another category, or view every photo.</p>
+          <a href="{% url 'gallery' %}" class="btn btn-navy">View All Photos</a>
         {% else %}
-          <p class="text-muted small">Photographs will appear here once they are published.</p>
+          <p class="text-muted mb-0">Photographs of campus life, sports day, Saraswati Puja and lab activities will appear here once they are published.</p>
         {% endif %}
       </div>
     {% endif %}

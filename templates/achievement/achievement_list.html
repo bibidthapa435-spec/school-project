@@ -46,7 +46,7 @@
             <div class="achievement-card h-100 shadow-sm">
               {% if achievement.image %}
                 <div class="achievement-image-wrapper">
-                  <img src="{{ achievement.image.url }}" alt="{{ achievement.title }}" class="achievement-image">
+                  <img src="{{ achievement.image.url }}" alt="{{ achievement.title }}" class="achievement-image" loading="lazy" decoding="async">
                   <div class="achievement-badge">
                     <i class="fa-solid fa-trophy text-warning"></i>
                   </div>

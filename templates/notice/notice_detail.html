@@ -32,7 +32,7 @@
           <div class="text-center mb-4">
             {% comment %} Graceful behaviour if the uploaded file is missing: the
                figure is removed rather than leaving a broken-image box. {% endcomment %}
-            <img src="{{ notice.image.url }}" alt="Notice illustration: {{ notice.title|escape }}" class="img-fluid rounded shadow-sm max-w-100" data-img-reveal style="max-height: 500px; object-fit: contain;" decoding="async" onerror="this.closest('.text-center').remove();">
+            <img src="{{ notice.image.url }}" alt="Notice illustration: {{ notice.title|escape }}" class="img-fluid rounded shadow-sm max-w-100" data-img-reveal style="max-height: 500px; object-fit: contain;" loading="lazy" decoding="async" onerror="this.closest('.text-center').remove();">
           </div>
         {% endif %}
 

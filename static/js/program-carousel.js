@@ -144,6 +144,14 @@
       if (prevBtn) prevBtn.hidden = !scrollable;
       if (nextBtn) nextBtn.hidden = !scrollable;
       if (!scrollable) {
+        /* `index` must be zeroed HERE, not just left alone. The window 'load'
+           handler below re-applies setTranslate(index * step) after measuring,
+           and a single slide has no clone runway to sit in - so a stale
+           startIndex() (2 * perView = 6 on desktop) would shift the lone card
+           1800px to the left and out of the clip box, leaving an empty section
+           under its own heading. The static CSS cannot rescue it: this writes an
+           INLINE transform, which outranks `.jj-pc--static .jj-pc__track`. */
+        index = 0;
         stop();
         setTranslate(0, false);
         return;

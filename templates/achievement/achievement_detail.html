@@ -26,7 +26,7 @@
         <div class="achievement-detail-card shadow-sm">
           {% if achievement.image %}
             <div class="achievement-detail-image-wrapper">
-              <img src="{{ achievement.image.url }}" alt="{{ achievement.title }}" class="achievement-detail-image" data-img-reveal>
+              <img src="{{ achievement.image.url }}" alt="{{ achievement.title }}" class="achievement-detail-image" data-img-reveal loading="lazy" decoding="async">
             </div>
           {% endif %}
 
@@ -103,7 +103,7 @@
                   <a href="{% url 'achievement_detail' other.slug %}" class="text-decoration-none">
                     <div class="d-flex gap-3">
                       {% if other.image %}
-                        <img src="{{ other.image.url }}" alt="{{ other.title }}" class="other-achievement-thumb">
+                        <img src="{{ other.image.url }}" alt="{{ other.title }}" class="other-achievement-thumb" loading="lazy" decoding="async">
                       {% else %}
                         <div class="other-achievement-thumb bg-primary d-flex align-items-center justify-content-center">
                           <i class="fa-solid fa-trophy text-white"></i>

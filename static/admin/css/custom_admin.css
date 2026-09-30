@@ -4224,3 +4224,857 @@ body.sjss-admin-authenticated .inline-group table td {
 body.sjss-admin-authenticated .inline-group table tr:hover td {
   background: var(--sjss-bg);
 }
+
+/* ============================================================
+   DJANGO ADMIN — CHANGELIST (LIST) PAGES
+   The custom admin shell does not load Django's base.css /
+   changelists.css, so the list interface (filter rail, search,
+   actions bar, results table, pagination) is styled here.
+   ============================================================ */
+
+/* ── Utility classes that base.css normally provides ── */
+.hidden {
+  display: none !important;
+}
+
+.small {
+  font-size: 0.8125rem;
+}
+
+.quiet {
+  color: var(--admin-muted, #6c757d) !important;
+}
+
+.clear {
+  clear: both;
+}
+
+/* ── Changelist card ── */
+#changelist {
+  background: var(--admin-card-bg, #ffffff);
+  border: 1px solid rgba(11, 37, 69, 0.08);
+  border-radius: 12px;
+  padding: 1.25rem;
+  box-shadow: 0 2px 12px rgba(11, 37, 69, 0.06);
+  margin-bottom: 1.25rem;
+}
+
+#changelist .changelist-form-container {
+  display: flex;
+  align-items: flex-start;
+  gap: 1.5rem;
+  width: 100%;
+}
+
+#changelist .changelist-form-container > div {
+  flex: 1 1 auto;
+  min-width: 0;
+}
+
+/* ── Filter rail ── */
+#changelist-filter {
+  order: 1;
+  flex: 0 0 270px;
+  width: 270px;
+  margin: 0;
+  padding: 0 0 0.35rem;
+  background: var(--admin-bg, #f8f9fa);
+  border: 1px solid rgba(11, 37, 69, 0.08);
+  border-radius: 12px;
+  overflow: hidden;
+}
+
+#changelist-filter h2 {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin: 0;
+  padding: 0.85rem 1.1rem;
+  background: var(--admin-card-bg, #ffffff);
+  border-bottom: 1px solid rgba(11, 37, 69, 0.08);
+  font-size: 0.78rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--admin-primary, #0b2545);
+}
+
+#changelist-filter h2::before {
+  content: '\f0b0';
+  font-family: 'Font Awesome 6 Free';
+  font-weight: 900;
+  font-size: 0.8rem;
+  color: var(--admin-accent, #d4af37);
+}
+
+#changelist-filter-extra-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+  padding: 0.7rem 1.1rem;
+  border-bottom: 1px solid rgba(11, 37, 69, 0.08);
+}
+
+#changelist-filter-extra-actions h3 {
+  margin: 0;
+}
+
+#changelist-filter-extra-actions a {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  padding: 0.3rem 0.7rem;
+  border-radius: 999px;
+  background: rgba(11, 37, 69, 0.06);
+  color: var(--admin-primary, #0b2545);
+  font-size: 0.72rem;
+  font-weight: 600;
+  text-decoration: none;
+  transition: background 0.2s ease, color 0.2s ease;
+}
+
+#changelist-filter-extra-actions a:hover {
+  background: var(--admin-primary, #0b2545);
+  color: #ffffff;
+}
+
+#changelist-filter-extra-actions a.viewlink::before {
+  content: '\f080';
+  font-family: 'Font Awesome 6 Free';
+  font-weight: 900;
+  font-size: 0.7rem;
+}
+/* -- changelist filter facets -- */
+#changelist-filter details {
+  border-bottom: 1px solid rgba(11, 37, 69, 0.05);
+}
+
+#changelist-filter details:last-of-type {
+  border-bottom: 0;
+}
+
+#changelist-filter details > summary {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+  padding: 0.65rem 1.1rem;
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: var(--admin-primary, #0b2545);
+  cursor: pointer;
+  list-style: none;
+  transition: background 0.2s ease;
+}
+
+#changelist-filter details > summary::-webkit-details-marker {
+  display: none;
+}
+
+#changelist-filter details > summary::after {
+  content: '\f078';
+  font-family: 'Font Awesome 6 Free';
+  font-weight: 900;
+  font-size: 0.6rem;
+  color: var(--admin-muted, #6c757d);
+  transition: transform 0.2s ease;
+}
+
+#changelist-filter details[open] > summary::after {
+  transform: rotate(180deg);
+}
+
+#changelist-filter details > summary:hover {
+  background: rgba(11, 37, 69, 0.04);
+}
+
+#changelist-filter ul {
+  list-style: none;
+  margin: 0;
+  padding: 0 0.7rem 0.6rem 1.1rem;
+}
+
+#changelist-filter li {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+#changelist-filter li a {
+  display: block;
+  padding: 0.38rem 0.7rem;
+  border-radius: 8px;
+  color: var(--admin-text, #1d2d44);
+  font-size: 0.82rem;
+  text-decoration: none;
+  transition: background 0.2s ease, color 0.2s ease;
+}
+
+#changelist-filter li a:hover {
+  background: rgba(11, 37, 69, 0.06);
+  color: var(--admin-primary, #0b2545);
+}
+
+#changelist-filter li.selected a {
+  background: var(--admin-primary, #0b2545);
+  color: #ffffff;
+  font-weight: 600;
+}
+
+#changelist-filter li.selected a:hover {
+  background: var(--admin-sidebar-hover, #134074);
+  color: #ffffff;
+}
+
+/* -- changelist search toolbar -- */
+#toolbar {
+  padding: 0;
+  margin: 0 0 1rem;
+  background: transparent;
+  border: 0;
+}
+
+#changelist-search {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  flex-wrap: wrap;
+  padding: 0.65rem 0.85rem;
+  background: var(--admin-bg, #f8f9fa);
+  border: 1px solid rgba(11, 37, 69, 0.08);
+  border-radius: 12px;
+}
+
+#changelist-search > div {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  flex: 1 1 auto;
+  min-width: 0;
+  flex-wrap: wrap;
+}
+
+#changelist-search label {
+  display: inline-flex;
+  align-items: center;
+  margin: 0;
+}
+
+#changelist-search img {
+  display: block;
+  width: 16px;
+  height: 16px;
+  opacity: 0.5;
+}
+
+#changelist-search #searchbar {
+  flex: 1 1 220px;
+  min-width: 0;
+  padding: 0.55rem 0.85rem;
+  background: #ffffff;
+  border: 1px solid rgba(11, 37, 69, 0.12);
+  border-radius: 9px;
+  font-size: 0.85rem;
+  color: var(--admin-text, #1d2d44);
+}
+
+#changelist-search #searchbar:focus {
+  outline: none;
+  border-color: var(--admin-primary, #0b2545);
+  box-shadow: 0 0 0 3px rgba(11, 37, 69, 0.12);
+}
+
+#changelist-search input[type="submit"] {
+  padding: 0.55rem 1.15rem;
+  background: var(--admin-primary, #0b2545);
+  border: 0;
+  border-radius: 9px;
+  color: #ffffff;
+  font-size: 0.82rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.2s ease;
+}
+
+#changelist-search input[type="submit"]:hover {
+  background: var(--admin-sidebar-hover, #134074);
+}
+
+#changelist-search .small {
+  font-size: 0.78rem;
+  white-space: nowrap;
+}
+
+#changelist-search .small a {
+  color: var(--admin-primary, #0b2545);
+  font-weight: 600;
+  text-decoration: none;
+}
+
+#changelist-search .small a:hover {
+  text-decoration: underline;
+}
+
+#changelist-search .help {
+  flex-basis: 100%;
+  font-size: 0.78rem;
+  color: var(--admin-muted, #6c757d);
+}
+/* -- changelist date hierarchy -- */
+#changelist .toplinks {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.45rem 0.75rem;
+  padding: 0.85rem 0.25rem;
+  margin: 0 0 0.5rem;
+  background: transparent;
+  border-bottom: 1px dashed rgba(11, 37, 69, 0.12);
+  font-weight: 600;
+}
+
+#changelist .toplinks > span {
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.07em;
+  color: var(--admin-muted, #6c757d);
+}
+
+#changelist .toplinks a {
+  padding: 0.28rem 0.7rem;
+  border-radius: 999px;
+  background: rgba(11, 37, 69, 0.07);
+  color: var(--admin-primary, #0b2545);
+  font-size: 0.8rem;
+  text-decoration: none;
+  transition: background 0.2s ease, color 0.2s ease;
+}
+
+#changelist .toplinks a:hover {
+  background: var(--admin-primary, #0b2545);
+  color: #ffffff;
+}
+
+#changelist .toplinks .date-back {
+  padding-left: 0;
+  background: transparent;
+  color: var(--admin-muted, #6c757d);
+}
+
+#changelist .toplinks .date-back:hover {
+  background: transparent;
+  color: var(--admin-primary, #0b2545);
+  text-decoration: underline;
+}
+
+/* -- changelist actions bar -- */
+#changelist .actions {
+  display: flex;
+  align-items: center;
+  gap: 0.65rem;
+  flex-wrap: wrap;
+  padding: 0.6rem 0.85rem;
+  margin-bottom: 1rem;
+  background: var(--admin-bg, #f8f9fa);
+  border: 1px solid rgba(11, 37, 69, 0.08);
+  border-radius: 12px;
+}
+
+#changelist .actions label {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin: 0;
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: var(--admin-text, #1d2d44);
+}
+
+#changelist .actions select {
+  max-width: 300px;
+  padding: 0.45rem 0.7rem;
+  background: #ffffff;
+  border: 1px solid rgba(11, 37, 69, 0.12);
+  border-radius: 8px;
+  font-size: 0.82rem;
+  color: var(--admin-text, #1d2d44);
+}
+
+#changelist .actions button.button {
+  padding: 0.5rem 1.15rem;
+  background: var(--admin-primary, #0b2545);
+  border: 0;
+  border-radius: 8px;
+  color: #ffffff;
+  font-size: 0.82rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.2s ease;
+}
+
+#changelist .actions button.button:hover {
+  background: var(--admin-sidebar-hover, #134074);
+}
+
+#changelist .actions .action-counter {
+  font-size: 0.78rem;
+  color: var(--admin-muted, #6c757d);
+}
+
+#changelist .actions .question a,
+#changelist .actions .clear a {
+  color: var(--admin-primary, #0b2545);
+  font-size: 0.78rem;
+  font-weight: 600;
+  text-decoration: none;
+}
+
+#changelist .actions .question a:hover,
+#changelist .actions .clear a:hover {
+  text-decoration: underline;
+}
+/* -- changelist results table -- */
+#changelist-form .results {
+  overflow-x: auto;
+  background: var(--admin-card-bg, #ffffff);
+  border: 1px solid rgba(11, 37, 69, 0.08);
+  border-radius: 12px;
+}
+
+#result_list {
+  width: 100%;
+  margin: 0;
+  border-collapse: collapse;
+  font-size: 0.85rem;
+}
+
+#result_list thead th {
+  padding: 0.7rem 0.9rem;
+  background: var(--admin-bg, #f8f9fa);
+  border-bottom: 1px solid rgba(11, 37, 69, 0.08);
+  color: var(--admin-muted, #6c757d);
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-align: left;
+  text-transform: uppercase;
+  white-space: nowrap;
+  vertical-align: middle;
+}
+
+#result_list thead th .text {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+}
+
+#result_list thead th .text a,
+#result_list thead th .text span {
+  color: inherit;
+  font-weight: inherit;
+  text-decoration: none;
+}
+
+#result_list thead th .text a:hover {
+  color: var(--admin-primary, #0b2545);
+}
+
+#result_list tbody th,
+#result_list tbody td {
+  padding: 0.75rem 0.9rem;
+  border-bottom: 1px solid rgba(11, 37, 69, 0.06);
+  color: var(--admin-text, #1d2d44);
+  text-align: left;
+  vertical-align: middle;
+}
+
+#result_list tbody th {
+  font-weight: 600;
+}
+
+#result_list tbody tr:last-child th,
+#result_list tbody tr:last-child td {
+  border-bottom: 0;
+}
+
+#result_list tbody tr:hover th,
+#result_list tbody tr:hover td {
+  background: rgba(11, 37, 69, 0.035);
+}
+
+#result_list tbody a {
+  color: var(--admin-primary, #0b2545);
+  font-weight: 600;
+  text-decoration: none;
+}
+
+#result_list tbody a:hover {
+  text-decoration: underline;
+}
+
+#result_list .action-checkbox-column,
+#result_list .action-checkbox {
+  width: 2.6rem;
+  text-align: center;
+}
+
+#result_list input[type="checkbox"] {
+  width: 16px;
+  height: 16px;
+  margin: 0;
+  accent-color: var(--admin-primary, #0b2545);
+  cursor: pointer;
+  vertical-align: middle;
+}
+
+#result_list td img,
+#result_list th img {
+  vertical-align: middle;
+}
+
+#result_list img[src*="icon-"] {
+  width: 16px;
+  height: 16px;
+}
+
+#result_list .sortoptions {
+  float: right;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  margin-left: 0.5rem;
+}
+
+#result_list .sortoptions a {
+  line-height: 1;
+  text-decoration: none;
+}
+
+#result_list .sortoptions a::before {
+  content: '';
+  font-family: 'Font Awesome 6 Free';
+  font-weight: 900;
+  font-size: 0.68rem;
+  color: var(--admin-primary, #0b2545);
+}
+
+#result_list .sortoptions a.sortremove::before {
+  content: '\f00d';
+  color: #adb5bd;
+}
+
+#result_list .sortoptions a.toggle.ascending::before {
+  content: '\f0de';
+}
+
+#result_list .sortoptions a.toggle.descending::before {
+  content: '\f0dd';
+}
+
+#result_list .sortoptions .sortpriority {
+  color: var(--admin-primary, #0b2545);
+  font-size: 0.68rem;
+  font-weight: 700;
+}
+/* -- changelist pagination & footer -- */
+#changelist .changelist-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  flex-wrap: wrap;
+  margin-top: 1rem;
+  padding: 0.95rem 0.25rem 0;
+  background: transparent;
+  border-top: 1px solid rgba(11, 37, 69, 0.08);
+}
+
+#changelist .paginator {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+  padding: 0;
+  background: transparent;
+  border: 0;
+  color: var(--admin-text, #1d2d44);
+  font-size: 0.82rem;
+  font-weight: 600;
+}
+
+#changelist .paginator ul {
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+#changelist .paginator ul li {
+  margin: 0;
+  list-style: none;
+}
+
+#changelist .paginator ul li a {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 34px;
+  height: 34px;
+  padding: 0 0.5rem;
+  background: var(--admin-bg, #f8f9fa);
+  border: 1px solid rgba(11, 37, 69, 0.08);
+  border-radius: 9px;
+  color: var(--admin-text, #1d2d44);
+  font-size: 0.8rem;
+  font-weight: 600;
+  text-decoration: none;
+  transition: background 0.2s ease, color 0.2s ease, border-color 0.2s ease;
+}
+
+#changelist .paginator ul li a:hover {
+  background: var(--admin-primary, #0b2545);
+  border-color: var(--admin-primary, #0b2545);
+  color: #ffffff;
+}
+
+#changelist .paginator .this-page {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 34px;
+  height: 34px;
+  padding: 0 0.5rem;
+  background: var(--admin-primary, #0b2545);
+  border-radius: 9px;
+  color: #ffffff;
+  font-size: 0.8rem;
+  font-weight: 700;
+}
+
+#changelist .paginator .end {
+  padding: 0 0.15rem;
+  color: var(--admin-muted, #6c757d);
+}
+
+#changelist .paginator .showall {
+  padding: 0.3rem 0.7rem;
+  background: rgba(11, 37, 69, 0.07);
+  border-radius: 999px;
+  color: var(--admin-primary, #0b2545);
+  font-weight: 600;
+  text-decoration: none;
+  transition: background 0.2s ease, color 0.2s ease;
+}
+
+#changelist .paginator .showall:hover {
+  background: var(--admin-primary, #0b2545);
+  color: #ffffff;
+}
+
+#changelist .changelist-footer input[type="submit"] {
+  padding: 0.55rem 1.15rem;
+  background: var(--admin-primary, #0b2545);
+  border: 0;
+  border-radius: 9px;
+  color: #ffffff;
+  font-size: 0.82rem;
+  font-weight: 600;
+  cursor: pointer;
+}
+/* -- object tools buttons -- */
+.admin-main-content .object-tools,
+#content-main .object-tools {
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.5rem;
+  margin: 0 0 1rem;
+  padding: 0;
+  list-style: none;
+}
+
+.admin-main-content .object-tools li,
+#content-main .object-tools li {
+  list-style: none;
+}
+
+.admin-main-content .object-tools a,
+#content-main .object-tools a {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  padding: 0.55rem 1.1rem;
+  background: var(--admin-primary, #0b2545) !important;
+  border: 0;
+  border-radius: 9px;
+  color: #ffffff !important;
+  font-size: 0.82rem;
+  font-weight: 600;
+  text-decoration: none;
+  transition: background 0.2s ease;
+}
+
+.admin-main-content .object-tools a:hover,
+#content-main .object-tools a:hover {
+  background: var(--admin-sidebar-hover, #134074) !important;
+  color: #ffffff !important;
+}
+
+.admin-main-content .object-tools a.addlink::before,
+#content-main .object-tools a.addlink::before {
+  content: '\f067';
+  font-family: 'Font Awesome 6 Free';
+  font-weight: 900;
+  font-size: 0.78rem;
+}
+
+/* -- delete confirmation page -- */
+.admin-main-content:has(.cancel-link) > p {
+  color: var(--admin-text, #1d2d44);
+  font-size: 0.9rem;
+}
+
+.admin-main-content:has(.cancel-link) > h2 {
+  margin: 1.5rem 0 0.5rem;
+  color: var(--admin-primary, #0b2545);
+  font-size: 1.1rem;
+  font-weight: 700;
+}
+
+.admin-main-content:has(.cancel-link) > ul {
+  margin: 0 0 1rem;
+  padding: 1rem 1.25rem;
+  background: var(--admin-card-bg, #ffffff);
+  border: 1px solid rgba(11, 37, 69, 0.08);
+  border-radius: 12px;
+  color: var(--admin-muted, #6c757d);
+  font-size: 0.85rem;
+  list-style: disc inside;
+}
+
+.admin-main-content > form:has(.cancel-link) {
+  margin-top: 1.25rem;
+  padding: 1.1rem 1.25rem;
+  background: var(--admin-card-bg, #ffffff);
+  border: 1px solid rgba(11, 37, 69, 0.08);
+  border-radius: 12px;
+  box-shadow: 0 2px 12px rgba(11, 37, 69, 0.06);
+}
+
+.admin-main-content > form:has(.cancel-link) > div {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+}
+
+.admin-main-content > form:has(.cancel-link) input[type="submit"] {
+  padding: 0.7rem 1.4rem;
+  background: #dc2626;
+  border: 0;
+  border-radius: 10px;
+  color: #ffffff;
+  font-size: 0.9rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.2s ease, transform 0.2s ease;
+}
+
+.admin-main-content > form:has(.cancel-link) input[type="submit"]:hover {
+  background: #b91c1c;
+  transform: translateY(-1px);
+}
+
+.admin-main-content > form:has(.cancel-link) .button.cancel-link {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.7rem 1.4rem;
+  background: var(--admin-bg, #f8f9fa);
+  border: 1px solid rgba(11, 37, 69, 0.12);
+  border-radius: 10px;
+  color: var(--admin-text, #1d2d44);
+  font-size: 0.9rem;
+  font-weight: 600;
+  text-decoration: none;
+  transition: background 0.2s ease;
+}
+
+.admin-main-content > form:has(.cancel-link) .button.cancel-link:hover {
+  background: #e9ecef;
+}
+/* -- changelist responsive -- */
+@media (max-width: 1200px) {
+  #changelist-filter {
+    flex-basis: 240px;
+    width: 240px;
+  }
+}
+
+@media (max-width: 992px) {
+  #changelist .changelist-form-container {
+    flex-direction: column;
+    gap: 1rem;
+  }
+
+  #changelist-filter {
+    order: 0;
+    flex: 1 1 auto;
+    width: 100%;
+  }
+
+  #changelist .actions label {
+    flex: 1 1 100%;
+  }
+
+  #changelist .actions select {
+    flex: 1 1 auto;
+    max-width: none;
+  }
+}
+
+@media (max-width: 767px) {
+  #changelist {
+    padding: 0.9rem;
+  }
+
+  #changelist-search {
+    padding: 0.6rem;
+  }
+
+  #changelist-search #searchbar {
+    flex: 1 1 100%;
+  }
+
+  #changelist-search input[type="submit"] {
+    flex: 1 1 auto;
+  }
+
+  #result_list {
+    font-size: 0.8rem;
+  }
+
+  #result_list thead th,
+  #result_list tbody th,
+  #result_list tbody td {
+    padding: 0.6rem 0.65rem;
+  }
+
+  #changelist .changelist-footer {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .admin-main-content .object-tools a,
+  #content-main .object-tools a {
+    flex: 1 1 auto;
+    justify-content: center;
+  }
+}
+
+
+
+
+
+
+

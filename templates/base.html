@@ -1,4 +1,4 @@
-{% load static %}
+{% load static %}{% load static_assets %}
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -35,30 +35,36 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Lora:wght@500;600;700&family=Karla:wght@400;500;600;700&family=Noto+Serif+Devanagari:wght@500;600;700&family=Noto+Sans+Devanagari:wght@400;500;600&display=swap" rel="stylesheet">
 
-  <!-- Custom CSS -->
-  <link rel="stylesheet" href="/static/css/style.css">
-  <link rel="stylesheet" href="/static/css/home.css">
-  <link rel="stylesheet" href="/static/css/popup.css">
-  <link rel="stylesheet" href="/static/css/modern-enhancements.css">
+  <!-- Custom CSS. Every local sheet is routed through the static_v template tag
+       (written without braces here so this comment does not parse as a tag), which
+       appends the file's mtime to the URL. That is what stops a browser from pinning
+       an old copy. See school_app/templatetags/static_assets.py. -->
+  <link rel="stylesheet" href="{% static_v 'css/style.css' %}">
+  <link rel="stylesheet" href="{% static_v 'css/home.css' %}">
+  <link rel="stylesheet" href="{% static_v 'css/popup.css' %}">
+  <link rel="stylesheet" href="{% static_v 'css/modern-enhancements.css' %}">
   <!-- Responsive overrides (mobile/tablet only — desktop unchanged) -->
-  <link rel="stylesheet" href="/static/css/responsive.css">
+  <link rel="stylesheet" href="{% static_v 'css/responsive.css' %}">
   <!-- Redesign brief layer (LAST: pine/rhododendron/marigold system) -->
-  <link rel="stylesheet" href="/static/css/jaljala-redesign.css">
-  <link rel="stylesheet" href="/static/css/jaljala-redesign-2.css">
+  <link rel="stylesheet" href="{% static_v 'css/jaljala-redesign.css' %}">
+  <link rel="stylesheet" href="{% static_v 'css/jaljala-redesign-2.css' %}">
   <!-- Audit fixes: accessibility, filter chips, mobile tables, forms -->
-  <link rel="stylesheet" href="/static/css/audit-fixes.css">
+  <link rel="stylesheet" href="{% static_v 'css/audit-fixes.css' %}">
   <!-- Scroll-animation layer: native IntersectionObserver engine, no library -->
-  <link rel="stylesheet" href="/static/css/scroll-motion.css">
+  <link rel="stylesheet" href="{% static_v 'css/scroll-motion.css' %}">
   <!-- Academic Programs carousel (home). Loaded LAST so its card styling wins
        over the legacy .custom-card / .card-img-top rules. -->
-  <link rel="stylesheet" href="/static/css/program-carousel.css">
+  <link rel="stylesheet" href="{% static_v 'css/program-carousel.css' %}">
   <!-- Latest Notices ticker: modern CSS marquee (badge + View All stay fixed,
        only the titles scroll). Loads LAST so it wins over jaljala-redesign-2. -->
-  <link rel="stylesheet" href="/static/css/notice-ticker.css">
+  <link rel="stylesheet" href="{% static_v 'css/notice-ticker.css' %}">
   <!-- Admission CTAs (navbar "Online Admission" + home hero "Enroll Your
        Child"): one shared pine/marigold breathing glow, in the school's own
        palette. Loaded LAST so it owns those two buttons outright. -->
-  <link rel="stylesheet" href="/static/css/admission-cta.css">
+  <link rel="stylesheet" href="{% static_v 'css/admission-cta.css' %}">
+  <!-- Gallery page (/gallery/): mosaic grid, hover captions and the captioned
+       lightbox. Loaded LAST so its tile rules win over the legacy card styles. -->
+  <link rel="stylesheet" href="{% static_v 'css/gallery.css' %}">
   <!-- Safety net: never leave a reveal target hidden if the engine never runs -->
   <noscript><style>
     [data-aos],[data-img-reveal],[data-stagger]>*{opacity:1!important;
@@ -147,13 +153,16 @@
   <!-- Bootstrap 5 JS Bundle -->
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 
-  <!-- Custom JS -->
-  <script src="/static/js/main.js"></script>
-  <script src="/static/js/popup.js"></script>
+  <!-- Custom JS. Versioned the same way as the stylesheets above: a stale cached
+       gallery.js means the lightbox caption/navigation never gets rebuilt. -->
+  <script src="{% static_v 'js/main.js' %}"></script>
+  <script src="{% static_v 'js/popup.js' %}"></script>
   <!-- Scroll-animation engine: reveals, stagger, nav highlight, parallax -->
-  <script src="/static/js/scroll-motion.js"></script>
+  <script src="{% static_v 'js/scroll-motion.js' %}"></script>
   <!-- Academic Programs carousel: clone-based infinite loop, vanilla JS -->
-  <script src="/static/js/program-carousel.js"></script>
+  <script src="{% static_v 'js/program-carousel.js' %}"></script>
+  <!-- Gallery lightbox: caption, "n of m" counter and arrow-key navigation -->
+  <script src="{% static_v 'js/gallery.js' %}"></script>
 </body>
 </html>
 

@@ -1,0 +1,346 @@
+/* ==========================================================================
+   Shree Jaljala Secondary School - Smooth Animate-On-Scroll (SA) System
+   Pure CSS properties (opacity, translate, scale, rotate) + IntersectionObserver.
+   Zero layout reflows. Respects prefers-reduced-motion. Preserves card hover.
+   ========================================================================== */
+
+:root {
+  --sa-duration: 700ms;
+  --sa-delay: 0ms;
+  --sa-easing: cubic-bezier(0.22, 0.61, 0.36, 1);
+  --sa-shift-y: 28px;
+  --sa-shift-x: 24px;
+}
+
+@media (max-width: 575.98px) {
+  :root {
+    --sa-shift-y: 18px;
+    --sa-shift-x: 14px;
+  }
+}
+
+/* 1. Page smooth scrolling & sticky header compensation */
+html {
+  scroll-behavior: smooth;
+  scroll-padding-top: var(--navbar-height, 70px);
+  overflow-x: clip; /* clip horizontal overflow without breaking position:sticky */
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto !important;
+  }
+}
+
+/* 2. Safety / Exclusions - NEVER animate these components */
+.navbar,
+.navbar-custom,
+.top-bar,
+.brand-header,
+.top-notice-ticker,
+.notice-marquee,
+.notice-ticker,
+.marquee-track,
+.carousel,
+.hero-slider,
+.carousel-item,
+.modal,
+.modal-dialog,
+.lightbox-modal,
+#lightboxModal,
+.admin-layout,
+.admin-sidebar,
+.admin-main-content,
+[data-sa-ignore] {
+  opacity: 1 !important;
+  transform: none !important;
+  translate: none !important;
+  scale: none !important;
+  rotate: none !important;
+  transition: none !important;
+  animation: none !important;
+}
+
+/* 3. Base animation target styling (only active when JS initializes sa-active) */
+html.sa-active [data-sa]:not(.sa-animated),
+html.sa-active [data-aos]:not(.sa-animated),
+html.sa-active [data-img-reveal]:not(.sa-animated) {
+  opacity: 0;
+  will-change: opacity, translate, scale, rotate;
+}
+
+/* Transition properties applied to animation targets */
+[data-sa],
+[data-aos],
+[data-img-reveal] {
+  transition-property: opacity, translate, scale, rotate;
+  transition-duration: var(--sa-dur, var(--sa-duration));
+  transition-delay: var(--sa-del, var(--sa-delay));
+  transition-timing-function: var(--sa-ease, var(--sa-easing));
+}
+
+/* State when revealed */
+.sa-animated,
+.sa-in {
+  opacity: 1 !important;
+  translate: 0 0 !important;
+  scale: 1 !important;
+  rotate: 0deg !important;
+}
+
+/* 4. Variants: Fade */
+html.sa-active [data-sa="fade"]:not(.sa-animated),
+html.sa-active [data-aos="fade"]:not(.sa-animated) {
+  opacity: 0;
+}
+
+html.sa-active [data-sa="fade-up"]:not(.sa-animated),
+html.sa-active [data-aos="fade-up"]:not(.sa-animated) {
+  opacity: 0;
+  translate: 0 var(--sa-shift-y);
+}
+
+html.sa-active [data-sa="fade-down"]:not(.sa-animated),
+html.sa-active [data-aos="fade-down"]:not(.sa-animated) {
+  opacity: 0;
+  translate: 0 calc(-1 * var(--sa-shift-y));
+}
+
+html.sa-active [data-sa="fade-left"]:not(.sa-animated),
+html.sa-active [data-aos="fade-left"]:not(.sa-animated) {
+  opacity: 0;
+  translate: var(--sa-shift-x) 0;
+}
+
+html.sa-active [data-sa="fade-right"]:not(.sa-animated),
+html.sa-active [data-aos="fade-right"]:not(.sa-animated) {
+  opacity: 0;
+  translate: calc(-1 * var(--sa-shift-x)) 0;
+}
+
+html.sa-active [data-sa="fade-up-right"]:not(.sa-animated),
+html.sa-active [data-aos="fade-up-right"]:not(.sa-animated) {
+  opacity: 0;
+  translate: calc(-1 * var(--sa-shift-x)) var(--sa-shift-y);
+}
+
+html.sa-active [data-sa="fade-up-left"]:not(.sa-animated),
+html.sa-active [data-aos="fade-up-left"]:not(.sa-animated) {
+  opacity: 0;
+  translate: var(--sa-shift-x) var(--sa-shift-y);
+}
+
+html.sa-active [data-sa="fade-down-right"]:not(.sa-animated),
+html.sa-active [data-aos="fade-down-right"]:not(.sa-animated) {
+  opacity: 0;
+  translate: calc(-1 * var(--sa-shift-x)) calc(-1 * var(--sa-shift-y));
+}
+
+html.sa-active [data-sa="fade-down-left"]:not(.sa-animated),
+html.sa-active [data-aos="fade-down-left"]:not(.sa-animated) {
+  opacity: 0;
+  translate: var(--sa-shift-x) calc(-1 * var(--sa-shift-y));
+}
+
+/* 5. Variants: Zoom-in */
+html.sa-active [data-sa="zoom-in"]:not(.sa-animated),
+html.sa-active [data-aos="zoom-in"]:not(.sa-animated) {
+  opacity: 0;
+  scale: 0.92;
+}
+
+html.sa-active [data-sa="zoom-in-up"]:not(.sa-animated),
+html.sa-active [data-aos="zoom-in-up"]:not(.sa-animated),
+html.sa-active [data-img-reveal]:not(.sa-animated) {
+  opacity: 0;
+  scale: 0.92;
+  translate: 0 var(--sa-shift-y);
+}
+
+html.sa-active [data-sa="zoom-in-down"]:not(.sa-animated),
+html.sa-active [data-aos="zoom-in-down"]:not(.sa-animated) {
+  opacity: 0;
+  scale: 0.92;
+  translate: 0 calc(-1 * var(--sa-shift-y));
+}
+
+html.sa-active [data-sa="zoom-in-left"]:not(.sa-animated),
+html.sa-active [data-aos="zoom-in-left"]:not(.sa-animated) {
+  opacity: 0;
+  scale: 0.92;
+  translate: var(--sa-shift-x) 0;
+}
+
+html.sa-active [data-sa="zoom-in-right"]:not(.sa-animated),
+html.sa-active [data-aos="zoom-in-right"]:not(.sa-animated) {
+  opacity: 0;
+  scale: 0.92;
+  translate: calc(-1 * var(--sa-shift-x)) 0;
+}
+
+html.sa-active [data-sa="zoom-in-up-left"]:not(.sa-animated),
+html.sa-active [data-aos="zoom-in-up-left"]:not(.sa-animated) {
+  opacity: 0;
+  scale: 0.92;
+  translate: var(--sa-shift-x) var(--sa-shift-y);
+}
+
+html.sa-active [data-sa="zoom-in-up-right"]:not(.sa-animated),
+html.sa-active [data-aos="zoom-in-up-right"]:not(.sa-animated) {
+  opacity: 0;
+  scale: 0.92;
+  translate: calc(-1 * var(--sa-shift-x)) var(--sa-shift-y);
+}
+
+html.sa-active [data-sa="zoom-in-down-left"]:not(.sa-animated),
+html.sa-active [data-aos="zoom-in-down-left"]:not(.sa-animated) {
+  opacity: 0;
+  scale: 0.92;
+  translate: var(--sa-shift-x) calc(-1 * var(--sa-shift-y));
+}
+
+html.sa-active [data-sa="zoom-in-down-right"]:not(.sa-animated),
+html.sa-active [data-aos="zoom-in-down-right"]:not(.sa-animated) {
+  opacity: 0;
+  scale: 0.92;
+  translate: calc(-1 * var(--sa-shift-x)) calc(-1 * var(--sa-shift-y));
+}
+
+/* 6. Variants: Zoom-out */
+html.sa-active [data-sa="zoom-out"]:not(.sa-animated),
+html.sa-active [data-aos="zoom-out"]:not(.sa-animated) {
+  opacity: 0;
+  scale: 1.08;
+}
+
+html.sa-active [data-sa="zoom-out-up"]:not(.sa-animated),
+html.sa-active [data-aos="zoom-out-up"]:not(.sa-animated) {
+  opacity: 0;
+  scale: 1.08;
+  translate: 0 var(--sa-shift-y);
+}
+
+html.sa-active [data-sa="zoom-out-down"]:not(.sa-animated),
+html.sa-active [data-aos="zoom-out-down"]:not(.sa-animated) {
+  opacity: 0;
+  scale: 1.08;
+  translate: 0 calc(-1 * var(--sa-shift-y));
+}
+
+html.sa-active [data-sa="zoom-out-left"]:not(.sa-animated),
+html.sa-active [data-aos="zoom-out-left"]:not(.sa-animated) {
+  opacity: 0;
+  scale: 1.08;
+  translate: var(--sa-shift-x) 0;
+}
+
+html.sa-active [data-sa="zoom-out-right"]:not(.sa-animated),
+html.sa-active [data-aos="zoom-out-right"]:not(.sa-animated) {
+  opacity: 0;
+  scale: 1.08;
+  translate: calc(-1 * var(--sa-shift-x)) 0;
+}
+
+html.sa-active [data-sa="zoom-out-up-left"]:not(.sa-animated),
+html.sa-active [data-aos="zoom-out-up-left"]:not(.sa-animated) {
+  opacity: 0;
+  scale: 1.08;
+  translate: var(--sa-shift-x) var(--sa-shift-y);
+}
+
+html.sa-active [data-sa="zoom-out-up-right"]:not(.sa-animated),
+html.sa-active [data-aos="zoom-out-up-right"]:not(.sa-animated) {
+  opacity: 0;
+  scale: 1.08;
+  translate: calc(-1 * var(--sa-shift-x)) var(--sa-shift-y);
+}
+
+html.sa-active [data-sa="zoom-out-down-left"]:not(.sa-animated),
+html.sa-active [data-aos="zoom-out-down-left"]:not(.sa-animated) {
+  opacity: 0;
+  scale: 1.08;
+  translate: var(--sa-shift-x) calc(-1 * var(--sa-shift-y));
+}
+
+html.sa-active [data-sa="zoom-out-down-right"]:not(.sa-animated),
+html.sa-active [data-aos="zoom-out-down-right"]:not(.sa-animated) {
+  opacity: 0;
+  scale: 1.08;
+  translate: calc(-1 * var(--sa-shift-x)) calc(-1 * var(--sa-shift-y));
+}
+
+/* 7. Variants: Flip */
+html.sa-active [data-sa="flip-up"]:not(.sa-animated),
+html.sa-active [data-aos="flip-up"]:not(.sa-animated) {
+  opacity: 0;
+  rotate: x 38deg;
+}
+
+html.sa-active [data-sa="flip-down"]:not(.sa-animated),
+html.sa-active [data-aos="flip-down"]:not(.sa-animated) {
+  opacity: 0;
+  rotate: x -38deg;
+}
+
+html.sa-active [data-sa="flip-left"]:not(.sa-animated),
+html.sa-active [data-aos="flip-left"]:not(.sa-animated) {
+  opacity: 0;
+  rotate: y -38deg;
+}
+
+html.sa-active [data-sa="flip-right"]:not(.sa-animated),
+html.sa-active [data-aos="flip-right"]:not(.sa-animated) {
+  opacity: 0;
+  rotate: y 38deg;
+}
+
+/* Subtle scale-in */
+html.sa-active [data-sa="scale-in"]:not(.sa-animated),
+html.sa-active [data-aos="scale-in"]:not(.sa-animated) {
+  opacity: 0;
+  scale: 0.96;
+}
+
+/* 8. Staggered groups: [data-stagger] or [data-sa-stagger] */
+html.sa-active [data-stagger] > *:not(.sa-animated),
+html.sa-active [data-sa-stagger] > *:not(.sa-animated) {
+  opacity: 0;
+  translate: 0 var(--sa-shift-y);
+  transition-property: opacity, translate, scale, rotate;
+  transition-duration: var(--sa-dur, var(--sa-duration));
+  transition-delay: var(--sa-del, 0ms);
+  transition-timing-function: var(--sa-ease, var(--sa-easing));
+}
+
+html.sa-active [data-stagger="zoom-in"] > *:not(.sa-animated),
+html.sa-active [data-sa-stagger="zoom-in"] > *:not(.sa-animated) {
+  translate: none;
+  scale: 0.94;
+}
+
+html.sa-active [data-stagger="scale-in"] > *:not(.sa-animated),
+html.sa-active [data-sa-stagger="scale-in"] > *:not(.sa-animated) {
+  translate: none;
+  scale: 0.97;
+}
+
+html.sa-active [data-stagger="fade"] > *:not(.sa-animated),
+html.sa-active [data-sa-stagger="fade"] > *:not(.sa-animated) {
+  translate: none;
+  scale: none;
+}
+
+/* 9. Prefers reduced motion: instant visibility, no shifts */
+@media (prefers-reduced-motion: reduce) {
+  html.sa-active [data-sa],
+  html.sa-active [data-aos],
+  html.sa-active [data-img-reveal],
+  html.sa-active [data-stagger] > *,
+  html.sa-active [data-sa-stagger] > * {
+    opacity: 1 !important;
+    translate: none !important;
+    scale: none !important;
+    rotate: none !important;
+    transition: none !important;
+  }
+}
