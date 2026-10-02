@@ -1,4 +1,4 @@
-from django.db import migrations, models
+from django.db import migrations
 
 
 class Migration(migrations.Migration):
@@ -8,20 +8,4 @@ class Migration(migrations.Migration):
     ]
 
     operations = [
-        migrations.AddField(
-            model_name="popupnotice",
-            name="start_date",
-            field=models.DateTimeField(
-                blank=True,
-                null=True,
-            ),
-        ),
-        migrations.AddField(
-            model_name="popupnotice",
-            name="end_date",
-            field=models.DateTimeField(
-                blank=True,
-                null=True,
-            ),
-        ),
     ]
