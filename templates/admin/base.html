@@ -311,34 +311,6 @@
             datetimePickers.forEach(function(picker) {
                 // Add enhanced styling and behavior
                 picker.setAttribute('title', 'Click to open date and time picker');
-
-                // Set min date to current date if it's a start date field
-                if (picker.name && picker.name.includes('start')) {
-                    const now = new Date();
-                    const localNow = new Date(now.getTime() - (now.getTimezoneOffset() * 60000));
-                    picker.min = localNow.toISOString().slice(0, 16);
-                }
-
-                // Ensure end date is after start date
-                picker.addEventListener('change', function() {
-                    const form = this.closest('form');
-                    if (form) {
-                        const startDateInput = form.querySelector('input[name*="start_date"]');
-                        const endDateInput = form.querySelector('input[name*="end_date"]');
-
-                        if (startDateInput && endDateInput) {
-                            if (this === startDateInput && startDateInput.value) {
-                                endDateInput.min = startDateInput.value;
-                            }
-                            if (this === endDateInput && startDateInput.value && endDateInput.value) {
-                                if (new Date(endDateInput.value) <= new Date(startDateInput.value)) {
-                                    alert('End date must be after start date');
-                                    endDateInput.value = '';
-                                }
-                            }
-                        }
-                    }
-                });
             });
 
             // Add quick-set buttons for common time ranges
@@ -373,59 +345,72 @@
                     scheduleFieldset.insertBefore(quickSetDiv, startRow);
                 }
 
-                // Make the functions globally available
+                function formatLocalDateTime(date) {
+                    const pad = value => String(value).padStart(2, '0');
+                    return `${date.getFullYear()}-${pad(date.getMonth() + 1)}-${pad(date.getDate())}` +
+                        `T${pad(date.getHours())}:${pad(date.getMinutes())}`;
+                }
+
+                // Make the functions globally available to the quick buttons.
                 window.setSchedule = function(range) {
                     const form = document.querySelector('form');
                     if (!form) return;
 
-                    const startDateInput = form.querySelector('input[name*="start_date"]');
-                    const endDateInput = form.querySelector('input[name*="end_date"]');
-
+                    const startDateInput = form.querySelector('input[name="start_date"]');
+                    const endDateInput = form.querySelector('input[name="end_date"]');
                     if (!startDateInput || !endDateInput) return;
 
                     const now = new Date();
-                    const localNow = new Date(now.getTime() - (now.getTimezoneOffset() * 60000));
-                    const today = localNow.toISOString().slice(0, 16);
-
-                    let startDate = today;
-                    let endDate = today;
+                    let startDate = '';
+                    let endDate = '';
 
                     switch(range) {
-                        case 'today':
-                            // Start now, end at midnight tonight
-                            endDate = localNow.toISOString().slice(0, 10) + 'T23:59';
+                        case 'today': {
+                            startDate = formatLocalDateTime(new Date(now.getFullYear(), now.getMonth(), now.getDate(), 0, 0));
+                            endDate = formatLocalDateTime(new Date(now.getFullYear(), now.getMonth(), now.getDate(), 23, 59));
                             break;
-                        case 'week':
-                            // Start now, end in 7 days
-                            const weekEnd = new Date(now.getTime() + (7 * 24 * 60 * 60 * 1000));
-                            const localWeekEnd = new Date(weekEnd.getTime() - (weekEnd.getTimezoneOffset() * 60000));
-                            endDate = localWeekEnd.toISOString().slice(0, 16);
+                        }
+                        case 'week': {
+                            const daysSinceMonday = (now.getDay() + 6) % 7;
+                            const monday = new Date(now.getFullYear(), now.getMonth(), now.getDate() - daysSinceMonday, 0, 0);
+                            const sundayEnd = new Date(monday.getFullYear(), monday.getMonth(), monday.getDate() + 6, 23, 59);
+                            startDate = formatLocalDateTime(monday);
+                            endDate = formatLocalDateTime(sundayEnd);
                             break;
-                        case 'month':
-                            // Start now, end in 30 days
-                            const monthEnd = new Date(now.getTime() + (30 * 24 * 60 * 60 * 1000));
-                            const localMonthEnd = new Date(monthEnd.getTime() - (monthEnd.getTimezoneOffset() * 60000));
-                            endDate = localMonthEnd.toISOString().slice(0, 16);
+                        }
+                        case 'month': {
+                            const monthStart = new Date(now.getFullYear(), now.getMonth(), 1, 0, 0);
+                            const monthEnd = new Date(now.getFullYear(), now.getMonth() + 1, 0, 23, 59);
+                            startDate = formatLocalDateTime(monthStart);
+                            endDate = formatLocalDateTime(monthEnd);
                             break;
+                        }
+                        default:
+                            return;
                     }
 
                     startDateInput.value = startDate;
                     endDateInput.value = endDate;
+                    const presetField = form.querySelector('select[name="schedule_preset"]');
+                    if (presetField) presetField.value = range;
 
-                    // Trigger change events
-                    startDateInput.dispatchEvent(new Event('change'));
-                    endDateInput.dispatchEvent(new Event('change'));
+                    startDateInput.dispatchEvent(new Event('change', { bubbles: true }));
+                    endDateInput.dispatchEvent(new Event('change', { bubbles: true }));
                 };
 
                 window.clearSchedule = function() {
                     const form = document.querySelector('form');
                     if (!form) return;
 
-                    const startDateInput = form.querySelector('input[name*="start_date"]');
-                    const endDateInput = form.querySelector('input[name*="end_date"]');
-
+                    const startDateInput = form.querySelector('input[name="start_date"]');
+                    const endDateInput = form.querySelector('input[name="end_date"]');
                     if (startDateInput) startDateInput.value = '';
                     if (endDateInput) endDateInput.value = '';
+                    const presetField = form.querySelector('select[name="schedule_preset"]');
+                    if (presetField) presetField.value = 'always';
+
+                    if (startDateInput) startDateInput.dispatchEvent(new Event('change', { bubbles: true }));
+                    if (endDateInput) endDateInput.dispatchEvent(new Event('change', { bubbles: true }));
                 };
             }
         });

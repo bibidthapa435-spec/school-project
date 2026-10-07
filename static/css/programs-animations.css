@@ -1,0 +1,514 @@
+/* ===========================================================================
+   Academic Programs Section - Modern Scroll Animations
+   ---------------------------------------------------------------------------
+   Premium scroll-based animations for the Academic Programs section.
+   Uses IntersectionObserver + CSS transforms for smooth, performant effects.
+   Respects prefers-reduced-motion. Works on desktop, tablet, and mobile.
+   =========================================================================== */
+
+:root {
+  /* Programs Section Animation Variables */
+  --programs-card-stagger: 80ms;      /* Delay between card animations */
+  --programs-animation-duration: 700ms;
+  --programs-easing: cubic-bezier(0.22, 0.61, 0.36, 1);
+  --programs-shift-y: 32px;           /* Vertical shift before animation */
+  --programs-scale-start: 0.95;       /* Initial scale for subtle effect */
+}
+
+@media (max-width: 768px) {
+  :root {
+    --programs-shift-y: 20px;
+    --programs-card-stagger: 60ms;
+  }
+}
+
+@media (max-width: 575.98px) {
+  :root {
+    --programs-shift-y: 16px;
+    --programs-card-stagger: 50ms;
+    --programs-animation-duration: 600ms;
+  }
+}
+
+/* ===========================================================================
+   Header Section Animation
+   =========================================================================== */
+
+.programs-header {
+  overflow: hidden;
+}
+
+.programs-header h1 {
+  opacity: 0;
+  transform: translateY(24px);
+  animation: programsHeaderFadeUp 0.8s var(--programs-easing) forwards 0.1s;
+}
+
+.programs-header p {
+  opacity: 0;
+  transform: translateY(16px);
+  animation: programsHeaderFadeUp 0.8s var(--programs-easing) forwards 0.3s;
+}
+
+@keyframes programsHeaderFadeUp {
+  from {
+    opacity: 0;
+    transform: translateY(24px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* ===========================================================================
+   Program Cards - Initial State (before reveal)
+   =========================================================================== */
+
+/* When animation system is active, start cards in hidden state */
+html.sa-active .programs-row > .col-lg-6:not(.sa-animated) .program-card {
+  opacity: 0;
+  transform: translateY(var(--programs-shift-y)) scale(var(--programs-scale-start));
+  will-change: opacity, transform;
+}
+
+/* Individual card animation via data-stagger system */
+.programs-row > .col-lg-6 {
+  /* Each column gets its own delay via --sa-del CSS variable from JS */
+  transition-property: opacity, transform;
+  transition-duration: var(--programs-animation-duration);
+  transition-timing-function: var(--programs-easing);
+  transition-delay: var(--sa-del, 0ms);
+}
+
+.programs-row > .col-lg-6.sa-animated .program-card {
+  opacity: 1;
+  transform: translateY(0) scale(1);
+}
+
+/* ===========================================================================
+   Program Card - Main Container
+   =========================================================================== */
+
+.program-card {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  border-radius: 16px;
+  background: #ffffff;
+  box-shadow: 0 6px 18px rgba(11, 37, 69, 0.08);
+  border: 1px solid rgba(212, 175, 55, 0);
+  overflow: hidden;
+  transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+  transform-origin: center center;
+  /* Prevent layout shift during animation */
+  contain: layout style paint;
+}
+
+@media (hover: hover) {
+  .program-card:hover {
+    transform: translateY(-8px);
+    box-shadow: 0 16px 40px rgba(11, 37, 69, 0.15);
+    border-color: rgba(212, 175, 55, 0.4);
+  }
+}
+
+@media (hover: none) {
+  .program-card:active {
+    transform: translateY(-4px);
+    box-shadow: 0 12px 30px rgba(11, 37, 69, 0.12);
+  }
+}
+
+/* Accent bar that grows on hover */
+.program-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: linear-gradient(90deg, #d4af37 0%, #f0d78c 100%);
+  transform: scaleX(0);
+  transform-origin: left center;
+  transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+  z-index: 1;
+}
+
+@media (hover: hover) {
+  .program-card:hover::before {
+    transform: scaleX(1);
+  }
+}
+
+/* ===========================================================================
+   Program Image Container
+   =========================================================================== */
+
+.program-image-wrapper {
+  position: relative;
+  overflow: hidden;
+  background: linear-gradient(135deg, #f0f0f0 0%, #e8e8e8 100%);
+  /* Aspect ratio maintained via img or parent sizing */
+}
+
+.program-image-wrapper img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
+  /* Smooth zoom on hover */
+  transition: transform 0.5s cubic-bezier(0.22, 0.61, 0.36, 1);
+  will-change: transform;
+}
+
+@media (hover: hover) {
+  .program-card:hover .program-image-wrapper img {
+    transform: scale(1.08);
+  }
+}
+
+/* Image reveal effect - subtle fade */
+.program-image-wrapper::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(11, 37, 69, 0);
+  pointer-events: none;
+  transition: background-color 0.5s ease;
+}
+
+@media (hover: hover) {
+  .program-card:hover .program-image-wrapper::after {
+    background: rgba(11, 37, 69, 0.05);
+  }
+}
+
+/* ===========================================================================
+   Program Card Content
+   =========================================================================== */
+
+.program-content {
+  display: flex;
+  flex-direction: column;
+  flex-grow: 1;
+  padding: 20px;
+}
+
+.program-title {
+  font-size: 1.125rem;
+  font-weight: 700;
+  color: #0b2545;
+  margin: 0 0 12px 0;
+  line-height: 1.4;
+  /* Subtle animation effect on card hover */
+  transition: color 0.3s ease;
+}
+
+@media (hover: hover) {
+  .program-card:hover .program-title {
+    color: #14315B;
+  }
+}
+
+.program-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-bottom: 12px;
+  font-size: 0.875rem;
+  align-items: center;
+}
+
+.program-duration {
+  color: #6B7280;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  transition: color 0.3s ease;
+}
+
+.program-duration i {
+  color: #d4af37;
+}
+
+@media (hover: hover) {
+  .program-card:hover .program-duration {
+    color: #374151;
+  }
+}
+
+.program-badge {
+  display: inline-block;
+  padding: 4px 12px;
+  background: #10b981;
+  color: white;
+  border-radius: 12px;
+  font-weight: 600;
+  font-size: 0.8125rem;
+  white-space: nowrap;
+  transition: all 0.3s ease;
+}
+
+@media (hover: hover) {
+  .program-card:hover .program-badge {
+    background: #059669;
+    box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
+  }
+}
+
+.program-description {
+  color: #374151;
+  font-size: 0.9375rem;
+  line-height: 1.6;
+  margin: 0;
+  flex-grow: 1;
+  transition: color 0.3s ease;
+}
+
+@media (hover: hover) {
+  .program-card:hover .program-description {
+    color: #1F2733;
+  }
+}
+
+/* ===========================================================================
+   Program Card Actions
+   =========================================================================== */
+
+.program-actions {
+  display: flex;
+  gap: 8px;
+  margin-top: 16px;
+  align-items: center;
+}
+
+.btn-program-view {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 16px;
+  background: linear-gradient(135deg, #14315B 0%, #1e4a8a 100%);
+  color: #ffffff;
+  border: none;
+  border-radius: 8px;
+  font-size: 0.875rem;
+  font-weight: 600;
+  text-decoration: none;
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  position: relative;
+  overflow: hidden;
+  flex-grow: 1;
+}
+
+.btn-program-view::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, rgba(255, 255, 255, 0.2) 0%, transparent 100%);
+  transition: left 0.4s ease;
+}
+
+@media (hover: hover) {
+  .btn-program-view:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 20px rgba(20, 49, 91, 0.3);
+    background: linear-gradient(135deg, #1e4a8a 0%, #152d4a 100%);
+  }
+
+  .btn-program-view:hover::before {
+    left: 100%;
+  }
+}
+
+.btn-program-view i {
+  transition: transform 0.3s ease;
+  font-size: 0.75rem;
+}
+
+@media (hover: hover) {
+  .btn-program-view:hover i {
+    transform: translateX(4px);
+  }
+}
+
+/* ===========================================================================
+   Empty State
+   =========================================================================== */
+
+.programs-empty-state {
+  opacity: 0;
+  animation: programsHeaderFadeUp 0.8s var(--programs-easing) forwards 0.2s;
+}
+
+.programs-empty-state i {
+  font-size: 3rem;
+  color: #d1d5db;
+  margin-bottom: 12px;
+  display: block;
+}
+
+.programs-empty-state h2 {
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: #6B7280;
+  margin-bottom: 8px;
+}
+
+.programs-empty-state p {
+  color: #9CA3AF;
+  margin-bottom: 24px;
+  font-size: 0.9375rem;
+}
+
+/* ===========================================================================
+   Reduced Motion Support
+   =========================================================================== */
+
+@media (prefers-reduced-motion: reduce) {
+  .programs-header h1,
+  .programs-header p,
+  .programs-row > .col-lg-6,
+  .program-card,
+  .program-image-wrapper img,
+  .btn-program-view,
+  .programs-empty-state {
+    animation: none !important;
+    transition: none !important;
+  }
+
+  .program-card::before,
+  .program-image-wrapper::after,
+  .program-duration,
+  .program-badge,
+  .program-description,
+  .program-title {
+    transition: none !important;
+  }
+
+  html.sa-active .programs-row > .col-lg-6:not(.sa-animated) .program-card {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+/* ===========================================================================
+   Responsive Design - Tablet
+   =========================================================================== */
+
+@media (max-width: 768px) {
+  .program-content {
+    padding: 18px;
+  }
+
+  .program-title {
+    font-size: 1rem;
+    margin-bottom: 10px;
+  }
+
+  .program-description {
+    font-size: 0.875rem;
+  }
+
+  .btn-program-view {
+    font-size: 0.8125rem;
+    padding: 6px 12px;
+  }
+}
+
+/* ===========================================================================
+   Responsive Design - Mobile
+   =========================================================================== */
+
+@media (max-width: 575.98px) {
+  .program-card {
+    border-radius: 12px;
+  }
+
+  .program-content {
+    padding: 16px;
+  }
+
+  .program-title {
+    font-size: 1rem;
+    margin-bottom: 8px;
+  }
+
+  .program-meta {
+    font-size: 0.8125rem;
+    gap: 8px;
+    margin-bottom: 8px;
+  }
+
+  .program-description {
+    font-size: 0.8125rem;
+    line-height: 1.5;
+  }
+
+  .program-badge {
+    padding: 3px 10px;
+    font-size: 0.75rem;
+  }
+
+  .program-actions {
+    gap: 6px;
+    margin-top: 12px;
+  }
+
+  .btn-program-view {
+    font-size: 0.75rem;
+    padding: 6px 10px;
+  }
+
+  /* Reduce animation shift on mobile */
+  html.sa-active .programs-row > .col-lg-6:not(.sa-animated) .program-card {
+    transform: translateY(16px) scale(var(--programs-scale-start));
+  }
+
+  /* Prevent aggressive hover transforms on touch devices */
+  @media (hover: none) {
+    .program-card {
+      transform: none !important;
+    }
+
+    .program-image-wrapper img {
+      transform: none !important;
+    }
+  }
+}
+
+/* ===========================================================================
+   Accessibility - Focus States
+   =========================================================================== */
+
+.btn-program-view:focus-visible {
+  outline: 2px solid #d4af37;
+  outline-offset: 2px;
+}
+
+.program-card:focus-within {
+  box-shadow: 0 0 0 3px rgba(212, 175, 55, 0.3);
+}
+
+/* ===========================================================================
+   Print Styles
+   =========================================================================== */
+
+@media print {
+  .program-card,
+  .program-image-wrapper img,
+  .btn-program-view {
+    animation: none !important;
+    transition: none !important;
+    transform: none !important;
+  }
+}

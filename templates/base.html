@@ -2,6 +2,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+  <script>document.documentElement.classList.add('js');</script>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>{% block title %}{{ settings.school_name|default:"Shree Jaljala Secondary School" }} | Panchkhapan, Sankhuwasabha{% endblock %}</title>
@@ -50,11 +51,14 @@
   <link rel="stylesheet" href="{% static_v 'css/jaljala-redesign-2.css' %}">
   <!-- Audit fixes: accessibility, filter chips, mobile tables, forms -->
   <link rel="stylesheet" href="{% static_v 'css/audit-fixes.css' %}">
-  <!-- Scroll-animation layer: native IntersectionObserver engine, no library -->
+  <!-- Scroll-animation layers: native IntersectionObserver engine, no library -->
   <link rel="stylesheet" href="{% static_v 'css/scroll-motion.css' %}">
+  <link rel="stylesheet" href="{% static_v 'css/scroll-animations.css' %}">
   <!-- Academic Programs carousel (home). Loaded LAST so its card styling wins
        over the legacy .custom-card / .card-img-top rules. -->
   <link rel="stylesheet" href="{% static_v 'css/program-carousel.css' %}">
+  <!-- Scroll reveal animation system for Academic Programs section -->
+  <link rel="stylesheet" href="{% static_v 'css/animations.css' %}">
   <!-- Latest Notices ticker: modern CSS marquee (badge + View All stay fixed,
        only the titles scroll). Loads LAST so it wins over jaljala-redesign-2. -->
   <link rel="stylesheet" href="{% static_v 'css/notice-ticker.css' %}">
@@ -65,6 +69,8 @@
   <!-- Gallery page (/gallery/): mosaic grid, hover captions and the captioned
        lightbox. Loaded LAST so its tile rules win over the legacy card styles. -->
   <link rel="stylesheet" href="{% static_v 'css/gallery.css' %}">
+  <!-- Custom page-specific stylesheets -->
+  {% block extra_css %}{% endblock %}
   <!-- Safety net: never leave a reveal target hidden if the engine never runs -->
   <noscript><style>
     [data-aos],[data-img-reveal],[data-stagger]>*{opacity:1!important;
@@ -157,8 +163,11 @@
        gallery.js means the lightbox caption/navigation never gets rebuilt. -->
   <script src="{% static_v 'js/main.js' %}"></script>
   <script src="{% static_v 'js/popup.js' %}"></script>
-  <!-- Scroll-animation engine: reveals, stagger, nav highlight, parallax -->
+  <!-- Scroll-animation engines: reveals, stagger, nav highlight, parallax -->
   <script src="{% static_v 'js/scroll-motion.js' %}"></script>
+  <script src="{% static_v 'js/scroll-animations.js' %}"></script>
+  <!-- Scroll reveal animation engine (IntersectionObserver) -->
+  <script src="{% static_v 'js/reveal.js' %}"></script>
   <!-- Academic Programs carousel: clone-based infinite loop, vanilla JS -->
   <script src="{% static_v 'js/program-carousel.js' %}"></script>
   <!-- Gallery lightbox: caption, "n of m" counter and arrow-key navigation -->

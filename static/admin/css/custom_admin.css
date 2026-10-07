@@ -35,7 +35,12 @@
 }
 
 /* Dark Mode Variables */
-[data-theme="dark"] {
+html[data-theme="light"] {
+  color-scheme: light;
+}
+
+html[data-theme="dark"] {
+  color-scheme: dark;
   --sjss-bg: #0f172a;
   --sjss-white: #1e293b;
   --sjss-text: #f1f5f9;
@@ -45,6 +50,21 @@
   --sjss-shadow-lg: 0 12px 40px rgba(0, 0, 0, 0.4);
   --sjss-glass-bg: rgba(30, 41, 59, 0.8);
   --sjss-glass-border: rgba(255, 255, 255, 0.05);
+}
+
+html[data-theme="dark"] body,
+html[data-theme="dark"] #container,
+html[data-theme="dark"] #main,
+html[data-theme="dark"] #content,
+html[data-theme="dark"] .module,
+html[data-theme="dark"] .dashboard-card,
+html[data-theme="dark"] .analytics-card,
+html[data-theme="dark"] .dashboard-summary,
+html[data-theme="dark"] .gallery-grid,
+html[data-theme="dark"] .recent-list,
+html[data-theme="dark"] .summary-pulse {
+  background: var(--sjss-bg);
+  color: var(--sjss-text);
 }
 
 *,

@@ -1,9 +1,15 @@
 import re
+from datetime import datetime, timedelta
 from types import SimpleNamespace
+from unittest.mock import patch
 
 from django.template.loader import render_to_string
 from django.test import SimpleTestCase
 from django.urls import resolve, reverse
+from django.utils import timezone
+
+from school_app.admin import PopupNoticeForm
+from school_app.models import PopupNotice
 
 from school_project.data import confirmed_statistics
 
@@ -20,6 +26,73 @@ class StaticPageUrlTests(SimpleTestCase):
     def test_facilities_page_resolves(self):
         self.assertEqual(resolve('/facilities/').view_name, 'facilities')
         self.assertEqual(reverse('facilities'), '/facilities/')
+
+
+class PopupNoticeScheduleFormTests(SimpleTestCase):
+    def _form(self, **dates):
+        data = {
+            'title': 'Schedule form test',
+            'slug': 'schedule-form-test',
+            'display_order': '0',
+            'start_date': '',
+            'end_date': '',
+        }
+        data.update(dates)
+        return PopupNoticeForm(data=data)
+
+    def _is_valid_without_database_uniqueness_query(self, form):
+        # Slug uniqueness is unrelated to schedule parsing and needs a DB query.
+        with patch.object(PopupNoticeForm, 'validate_unique', return_value=None):
+            return form.is_valid()
+
+    def test_datetime_local_values_are_accepted_as_one_value_per_field(self):
+        form = self._form(
+            start_date='2026-10-07T14:36',
+            end_date='2026-10-07T15:36',
+        )
+
+        self.assertTrue(self._is_valid_without_database_uniqueness_query(form), form.errors)
+        self.assertEqual(
+            timezone.localtime(form.cleaned_data['start_date']).strftime('%Y-%m-%dT%H:%M'),
+            '2026-10-07T14:36',
+        )
+        self.assertEqual(
+            timezone.localtime(form.cleaned_data['end_date']).strftime('%Y-%m-%dT%H:%M'),
+            '2026-10-07T15:36',
+        )
+        self.assertEqual(form.cleaned_data['start_date'].utcoffset(), timedelta(hours=5, minutes=45))
+        self.assertEqual(form.fields['start_date'].widget.input_type, 'datetime-local')
+
+    def test_blank_dates_are_valid_and_remain_empty(self):
+        form = self._form()
+
+        self.assertTrue(self._is_valid_without_database_uniqueness_query(form), form.errors)
+        self.assertFalse(form.fields['start_date'].required)
+        self.assertFalse(form.fields['end_date'].required)
+        self.assertIsNone(form.cleaned_data['start_date'])
+        self.assertIsNone(form.cleaned_data['end_date'])
+
+    def test_end_before_start_is_an_end_date_error(self):
+        form = self._form(
+            start_date='2026-10-07T14:36',
+            end_date='2026-10-07T14:35',
+        )
+
+        self.assertFalse(self._is_valid_without_database_uniqueness_query(form))
+        self.assertEqual(
+            form.errors['end_date'],
+            ['End date must be later than start date.'],
+        )
+
+    def test_existing_datetime_is_formatted_for_datetime_local(self):
+        instance = PopupNotice(
+            title='Existing schedule',
+            slug='existing-schedule-test',
+            start_date=timezone.make_aware(datetime(2026, 10, 7, 14, 36)),
+        )
+        form = PopupNoticeForm(instance=instance)
+
+        self.assertIn('value="2026-10-07T14:36"', str(form['start_date']))
 
 
 class HomeSliderTests(SimpleTestCase):

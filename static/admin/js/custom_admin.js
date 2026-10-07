@@ -158,31 +158,39 @@ function initThemeToggle() {
 
   var lightBtn = toggle.querySelector('.theme-light');
   var darkBtn = toggle.querySelector('.theme-dark');
-  var currentTheme = localStorage.getItem('sjss-theme') || 'light';
+  var prefersDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+  var currentTheme = localStorage.getItem('sjss-theme') || (prefersDark ? 'dark' : 'light');
 
   function setTheme(theme) {
     document.documentElement.setAttribute('data-theme', theme);
+    document.documentElement.style.colorScheme = theme;
     localStorage.setItem('sjss-theme', theme);
-    
-    if (theme === 'dark') {
-      lightBtn.classList.remove('active');
-      darkBtn.classList.add('active');
-    } else {
-      lightBtn.classList.add('active');
-      darkBtn.classList.remove('active');
+
+    if (lightBtn && darkBtn) {
+      if (theme === 'dark') {
+        lightBtn.classList.remove('active');
+        darkBtn.classList.add('active');
+      } else {
+        lightBtn.classList.add('active');
+        darkBtn.classList.remove('active');
+      }
     }
   }
 
   // Initialize theme
   setTheme(currentTheme);
 
-  lightBtn.addEventListener('click', function() {
-    setTheme('light');
-  });
+  if (lightBtn) {
+    lightBtn.addEventListener('click', function() {
+      setTheme('light');
+    });
+  }
 
-  darkBtn.addEventListener('click', function() {
-    setTheme('dark');
-  });
+  if (darkBtn) {
+    darkBtn.addEventListener('click', function() {
+      setTheme('dark');
+    });
+  }
 }
 
 /* Notification Center */

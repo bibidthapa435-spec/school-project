@@ -144,6 +144,57 @@ def get_base_context(extra=None, request=None):
 # PUBLIC WEBSITE VIEWS
 # ============================================================
 
+# Homepage "School Gallery" display data.
+#
+# The GalleryPhoto categories stored in the database predate the
+# Sports/Events/Programs filter taxonomy, so the home section maps each
+# known photo (by normalised title) to its fixed caption and filter
+# group here, in the view layer, instead of hardcoding it in the
+# template. Photos not in the map keep their own title and get a group
+# from title keywords, defaulting to Events.
+HOME_GALLERY_CAPTIONS = {
+    'celebrating student athletic achievements': (
+        'Celebrating Student Athletic Achievements', 'Sports',
+    ),
+    'saraswoti puja': ('Saraswati Puja', 'Events'),
+    'saraswati puja': ('Saraswati Puja', 'Events'),
+    '2082 farewell to our see graduates': (
+        '2082 Farewell to Our SEE Graduates', 'Events',
+    ),
+    'police awareness and educational program': (
+        'Police Awareness and Educational Program', 'Programs',
+    ),
+    'sports championship celebration': (
+        'Sports Championship Celebration', 'Sports',
+    ),
+    'student health check-up program': (
+        'Student Health Check-up Program', 'Programs',
+    ),
+    'bag, copy & stationery distribution program': (
+        'Bag, Copy & Stationery Distribution Program', 'Programs',
+    ),
+    'students participating in cultural program': (
+        'Students Participating in Cultural Program', 'Events',
+    ),
+}
+
+
+def _home_gallery_group(title):
+    """Filter group for a photo title not in HOME_GALLERY_CAPTIONS."""
+    text = (title or '').lower()
+    if any(
+        word in text
+        for word in ('sport', 'athlet', 'championship', 'volleyball', 'football')
+    ):
+        return 'Sports'
+    if any(
+        word in text
+        for word in ('program', 'health', 'awareness', 'distribution', 'police')
+    ):
+        return 'Programs'
+    return 'Events'
+
+
 def home(request):
     principal = Teacher.objects.filter(
         position__iexact='Principal',
@@ -185,6 +236,16 @@ def home(request):
         GalleryPhoto.objects.filter(status=True)
         .order_by('display_order', '-created_at')[:8]
     )
+
+    for photo in gallery_items:
+        title = getattr(photo, 'title', '') or ''
+        caption, group = HOME_GALLERY_CAPTIONS.get(
+            title.strip().lower(), (title, None),
+        )
+        if group is None:
+            group = _home_gallery_group(title)
+        setattr(photo, 'gallery_caption', caption or title)
+        setattr(photo, 'gallery_group', group)
 
     achievements_qs = list(
         Achievement.objects.filter(status=True)

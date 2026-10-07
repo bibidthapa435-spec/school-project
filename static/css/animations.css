@@ -1,0 +1,105 @@
+/* Reveal system - PART 1/2 */
+html.js .reveal {
+  opacity: 0;
+  transform: translateY(30px);
+  transition-property: opacity, transform;
+  transition-duration: 700ms;
+  transition-timing-function: cubic-bezier(0.22, 1, 0.36, 1);
+  will-change: opacity, transform;
+}
+html.js .reveal.is-visible { opacity: 1; transform: translateY(0) scale(1); }
+html.js .reveal-up { transform: translateY(30px); }
+html.js .reveal-up.is-visible { transform: translateY(0) scale(1); }
+html.js .reveal-scale { transform: translateY(50px) scale(0.96); }
+html.js .reveal-scale.is-visible { transform: translateY(0) scale(1); }
+html.js .stagger-child > * {
+  opacity: 0; transform: translateY(24px);
+  transition-property: opacity, transform;
+  transition-duration: 700ms;
+  transition-timing-function: cubic-bezier(0.22, 1, 0.36, 1);
+}
+html.js .stagger-child.is-visible > * { opacity: 1; transform: translateY(0) scale(1); }
+html.js .stagger-child.is-visible > *:nth-child(1) { transition-delay: 0ms; }
+html.js .stagger-child.is-visible > *:nth-child(2) { transition-delay: 120ms; }
+html.js .stagger-child.is-visible > *:nth-child(3) { transition-delay: 240ms; }
+html.js .stagger-child.is-visible > *:nth-child(4) { transition-delay: 360ms; }
+html.js .stagger-child.is-visible > *:nth-child(5) { transition-delay: 480ms; }
+html.js .stagger-child.is-visible > *:nth-child(6) { transition-delay: 600ms; }
+#programs-section .section-title { text-align: center; }
+#programs-section .section-title::after,
+#programs-section .section-title h2::after { display: none !important; content: none !important; }
+#programs-section .section-title .divider { display: none !important; }
+#programs-section .programs-heading { color: #1F3A33 !important; font-family: 'Lora', serif; text-align: center; }
+html.js #programs-section .heading-underline {
+  display: block; width: 80px; height: 4px; margin: 12px auto 0;
+  border-radius: 2px; background-color: #f59e0b;
+  transform: scaleX(0); transform-origin: center;
+  transition: transform 600ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+#programs-section .heading-underline.is-visible { transform: scaleX(1); }
+#programs-section .programs-subtitle { color: #6B7280; font-size: 1.1rem; line-height: 1.6; max-width: 700px; margin: 0.75rem auto 0; text-align: center; }
+html.js #programs-section .programs-subtitle.reveal { transform: translateY(20px); }
+#programs-section .programs-subtitle.is-visible { transform: translateY(0) scale(1); }
+#programs-section .jj-pc__card.reveal { transition-delay: calc(var(--i, 0) * 120ms); }
+#programs-section .jj-pc__card.reveal.is-visible { opacity: 1; transform: translateY(0) scale(1); }
+html.js #programs-section .jj-pc__card.reveal.off-screen { transform: translateX(40px) scale(0.98); }
+html.js #programs-section .jj-pc__card.reveal.off-screen.is-visible { opacity: 1; transform: translateX(0) scale(1); }
+/* Reveal system - PART 2/2: internals, nav, hover, reduced motion, mobile */
+html.js #programs-section .jj-pc__card .jj-pc__chip {
+  opacity: 0; transform: translateX(-14px);
+  transition: opacity 500ms cubic-bezier(0.22, 1, 0.36, 1), transform 500ms cubic-bezier(0.22, 1, 0.36, 1);
+  transition-delay: calc(var(--i, 0) * 120ms + 250ms);
+}
+html.js #programs-section .jj-pc__card.is-visible .jj-pc__chip { opacity: 1; transform: translateX(0); }
+html.js #programs-section .jj-pc__card .jj-pc__title {
+  opacity: 0; transform: translateY(14px);
+  transition: opacity 500ms cubic-bezier(0.22, 1, 0.36, 1), transform 500ms cubic-bezier(0.22, 1, 0.36, 1);
+  transition-delay: calc(var(--i, 0) * 120ms + 350ms);
+}
+html.js #programs-section .jj-pc__card.is-visible .jj-pc__title { opacity: 1; transform: translateY(0); }
+html.js #programs-section .jj-pc__card .jj-pc__go {
+  opacity: 0; transform: scale(0);
+  transition: opacity 450ms cubic-bezier(0.22, 1, 0.36, 1), transform 550ms cubic-bezier(0.34, 1.56, 0.64, 1), background-color 300ms ease;
+}
+html.js #programs-section .jj-pc__card.is-visible .jj-pc__go {
+  opacity: 1; transform: scale(1);
+  transition-delay: calc(var(--i, 0) * 120ms + 450ms), calc(var(--i, 0) * 120ms + 450ms), 0ms;
+}
+html.js #programs-section .jj-pc__card.reveal.off-screen .jj-pc__chip { transition-delay: 250ms; }
+html.js #programs-section .jj-pc__card.reveal.off-screen .jj-pc__title { transition-delay: 350ms; }
+html.js #programs-section .jj-pc__card.reveal.off-screen .jj-pc__go { transition-delay: 450ms, 450ms, 0ms; }
+html.js #programs-section .jj-pc__nav.reveal {
+  opacity: 0; transform: none;
+  transition: opacity 700ms cubic-bezier(0.22, 1, 0.36, 1), background-color 300ms ease, color 300ms ease;
+}
+html.js #programs-section .jj-pc__nav.reveal.is-visible { opacity: 1; transform: none; }
+@media (hover: hover) and (pointer: fine) {
+  #programs-section .jj-pc__card.is-visible:hover { transform: translateY(-6px); box-shadow: 0 20px 44px rgba(28, 26, 22, 0.2); }
+  #programs-section .jj-pc__card:hover .jj-pc__img { transform: scale(1.06); transition: transform 600ms cubic-bezier(0.22, 1, 0.36, 1); }
+  #programs-section .jj-pc__card.is-visible:hover .jj-pc__go { transform: translateX(4px) scale(1); background-color: #A82E4B; background: #A82E4B; border-color: #A82E4B; transition-delay: 0ms; }
+  #programs-section .jj-pc__card:hover .jj-pc__go i, #programs-section .jj-pc__card:hover .jj-pc__go .fa-solid { color: #fff; }
+}
+@media (prefers-reduced-motion: reduce) {
+  html.js .reveal, html.js .reveal-up, html.js .reveal-scale, html.js .stagger-child > *,
+  html.js #programs-section .heading-underline,
+  html.js #programs-section .jj-pc__card .jj-pc__chip,
+  html.js #programs-section .jj-pc__card .jj-pc__title,
+  html.js #programs-section .jj-pc__card .jj-pc__go,
+  html.js #programs-section .jj-pc__nav.reveal { opacity: 1 !important; transform: none !important; transition: none !important; }
+  #programs-section .jj-pc__card:hover, #programs-section .jj-pc__card:hover .jj-pc__img,
+  #programs-section .jj-pc__card:hover .jj-pc__go, #programs-section .jj-pc__nav:hover { transform: none !important; }
+}
+@media (max-width: 575.98px) {
+  html.js .reveal-up { transform: translateY(24px); }
+  html.js .reveal-scale { transform: translateY(24px) scale(0.96); }
+  html.js .stagger-child > * { transform: translateY(16px); }
+  html.js .stagger-child.is-visible > *:nth-child(2) { transition-delay: 80ms; }
+  html.js .stagger-child.is-visible > *:nth-child(3) { transition-delay: 160ms; }
+  html.js .stagger-child.is-visible > *:nth-child(4) { transition-delay: 240ms; }
+  html.js .stagger-child.is-visible > *:nth-child(5) { transition-delay: 320ms; }
+  html.js .stagger-child.is-visible > *:nth-child(6) { transition-delay: 400ms; }
+  #programs-section .jj-pc__card.reveal { transition-delay: calc(var(--i, 0) * 80ms); }
+  html.js #programs-section .jj-pc__card .jj-pc__chip { transition-delay: calc(var(--i, 0) * 80ms + 250ms); }
+  html.js #programs-section .jj-pc__card .jj-pc__title { transition-delay: calc(var(--i, 0) * 80ms + 350ms); }
+  html.js #programs-section .jj-pc__card .jj-pc__go { transition-delay: calc(var(--i, 0) * 80ms + 450ms), calc(var(--i, 0) * 80ms + 450ms), 0ms; }
+}

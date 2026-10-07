@@ -1,15 +1,19 @@
 // Modern School Notice Popup Modal Handler
 document.addEventListener('DOMContentLoaded', function() {
-  // Detect actual browser refresh/reload vs normal navigation
   const navigationEntries = performance.getEntriesByType('navigation');
   const isRefresh = navigationEntries.length > 0 && navigationEntries[0].type === 'reload';
-  
-  // Only clear session storage on actual browser refresh
+  const closedKey = 'jaljala_school_popup_closed';
+  const dismissedKey = 'jaljala_school_popup_dismissed_notices';
+
+  // A deliberate browser refresh starts a fresh popup session, as before.
   if (isRefresh) {
-    sessionStorage.removeItem('jaljala_school_popup_closed');
+    sessionStorage.removeItem(closedKey);
+    sessionStorage.removeItem(dismissedKey);
   }
-  
+
   const popupOverlay = document.getElementById('schoolNoticePopup');
+  if (!popupOverlay) return;
+
   const closePopupBtn = document.getElementById('closePopupBtn');
   const closeAllBtn = document.getElementById('closeAllBtn');
   const prevNoticeBtn = document.getElementById('prevNoticeBtn');
@@ -17,132 +21,130 @@ document.addEventListener('DOMContentLoaded', function() {
   const currentNoticeIndexEl = document.getElementById('currentNoticeIndex');
   const totalNoticesEl = document.getElementById('totalNotices');
   const noticeImagesContainer = document.getElementById('noticeImagesContainer');
-  
-  // Check if popup exists and has notices
-  if (!popupOverlay) return;
-  
-  // Get all notice wrappers
-  const noticeWrappers = noticeImagesContainer ? 
-    noticeImagesContainer.querySelectorAll('.school-notice-image-wrapper') : [];
-  
-  const totalNotices = noticeWrappers.length;
-  let currentNoticeIndex = 0;
-  
-  // Check if user already closed popup during current session
-  const popupClosed = sessionStorage.getItem('jaljala_school_popup_closed');
-  
-  if (!popupClosed && totalNotices > 0) {
-    // Show popup after a short delay
-    setTimeout(function() {
-      openPopup();
-    }, 800);
+  const noticeWrappers = noticeImagesContainer
+    ? Array.from(noticeImagesContainer.querySelectorAll('.school-notice-image-wrapper'))
+    : [];
+
+  if (!noticeWrappers.length) return;
+
+  let dismissedIds = [];
+  try {
+    dismissedIds = JSON.parse(sessionStorage.getItem(dismissedKey) || '[]');
+    if (!Array.isArray(dismissedIds)) dismissedIds = [];
+  } catch (error) {
+    dismissedIds = [];
   }
-  
-  // Open popup function
+
+  const dismissedSet = new Set(dismissedIds.map(String));
+  let remainingIndexes = noticeWrappers
+    .map((wrapper, index) => ({ wrapper, index }))
+    .filter(item => !dismissedSet.has(String(item.wrapper.dataset.noticeId)))
+    .map(item => item.index);
+  let currentNoticeIndex = remainingIndexes[0] ?? -1;
+
+  if (sessionStorage.getItem(closedKey)) remainingIndexes = [];
+
   function openPopup() {
     popupOverlay.classList.add('active');
-    document.body.style.overflow = 'hidden'; // Prevent background scrolling
+    document.body.style.overflow = 'hidden';
   }
-  
-  // Close popup function
-  function closePopup() {
+
+  function closePopup(closeAll) {
     popupOverlay.classList.remove('active');
-    document.body.style.overflow = ''; // Restore scrolling
-    
-    // Store in sessionStorage that popup was closed
-    sessionStorage.setItem('jaljala_school_popup_closed', 'true');
+    document.body.style.overflow = '';
+    if (closeAll) sessionStorage.setItem(closedKey, 'true');
   }
-  
-  // Close button click handler
-  if (closePopupBtn) {
-    closePopupBtn.addEventListener('click', closePopup);
-  }
-  
-  // Close All button click handler
-  if (closeAllBtn) {
-    closeAllBtn.addEventListener('click', closePopup);
-  }
-  
-  // Close on overlay click (outside modal)
-  popupOverlay.addEventListener('click', function(e) {
-    if (e.target === popupOverlay) {
-      closePopup();
+
+  function updateNavigation() {
+    const position = remainingIndexes.indexOf(currentNoticeIndex);
+    if (currentNoticeIndexEl && position !== -1) {
+      currentNoticeIndexEl.textContent = position + 1;
     }
-  });
-  
-  // Close on Escape key
-  document.addEventListener('keydown', function(e) {
-    if (e.key === 'Escape' && popupOverlay.classList.contains('active')) {
-      closePopup();
-    }
-  });
-  
-  // Navigation functions (if multiple notices)
-  function showNotice(index) {
-    // Hide all notices
-    noticeWrappers.forEach(function(wrapper) {
-      wrapper.style.display = 'none';
-    });
-    
-    // Show current notice
-    if (noticeWrappers[index]) {
-      noticeWrappers[index].style.display = 'flex';
-    }
-    
-    // Update counter
-    if (currentNoticeIndexEl) {
-      currentNoticeIndexEl.textContent = index + 1;
-    }
-    
-    // Update navigation button states
+    if (totalNoticesEl) totalNoticesEl.textContent = remainingIndexes.length;
+
     if (prevNoticeBtn) {
-      prevNoticeBtn.style.opacity = index === 0 ? '0.3' : '1';
-      prevNoticeBtn.style.pointerEvents = index === 0 ? 'none' : 'auto';
+      prevNoticeBtn.style.opacity = position <= 0 ? '0.3' : '1';
+      prevNoticeBtn.style.pointerEvents = position <= 0 ? 'none' : 'auto';
     }
-    
     if (nextNoticeBtn) {
-      nextNoticeBtn.style.opacity = index === totalNotices - 1 ? '0.3' : '1';
-      nextNoticeBtn.style.pointerEvents = index === totalNotices - 1 ? 'none' : 'auto';
+      const atEnd = position === -1 || position >= remainingIndexes.length - 1;
+      nextNoticeBtn.style.opacity = atEnd ? '0.3' : '1';
+      nextNoticeBtn.style.pointerEvents = atEnd ? 'none' : 'auto';
     }
-    
+  }
+
+  function showNotice(index) {
+    if (!remainingIndexes.includes(index)) return;
+    noticeWrappers.forEach(wrapper => { wrapper.style.display = 'none'; });
+    noticeWrappers[index].style.display = 'flex';
     currentNoticeIndex = index;
+    updateNavigation();
   }
-  
-  // Previous notice button
-  if (prevNoticeBtn && totalNotices > 1) {
-    prevNoticeBtn.addEventListener('click', function() {
-      if (currentNoticeIndex > 0) {
-        showNotice(currentNoticeIndex - 1);
-      }
-    });
+
+  function dismissCurrentNotice() {
+    if (currentNoticeIndex < 0) return;
+
+    const dismissedPosition = remainingIndexes.indexOf(currentNoticeIndex);
+    const noticeId = String(noticeWrappers[currentNoticeIndex].dataset.noticeId);
+    dismissedSet.add(noticeId);
+    sessionStorage.setItem(dismissedKey, JSON.stringify(Array.from(dismissedSet)));
+    remainingIndexes = remainingIndexes.filter(index => index !== currentNoticeIndex);
+
+    if (!remainingIndexes.length) {
+      currentNoticeIndex = -1;
+      closePopup(false);
+      return;
+    }
+
+    const nextPosition = Math.min(dismissedPosition, remainingIndexes.length - 1);
+    showNotice(remainingIndexes[nextPosition]);
   }
-  
-  // Next notice button
-  if (nextNoticeBtn && totalNotices > 1) {
-    nextNoticeBtn.addEventListener('click', function() {
-      if (currentNoticeIndex < totalNotices - 1) {
-        showNotice(currentNoticeIndex + 1);
-      }
-    });
+
+  if (remainingIndexes.length) {
+    showNotice(currentNoticeIndex);
+    setTimeout(openPopup, 800);
   }
-  
-  // Keyboard navigation
-  document.addEventListener('keydown', function(e) {
+
+  // The X dismisses only the notice currently on screen.
+  if (closePopupBtn) closePopupBtn.addEventListener('click', dismissCurrentNotice);
+
+  // Keep the explicit Close All action for users who want to dismiss the set.
+  if (closeAllBtn) closeAllBtn.addEventListener('click', () => closePopup(true));
+
+  // Outside click and Escape dismiss the current notice, just like the X.
+  popupOverlay.addEventListener('click', function(event) {
+    if (event.target === popupOverlay) dismissCurrentNotice();
+  });
+
+  document.addEventListener('keydown', function(event) {
     if (!popupOverlay.classList.contains('active')) return;
-    
-    if (e.key === 'ArrowLeft' && totalNotices > 1) {
-      if (currentNoticeIndex > 0) {
-        showNotice(currentNoticeIndex - 1);
-      }
-    } else if (e.key === 'ArrowRight' && totalNotices > 1) {
-      if (currentNoticeIndex < totalNotices - 1) {
-        showNotice(currentNoticeIndex + 1);
-      }
+
+    if (event.key === 'Escape') {
+      dismissCurrentNotice();
+      return;
+    }
+
+    const position = remainingIndexes.indexOf(currentNoticeIndex);
+    if (event.key === 'ArrowLeft' && position > 0) {
+      showNotice(remainingIndexes[position - 1]);
+    } else if (event.key === 'ArrowRight' && position < remainingIndexes.length - 1) {
+      showNotice(remainingIndexes[position + 1]);
     }
   });
-  
-  // Initialize first notice
-  if (totalNotices > 0) {
-    showNotice(0);
+
+  if (prevNoticeBtn) {
+    prevNoticeBtn.addEventListener('click', function() {
+      const position = remainingIndexes.indexOf(currentNoticeIndex);
+      if (position > 0) showNotice(remainingIndexes[position - 1]);
+    });
+  }
+
+  if (nextNoticeBtn) {
+    nextNoticeBtn.addEventListener('click', function() {
+      const position = remainingIndexes.indexOf(currentNoticeIndex);
+      if (position >= 0 && position < remainingIndexes.length - 1) {
+        showNotice(remainingIndexes[position + 1]);
+      }
+    });
   }
 });

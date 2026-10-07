@@ -10,7 +10,7 @@ from django.db import models
 
 # Custom DateTime Widget with better UX
 class CustomDateTimeInput(DateTimeInput):
-    def __init__(self, attrs=None):
+    def __init__(self, attrs=None, format=None):
         default_attrs = {
             'type': 'datetime-local',
             'class': 'form-control datetime-picker',
@@ -18,7 +18,7 @@ class CustomDateTimeInput(DateTimeInput):
         }
         if attrs:
             default_attrs.update(attrs)
-        super().__init__(attrs=default_attrs)
+        super().__init__(attrs=default_attrs, format=format)
     
     def format_value(self, value):
         """Format datetime value for datetime-local input (YYYY-MM-DDTHH:MM format)"""
@@ -59,10 +59,20 @@ from .models import (
 
 from django import forms
 from django.utils import timezone
-from django.utils.dateparse import parse_datetime
 
 
 class PopupNoticeForm(forms.ModelForm):
+    start_date = forms.DateTimeField(
+        required=False,
+        input_formats=('%Y-%m-%dT%H:%M', '%Y-%m-%dT%H:%M:%S'),
+        widget=CustomDateTimeInput(format='%Y-%m-%dT%H:%M'),
+    )
+    end_date = forms.DateTimeField(
+        required=False,
+        input_formats=('%Y-%m-%dT%H:%M', '%Y-%m-%dT%H:%M:%S'),
+        widget=CustomDateTimeInput(format='%Y-%m-%dT%H:%M'),
+    )
+
     class Meta:
         model = PopupNotice
         fields = '__all__'
@@ -103,47 +113,13 @@ class PopupNoticeForm(forms.ModelForm):
         if 'schedule_preset' in self.fields:
             self.fields['schedule_preset'].initial = ''
 
-    def _parse_datetime_input(self, value):
-        if value in (None, ''):
-            return None
-        # If it's already a datetime object, return it
-        import datetime
-        if isinstance(value, datetime.datetime):
-            return value
-
-        # Try django's ISO parser first
-        dt = parse_datetime(str(value))
-        if dt:
-            return dt
-
-        # Try several common formats
-        for fmt in ('%Y-%m-%dT%H:%M', '%Y-%m-%d %H:%M:%S', '%Y-%m-%d %H:%M', '%m/%d/%Y %I:%M %p', '%m/%d/%Y %H:%M'):
-            try:
-                return datetime.datetime.strptime(str(value), fmt)
-            except Exception:
-                continue
-
-        # Last resort: return None so validation will catch it
-        return None
-
-    def clean_start_date(self):
-        val = self.cleaned_data.get('start_date')
-        parsed = self._parse_datetime_input(val)
-        if parsed is None and val not in (None, ''):
-            raise forms.ValidationError('Invalid start date format.')
-        # If timezone-aware handling is desired, make naive -> aware in current timezone
-        if parsed is not None and timezone.is_naive(parsed):
-            parsed = timezone.make_aware(parsed, timezone.get_current_timezone())
-        return parsed
-
-    def clean_end_date(self):
-        val = self.cleaned_data.get('end_date')
-        parsed = self._parse_datetime_input(val)
-        if parsed is None and val not in (None, ''):
-            raise forms.ValidationError('Invalid end date format.')
-        if parsed is not None and timezone.is_naive(parsed):
-            parsed = timezone.make_aware(parsed, timezone.get_current_timezone())
-        return parsed
+    def clean(self):
+        cleaned_data = super().clean()
+        start_date = cleaned_data.get('start_date')
+        end_date = cleaned_data.get('end_date')
+        if start_date and end_date and end_date <= start_date:
+            self.add_error('end_date', 'End date must be later than start date.')
+        return cleaned_data
 
 
 
@@ -400,7 +376,10 @@ class PopupNoticeAdmin(StatusBaseAdmin):
 
     # Use better date/time widgets
     formfield_overrides = {
-        models.DateTimeField: {'widget': CustomDateTimeInput},
+        models.DateTimeField: {
+            'form_class': forms.DateTimeField,
+            'widget': CustomDateTimeInput,
+        },
     }
     form = PopupNoticeForm
 
