@@ -544,8 +544,8 @@ class TemplateCommentLeakTests(SimpleTestCase):
             )
 
 
-class AdmissionCtaGlowTests(SimpleTestCase):
-    """Guards the "respiration" glow on the two admission CTAs.
+class AdmissionCtaStyleTests(SimpleTestCase):
+    """Guards the deep-green ONLINE ADMISSION style + green respiration glow.
 
     Both conversion points share ONE class, defined in
     static/css/admission-cta.css and loaded last in templates/base.html:
@@ -553,25 +553,19 @@ class AdmissionCtaGlowTests(SimpleTestCase):
       * templates/includes/navbar.html - the ONLINE ADMISSION brand-header button
       * templates/home/index.html      - the home-hero "Enroll Your Child" button
 
-    History: each button used to carry its own copy of a maroon/marigold
-    conic ring (1.8s and 2.4s linear sweeps, declared twice - in
-    modern-enhancements.css and jaljala-redesign.css), which read as a flash
-    rather than a breath. Those copies were replaced by one shared treatment
-    in the school's own palette - a pine face, a marigold rim, a marigold
-    halo over a rhododendron under-glow - so what is pinned here is:
+    What is pinned here is:
 
       * one shared class, with both links and labels left untouched
-      * the site's own colour tokens, not an outside colour scheme
-      * a 3-4s ease-in-out breath (never a blink: no steps(), no alternate,
-        no sub-second duration) on BOTH the rim glow and the halo, on one beat
-      * an amplitude wide enough to be seen: a sub-.35 ember at the bottom of
-        the breath and a near-opaque peak whose bloom is clearly larger - the
-        "I can barely see the glow" bug is what these two pins catch
+      * deep-green face (#0f5e36) + thin muted-gold rim (#c9a227),
+        white label, 6px radius - exactly the approved screenshot
+      * a slow 3-4s ease-in-out green/gold breath (never a blink) on BOTH
+        the rim glow and the halo, on one rhythm, in matching greens/golds
+      * a visible breath: dim ember at the bottom, near-opaque larger bloom
+        at the peak
       * a 2px hover lift that leaves the animated box-shadows alone
       * a focus ring drawn with outline (box-shadow is taken by the breath)
       * prefers-reduced-motion switching the animation off, and still lit
-      * the old maroon/gold CTA selectors and the discarded navy/cyan palette
-        not coming back
+      * the retired crimson/marigold breathing glow does not come back
     """
 
     #: The two CTAs as (template path, link fragment, label) triples.
@@ -599,39 +593,11 @@ class AdmissionCtaGlowTests(SimpleTestCase):
         }
 
     def _block(self, selector):
-        """Return the first declaration block for `selector`, comments stripped.
-
-        Comments are removed so an explanatory note can never be mistaken for
-        an actual declaration.
-        """
+        """Return the first declaration block for `selector`, comments stripped."""
         idx = self.css.find(selector)
         self.assertNotEqual(idx, -1, f'missing rule for {selector}')
         block = self.css[idx:self.css.find('}', idx)]
         return re.sub(r'/\*.*?\*/', '', block, flags=re.S)
-
-    def _keyframes(self, name):
-        """Body of the `@keyframes <name>` block, comments stripped."""
-        match = re.search(
-            r'@keyframes ' + name + r' \{(.*?)\n\}', self.css, re.S
-        )
-        self.assertIsNotNone(match, f'missing @keyframes {name}')
-        return re.sub(r'/\*.*?\*/', '', match.group(1), flags=re.S)
-
-    @staticmethod
-    def _largest_bloom(block):
-        """Widest `0 0 <blur>px` radius declared in a block of declarations."""
-        radii = [int(n) for n in re.findall(r'0 0 (\d+)px', block)]
-        return max(radii, default=0)
-
-    @staticmethod
-    def _strongest_alpha(block):
-        """Highest rgba() alpha declared in a block of declarations."""
-        alphas = [
-            float(a) for a in re.findall(
-                r'rgba\(\s*\d+,\s*\d+,\s*\d+,\s*(\.?\d+)\)', block
-            )
-        ]
-        return max(alphas, default=0.0)
 
     def test_both_ctas_share_one_class_and_keep_links_and_labels(self):
         for rel, link, label in self.CTAS:
@@ -640,17 +606,21 @@ class AdmissionCtaGlowTests(SimpleTestCase):
                           f'{rel} no longer uses the shared CTA class')
             self.assertIn(link, html, f'{rel} lost its admission link')
             self.assertIn(label, html, f'{rel} lost its label')
-            # Two per-button variants would let the effect drift apart again.
             self.assertNotIn('admission-glow-btn', html)
             self.assertNotIn('jj-admission-glow', html)
+
+    def test_navbar_uses_screenshot_edit_icon(self):
+        html = self.templates['includes/navbar.html']
+        self.assertIn('fa-pen-to-square', html,
+                      'navbar CTA must use the screenshot edit icon')
+        self.assertNotIn('fa-file-pen', html,
+                         'retired CTA icon must not come back')
 
     def test_stylesheet_is_loaded_after_the_layers_it_replaces(self):
         self.assertIn(
             "{% static_v 'css/admission-cta.css' %}",
             self.base_html,
         )
-        # Later in the document wins at equal specificity, so this layer has
-        # to come after every stylesheet that used to colour these buttons.
         new = self.base_html.index('admission-cta.css')
         for earlier in (
             'modern-enhancements.css',
@@ -662,10 +632,43 @@ class AdmissionCtaGlowTests(SimpleTestCase):
                 f'admission-cta.css must load after {earlier}',
             )
 
+    def test_flat_green_face_and_gold_rim(self):
+        base = self._block('.jj-admission-cta {')
+        self.assertIn('background-color: var(--jj-cta-green) !important;', base)
+        self.assertIn('background-image: none !important;', base)
+        self.assertIn('border: 1px solid var(--jj-cta-rim) !important;', base)
+        self.assertIn('border-radius: 6px !important;', base)
+        self.assertIn('color: var(--jj-cta-white) !important;', base)
+        self.assertIn('--jj-cta-green: #0f5e36;', self.css)
+        self.assertIn('--jj-cta-rim: #c9a227;', self.css)
+        self.assertIn('--jj-cta-white: #ffffff;', self.css)
+        self.assertIn('--jj-cta-glow-green: #2fbf71;', self.css)
+
+    def _keyframes(self, name):
+        match = re.search(
+            r'@keyframes ' + name + r' \{(.*?)\n\}', self.css, re.S
+        )
+        self.assertIsNotNone(match, f'missing @keyframes {name}')
+        return re.sub(r'/\*.*?\*/', '', match.group(1), flags=re.S)
+
+    @staticmethod
+    def _largest_bloom(block):
+        radii = [int(n) for n in re.findall(r'0 0 (\d+)px', block)]
+        return max(radii, default=0)
+
+    @staticmethod
+    def _strongest_alpha(block):
+        alphas = [
+            float(a) for a in re.findall(
+                r'rgba\(\s*\d+,\s*\d+,\s*\d+,\s*(\.?\d+)\)', block
+            )
+        ]
+        return max(alphas, default=0.0)
+
     def test_breathing_is_slow_eased_and_never_blinks(self):
         halo = self._block('.jj-admission-cta::after {')
         match = re.search(
-            r'animation:\s*jjCtaBreathe\s+([\d.]+)s\s+ease-in-out\s+infinite;',
+            r'animation:\s*jjCtaGreenHaloBreathe\s+([\d.]+)s\s+ease-in-out\s+infinite;',
             halo,
         )
         self.assertIsNotNone(
@@ -675,153 +678,97 @@ class AdmissionCtaGlowTests(SimpleTestCase):
         duration = float(match.group(1))
         self.assertGreaterEqual(duration, 3.0)
         self.assertLessEqual(duration, 4.0)
-        # A blink or strobe would need steps()/alternate; a slow breath does not.
         self.assertNotIn('steps(', self.css)
         self.assertNotIn('alternate', self.css)
-        # The quiet end is declared on the rule itself too, so a browser that
-        # never starts the animation still shows the ember instead of a flat
-        # button.
         self.assertIn('opacity: .3;', halo)
         self.assertIn('box-shadow:', halo)
-
-        body = self._keyframes('jjCtaBreathe')
-        self.assertIn('0%, 100%', body)   # the quiet end of the breath
-        self.assertIn('50%', body)        # the peak
+        body = self._keyframes('jjCtaGreenHaloBreathe')
+        self.assertIn('0%, 100%', body)
+        self.assertIn('50%', body)
         self.assertIn('opacity: 1', body)
 
     def test_the_breath_is_wide_enough_to_be_seen(self):
-        """A glow nobody notices is the bug: the breath has to be obvious.
-
-        An earlier pass breathed .4 -> 1 on the halo alone and read on screen
-        as "almost no glow", so the amplitude is pinned numerically here.
-        """
         quiet = float(re.search(
             r'opacity:\s*(\.?\d+);',
             self._block('.jj-admission-cta::after {'),
         ).group(1))
-        self.assertGreaterEqual(quiet, .2, 'the exhale must stay a warm ember')
-        self.assertLessEqual(quiet, .35, 'the exhale must really dim')
-
-        ember, peak = self._keyframes('jjCtaBreathe').split('50%', 1)
+        self.assertGreaterEqual(quiet, .2)
+        self.assertLessEqual(quiet, .35)
+        ember, peak = self._keyframes('jjCtaGreenHaloBreathe').split('50%', 1)
         peak_opacity = float(re.search(r'opacity:\s*([\d.]+);', peak).group(1))
-        self.assertEqual(peak_opacity, 1, 'the inhale must reach full bloom')
-        self.assertGreaterEqual(
-            peak_opacity / quiet, 2.5,
-            'a breath this shallow cannot be seen on screen',
-        )
-        # It does not merely brighten - the bloom visibly grows.
+        self.assertEqual(peak_opacity, 1)
+        self.assertGreaterEqual(peak_opacity / quiet, 2.5)
         self.assertIn('transform: scale(1.045);', peak)
         self.assertGreater(
             self._largest_bloom(peak), self._largest_bloom(ember) * 1.4,
-            'the peak bloom must be clearly larger than the ember',
         )
         self.assertGreater(
             self._strongest_alpha(peak), self._strongest_alpha(ember),
-            'the peak bloom must be brighter than the ember',
         )
-        self.assertGreaterEqual(
-            self._strongest_alpha(peak), .8,
-            'the peak must be near-opaque, not a whisper',
-        )
+        self.assertGreaterEqual(self._strongest_alpha(peak), .8)
 
     def test_the_button_face_breathes_in_step_with_the_halo(self):
-        """One faint layer was not enough, so the rim glows on the same beat."""
         base = self._block('.jj-admission-cta {')
         face_breath = re.search(
-            r'animation:\s*jjCtaFaceBreathe\s+([\d.]+)s\s+ease-in-out\s+infinite;',
+            r'animation:\s*jjCtaGreenBreathe\s+([\d.]+)s\s+ease-in-out\s+infinite;',
             base,
         )
         self.assertIsNotNone(face_breath, 'the rim glow must breathe as well')
         halo_breath = re.search(
-            r'animation:\s*jjCtaBreathe\s+([\d.]+)s\s+ease-in-out\s+infinite;',
+            r'animation:\s*jjCtaGreenHaloBreathe\s+([\d.]+)s\s+ease-in-out\s+infinite;',
             self._block('.jj-admission-cta::after {'),
         )
         self.assertEqual(
             face_breath.group(1), halo_breath.group(1),
             'both layers must breathe on one rhythm',
         )
-        ember, peak = self._keyframes('jjCtaFaceBreathe').split('50%', 1)
+        ember, peak = self._keyframes('jjCtaGreenBreathe').split('50%', 1)
         self.assertGreater(
             self._strongest_alpha(peak), self._strongest_alpha(ember),
-            'the rim glow must brighten at the peak of the breath',
         )
 
-    def test_it_wears_the_schools_own_palette(self):
-        """Rhododendron face + marigold rim, and nothing else.
-
-        Crimson + marigold is the button pair the whole site already speaks
-        (.btn-primary, .jj-btn-primary, .btn-gold all wear --color-accent), so
-        the CTA belongs to the page instead of carrying an outside scheme.
-        Only two hues appear, which is what stops the glow looking busy.
-        """
-        base = self._block('.jj-admission-cta {')
-        self.assertIn('border: 2px solid var(--jj-cta-gold) !important;', base)
-        self.assertIn('background-image: linear-gradient(', base)
-        self.assertIn('color: var(--jj-cta-white) !important;', base)
-        self.assertIn('box-shadow:', base)   # never a flat button
-
-        self.assertIn('--jj-cta-crimson: #A6314B;', self.css)      # accent
-        self.assertIn('--jj-cta-crimson-deep: #8C2740;', self.css)  # deep accent
-        self.assertIn('--jj-cta-gold: #E8A33D;', self.css)          # highlight
-        self.assertIn('--jj-cta-amber: #C9871F;', self.css)         # halo depth
-        self.assertIn('var(--jj-cta-crimson) 0%', base)
-
-        # Discarded paints must not survive anywhere in this stylesheet: the
-        # navy/cyan first pass and the pine/gold/crimson three-hue second pass.
-        self.assertNotIn('--jj-cta-pine', self.css)
-        for dropped in ('22d3ee', '67e8f9', '082f49', '0f172a',
-                        '1f3a34', '122c26', '166, 49, 75', '16, 38, 32'):
-            self.assertNotIn(dropped, self.css.lower())
-
-        # Two hues is the whole point: every glow layer is marigold or amber,
-        # never the crimson of the face (that would smear the button's edge).
+    def test_glow_uses_matching_greens_and_golds_only(self):
         for layer in (self._block('.jj-admission-cta::after {')
-                      + self._keyframes('jjCtaBreathe')):
+                      + self._keyframes('jjCtaGreenHaloBreathe')
+                      + self._keyframes('jjCtaGreenBreathe')):
             self.assertNotIn('rgba(166', layer)
             self.assertNotIn('rgba(60', layer)
+            self.assertNotIn('232, 163, 61, .95', layer)
 
     def test_hover_answers_without_fighting_the_keyframes(self):
         hover = self._block('.jj-admission-cta:hover {')
         self.assertIn('transform: translateY(-2px);', hover)
-        # Both box-shadows belong to the animations now; a hover rule that set
-        # one would lose the cascade and leave the hover looking dead.
         self.assertNotIn('box-shadow', hover)
         self.assertIn('filter: brightness(', hover)
-        self.assertIn('border-color: var(--jj-cta-gold-bright) !important;',
+        self.assertIn('border-color: var(--jj-cta-rim-bright) !important;',
                       hover)
-
-        # The halo brightens on top of whatever mid-breath opacity it has.
         self.assertIn('filter: brightness(',
                       self._block('.jj-admission-cta:hover::after {'))
-
         icons = self._block('.jj-admission-cta:hover :is(')
         self.assertIn('transform: translateX(3px);', icons)
 
     def test_focus_ring_is_an_outline_not_a_shadow(self):
-        """box-shadow is taken by the breath, so focus needs its own channel."""
         focus = self._block('.jj-admission-cta:focus-visible {')
         self.assertIn(
-            'outline: 3px solid var(--jj-cta-gold-bright) !important;', focus
+            'outline: 2px solid var(--jj-cta-rim-bright) !important;', focus
         )
         self.assertIn('outline-offset: 3px;', focus)
         self.assertNotIn('outline: none', self.css)
 
-    def test_reduced_motion_switches_the_animation_off(self):
+    def test_reduced_motion_disables_lift(self):
         block = self.css[
             self.css.index('@media (prefers-reduced-motion: reduce)'):
         ]
         self.assertIn('animation: none !important;', block)
-        self.assertIn('transform: none;', block)  # the lift is motion too
-        # Still lit while standing still: the steady glow is set between the
-        # two ends of the breath instead of dropping to nothing.
+        self.assertIn('transform: none;', block)
         self.assertIn('opacity: .55;', block)
         self.assertIn('box-shadow:', block)
 
-    def test_old_maroon_gold_cta_styling_is_gone(self):
+    def test_old_crimson_glow_styling_is_gone(self):
         canonical = 'admission-cta.css'
         for path in sorted((self.root / 'static' / 'css').glob('*.css')):
             if path.name == canonical:
-                continue  # the one stylesheet allowed to own these buttons
+                continue
             text = path.read_text(encoding='utf-8')
             self.assertNotIn('admission-glow-btn', text,
                              f'{path.name} still styles the retired nav CTA')
@@ -832,7 +779,14 @@ class AdmissionCtaGlowTests(SimpleTestCase):
             self.assertNotIn('jj-admission-cta', text,
                              f'{path.name} must not re-style the shared CTA '
                              'class - the effect would drift apart again')
-
+        # The retired crimson/marigold breathing palette is gone for good.
+        self.assertNotIn('--jj-cta-crimson', self.css)
+        self.assertNotIn('--jj-cta-gold: #E8A33D;', self.css)
+        self.assertNotIn('--jj-cta-amber', self.css)
+        self.assertNotIn('jjCtaBreathe', self.css)
+        self.assertNotIn('jjCtaFaceBreathe', self.css)
+        self.assertIn('jjCtaGreenBreathe', self.css)
+        self.assertIn('jjCtaGreenHaloBreathe', self.css)
 
 class TopbarLoginIconTests(SimpleTestCase):
     """The top-bar trigger reads "open padlock", the menu item reads "lock".

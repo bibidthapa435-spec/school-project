@@ -1,127 +1,166 @@
-{% extends "admin/base_site.html" %}
-{% load i18n static %}
-
-{% block bodyclass %}login sjss-login-page{% endblock %}
-
-{% block nav-sidebar %}{% endblock %}
-
-{% block pretitle %}{% endblock %}
-
-{% block extrahead %}
-{{ block.super }}
-<style>
-  /* Hide admin chrome on the login page only */
-  body.login .sjss-sidebar,
-  body.login .sjss-topbar,
-  body.login .alert-container {
-    display: none !important;
-  }
-  body.login .admin-main-content {
-    width: 100%;
-    margin-left: 0 !important;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    min-height: 100vh;
-    padding: 2rem !important;
-    background: transparent !important;
-  }
-  body.login .sjss-login-shell {
-    width: 100%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-  }
-</style>
-{% endblock %}
-
-{% block content %}
-<div class="sjss-login-bg">
-  <div class="sjss-login-bg-shape sjss-login-bg-shape-1"></div>
-  <div class="sjss-login-bg-shape sjss-login-bg-shape-2"></div>
-  <div class="sjss-login-bg-shape sjss-login-bg-shape-3"></div>
-</div>
-
-<div class="sjss-login-shell">
-  <div class="sjss-login-card">
-    <div class="sjss-login-brand">
-      <img src="{{ site_settings.logo_url|default:'/static/images/logo.jpg' }}" alt="{{ site_settings.school_name|default:'Shree Jaljala Secondary School' }} logo" class="sjss-login-logo" onerror="this.onerror=null; this.src='/static/images/logo.jpg';">
-      <h1>{{ site_settings.school_name|default:'Shree Jaljala Secondary School' }}</h1>
-      <p>Admin Panel — Sign in to manage your school website</p>
-    </div>
-
-    {% if form.errors and not form.non_field_errors %}
-      <p class="sjss-login-error">
-        {% if form.errors.items|length == 1 %}{% trans "Please correct the error below." %}{% else %}{% trans "Please correct the errors below." %}{% endif %}
-      </p>
-    {% endif %}
-
-    {% if form.non_field_errors %}
-      {% for error in form.non_field_errors %}
-        <p class="sjss-login-error">{{ error }}</p>
-      {% endfor %}
-    {% endif %}
-
-    <form action="{{ app_path }}" method="post" id="login-form" class="sjss-login-form">
-      {% csrf_token %}
-      <input type="hidden" name="next" value="{{ next }}">
-
-      <div class="sjss-form-group">
-        <label for="{{ form.username.id_for_label }}">{% trans 'Username' %}</label>
-        {{ form.username }}
-      </div>
-
-      <div class="sjss-form-group" style="position: relative;">
-        <label for="{{ form.password.id_for_label }}">{% trans 'Password' %}</label>
-        {{ form.password }}
-        <button type="button" class="sjss-password-toggle" onclick="togglePassword()">
-          <i class="fa-solid fa-eye" id="toggleIcon"></i>
-        </button>
-      </div>
-
-      <div class="sjss-login-options">
-        <label class="sjss-remember-me">
-          <input type="checkbox" name="remember" id="remember">
-          Remember me
-        </label>
-        <a href="#" class="sjss-forgot-password">Forgot password?</a>
-      </div>
-
-      <button type="submit" class="sjss-login-btn">
-        {% trans 'Log in' %}
-        <i class="fa-solid fa-arrow-right"></i>
-      </button>
-    </form>
-
-    <div class="sjss-login-footer-links">
-      <a href="/" target="_blank" rel="noopener noreferrer">
-        <i class="fa-solid fa-arrow-up-right-from-square"></i> View Public Website
-      </a>
-    </div>
-  </div>
-</div>
-
-<script>
-function togglePassword() {
-    var passwordInput = document.getElementById('{{ form.password.id_for_label }}');
-    var toggleIcon = document.getElementById('toggleIcon');
-    
-    if (passwordInput.type === 'password') {
-        passwordInput.type = 'text';
-        toggleIcon.classList.remove('fa-eye');
-        toggleIcon.classList.add('fa-eye-slash');
-    } else {
-        passwordInput.type = 'password';
-        toggleIcon.classList.remove('fa-eye-slash');
-        toggleIcon.classList.add('fa-eye');
-    }
-}
-</script>
-{% endblock %}
-
-{% block footer %}
-<footer class="sjss-footer sjss-footer-login">
-  <p>© 2026 Shree Jaljala Secondary School. All rights reserved.</p>
-  <p class="footer-heart">Made with ❤️ for our school</p>
-</footer>
-{% endblock %}
+{% extends "admin/base_site.html" %}
+{% load i18n static %}
+
+{% block title %}{% trans 'Admin Login' %} | {{ site_settings.school_name|default:'Shree Jaljala Secondary School' }}{% endblock %}
+
+{% block bodyclass %}login sjss-login-page{% endblock %}
+
+{% block nav-sidebar %}{% endblock %}
+
+{% block pretitle %}{% endblock %}
+
+{% block content %}
+<style>
+  .admin-layout > .admin-main-content{margin-left:0 !important;padding:0 !important;background:transparent !important}
+  .sjss-login-card .errorlist{list-style:none;margin:.4rem 0 0;padding:0;color:#b91c1c;font-size:.8rem;line-height:1.5}
+</style>
+<div class="sjss-login-page">
+  <div class="sjss-login-bg" aria-hidden="true">
+    <div class="sjss-login-bg-shape sjss-login-bg-shape-1"></div>
+    <div class="sjss-login-bg-shape sjss-login-bg-shape-2"></div>
+    <div class="sjss-login-bg-shape sjss-login-bg-shape-3"></div>
+  </div>
+
+  <div class="sjss-login-shell">
+    <div class="sjss-login-card">
+      <div class="sjss-login-brand">
+        <img src="{{ site_settings.logo_url|default:'/static/images/image/tilogo.png' }}" alt="{{ site_settings.school_name|default:'Shree Jaljala Secondary School' }} logo" class="sjss-login-logo" onerror="this.onerror=null;this.src='/static/images/image/tilogo.png';">
+        <p class="sjss-login-eyebrow">{% trans 'School Administration' %}</p>
+        <h1>{{ site_settings.school_name|default:'Shree Jaljala Secondary School' }}</h1>
+        <p class="sjss-login-subtitle"><span class="sjss-login-badge">{% trans 'Admin Panel' %}</span>{% trans 'Sign in to manage your school website' %}</p>
+        <p class="sjss-login-meta">Panchkhapan Municipality-7, Bihibare, Sankhuwasabha &middot; {% trans 'Estd. 2045 B.S. (1988 A.D.)' %}</p>
+      </div>
+
+      {% if form.non_field_errors %}
+      <div class="sjss-login-error-list" role="alert">
+        {% for error in form.non_field_errors %}
+        <p class="sjss-login-error">{{ error }}</p>
+        {% endfor %}
+      </div>
+      {% elif form.errors %}
+      <p class="sjss-login-error" role="alert">{% if form.errors.items|length == 1 %}{% trans 'Please correct the error below.' %}{% else %}{% trans 'Please correct the errors below.' %}{% endif %}</p>
+      {% endif %}
+      <form action="{{ app_path }}" method="post" id="login-form" class="sjss-login-form">
+        {% csrf_token %}
+        <input type="hidden" name="next" value="{{ next }}">
+
+        <div class="sjss-form-group">
+          <label for="{{ form.username.id_for_label }}">{% trans 'Username' %}</label>
+          {{ form.username }}
+          {{ form.username.errors }}
+        </div>
+
+        <div class="sjss-form-group">
+          <label for="{{ form.password.id_for_label }}">{% trans 'Password' %}</label>
+          <div class="sjss-password-wrap">
+            {{ form.password }}
+            <button type="button" class="sjss-password-toggle" id="sjss-password-toggle" aria-controls="{{ form.password.id_for_label }}" aria-pressed="false" aria-label="{% trans 'Show password' %}" data-show-label="{% trans 'Show password' %}" data-hide-label="{% trans 'Hide password' %}">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false" hidden><path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94"></path><path d="M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19"></path><path d="M14.12 14.12a3 3 0 1 1-4.24-4.24"></path><line x1="1" y1="1" x2="23" y2="23"></line></svg>
+            </button>
+          </div>
+          {{ form.password.errors }}
+        </div>
+
+        <div class="sjss-login-options">
+          <label class="sjss-remember" title="{% trans 'Stored only in this browser' %}">
+            <input type="checkbox" name="remember-username" id="sjss-remember-username" value="1">
+            {% trans 'Remember my username' %}
+          </label>
+          <p class="sjss-login-help">{% trans 'Forgot your password? Please contact the school administrator to reset it.' %}</p>
+        </div>
+
+        <button type="submit" class="sjss-login-btn" id="sjss-login-submit" data-loading-label="{% trans 'Signing in…' %}">
+          <span data-login-label>{% trans 'Log in' %}</span>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
+        </button>
+      </form>
+
+      <div class="sjss-login-footer-links">
+        <a href="/">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y2="3"></line></svg>
+          {% trans 'View Public Website' %}
+        </a>
+      </div>
+    </div>
+
+    <div class="sjss-login-page-footer">
+      <p>&copy; {% now 'Y' %} {{ site_settings.school_name|default:'Shree Jaljala Secondary School' }}. {% trans 'All rights reserved.' %}</p>
+      <p class="footer-heart">{% trans 'Made with' %} &#10084;&#65039; {% trans 'for our school' %}</p>
+    </div>
+  </div>
+</div>
+<script>
+(function () {
+  var form = document.getElementById('login-form');
+  if (!form) { return; }
+  var userField = form.querySelector('input[name="username"]');
+  var passField = form.querySelector('input[name="password"]');
+  var toggle = document.getElementById('sjss-password-toggle');
+  var remember = document.getElementById('sjss-remember-username');
+  var submit = document.getElementById('sjss-login-submit');
+  var storageKey = 'sjss-admin-username';
+  if (userField) {
+    userField.setAttribute('autocomplete', 'username');
+    userField.setAttribute('autocapitalize', 'none');
+    userField.setAttribute('spellcheck', 'false');
+  }
+  if (passField) { passField.setAttribute('autocomplete', 'current-password'); }
+  try {
+    var saved = window.localStorage.getItem(storageKey);
+    if (saved && userField && !userField.value) {
+      userField.value = saved;
+      if (remember) { remember.checked = true; }
+    }
+  } catch (err) { /* private mode: continue without a saved username */ }
+  if (toggle && passField) {
+    var showLabel = toggle.getAttribute('data-show-label') || 'Show password';
+    var hideLabel = toggle.getAttribute('data-hide-label') || 'Hide password';
+    var icons = toggle.querySelectorAll('svg');
+    var setState = function (show) {
+      try { passField.type = show ? 'text' : 'password'; } catch (err2) { return; }
+      toggle.setAttribute('aria-pressed', show ? 'true' : 'false');
+      toggle.setAttribute('aria-label', show ? hideLabel : showLabel);
+      if (icons.length === 2) {
+        if (show) { icons[0].setAttribute('hidden', ''); icons[1].removeAttribute('hidden'); }
+        else { icons[1].setAttribute('hidden', ''); icons[0].removeAttribute('hidden'); }
+      }
+    };
+    toggle.addEventListener('click', function () {
+      setState(passField.type === 'password');
+      try { passField.focus({ preventScroll: true }); }
+      catch (err3) { try { passField.focus(); } catch (err4) {} }
+    });
+  }
+  form.addEventListener('submit', function (event) {
+    try {
+      if (remember && userField) {
+        if (remember.checked && userField.value) { window.localStorage.setItem(storageKey, userField.value); }
+        else { window.localStorage.removeItem(storageKey); }
+      }
+    } catch (err5) {}
+    if (form.getAttribute('data-submitted') === '1') { event.preventDefault(); return; }
+    form.setAttribute('data-submitted', '1');
+    if (submit) {
+      submit.disabled = true;
+      submit.setAttribute('aria-busy', 'true');
+      var label = submit.querySelector('[data-login-label]');
+      var loading = submit.getAttribute('data-loading-label');
+      if (label && loading) { label.textContent = loading; }
+    }
+  });
+  var hasError = !!form.querySelector('.sjss-login-error');
+  try {
+    if (!hasError && userField && !userField.value) { userField.focus(); }
+    else if (!hasError && userField.value && passField && !passField.value) { passField.focus(); }
+  } catch (err6) {}
+})();
+</script>
+{% endblock %}
+
+{% block footer %}
+<footer class="sjss-footer sjss-footer-login">
+  <p>&copy; {% now 'Y' %} {{ site_settings.school_name|default:'Shree Jaljala Secondary School' }}. {% trans 'All rights reserved.' %}</p>
+  <p class="footer-heart">{% trans 'Made with' %} &#10084;&#65039; {% trans 'for our school' %}</p>
+</footer>
+{% endblock %}
