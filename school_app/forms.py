@@ -1,7 +1,7 @@
 from django import forms
 from django.core.validators import RegexValidator
 from django.core.exceptions import ValidationError
-from .models import AdmissionApplication, ContactMessage
+from .models import AdmissionApplication, ContactMessage, SiteSettings
 import re
 
 
@@ -146,3 +146,105 @@ class ContactMessageForm(forms.ModelForm):
         if len(message.strip()) < 10:
             raise ValidationError("Message must be at least 10 characters long.")
         return message.strip()
+
+
+class SiteSettingsForm(forms.ModelForm):
+    class Meta:
+        model = SiteSettings
+        fields = [
+            'school_name', 'tagline', 'phone', 'email', 'address',
+            'logo', 'favicon',
+        ]
+        widgets = {
+            'school_name': forms.TextInput(attrs={
+                'class': 'form-control',
+                'placeholder': 'e.g. Shree Jaljala Secondary School',
+            }),
+            'tagline': forms.TextInput(attrs={
+                'class': 'form-control',
+                'placeholder': 'e.g. Quality Education for All',
+            }),
+            'phone': forms.TextInput(attrs={
+                'class': 'form-control',
+                'placeholder': 'e.g. 98XXXXXXXX',
+            }),
+            'email': forms.EmailInput(attrs={
+                'class': 'form-control',
+                'placeholder': 'e.g. info@school.edu.np',
+            }),
+            'address': forms.Textarea(attrs={
+                'class': 'form-control',
+                'rows': 3,
+                'placeholder': 'School address',
+            }),
+            'logo': forms.ClearableFileInput(attrs={
+                'class': 'form-control',
+                'accept': 'image/*',
+            }),
+            'favicon': forms.ClearableFileInput(attrs={
+                'class': 'form-control',
+                'accept': 'image/*',
+            }),
+        }
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields['school_name'].required = True
+        self.fields['school_name'].help_text = (
+            'Official name of the school shown across the website.'
+        )
+        self.fields['tagline'].help_text = 'Short school tagline or motto.'
+        self.fields['phone'].help_text = (
+            'Nepal mobile number, e.g. 98XXXXXXXX or +97798XXXXXXXX.'
+        )
+        self.fields['email'].help_text = 'Contact email shown on the website.'
+        self.fields['address'].help_text = 'School address.'
+        self.fields['logo'].help_text = 'School logo (JPG/PNG/GIF, max 2 MB).'
+        self.fields['favicon'].help_text = 'Site favicon (JPG/PNG/GIF, max 2 MB).'
+
+    def clean_school_name(self):
+        name = (self.cleaned_data.get('school_name') or '').strip()
+        if len(name) < 2:
+            raise ValidationError("School name must be at least 2 characters long.")
+        return name
+
+    def clean_email(self):
+        email = self.cleaned_data.get('email')
+        if email:
+            email = email.strip()
+            if '@' not in email or '.' not in email.split('@')[-1]:
+                raise ValidationError("Please enter a valid email address.")
+        return email
+
+    def clean_phone(self):
+        phone = self.cleaned_data.get('phone')
+        if phone:
+            phone_clean = re.sub(r'[\s-]', '', phone)
+            if not re.match(r'^(\+977)?9\d{9}$', phone_clean):
+                raise ValidationError(
+                    "Please enter a valid Nepal mobile number "
+                    "(e.g., 98XXXXXXXX or +97798XXXXXXXX)."
+                )
+            return phone_clean
+        return phone
+
+    def _clean_image(self, field_name):
+        image = self.cleaned_data.get(field_name)
+        if image:
+            if getattr(image, 'size', None) and image.size > 2 * 1024 * 1024:
+                raise ValidationError(
+                    f"{field_name.capitalize()} must be less than 2 MB."
+                )
+            valid_extensions = ['jpg', 'jpeg', 'png', 'gif']
+            ext = image.name.split('.')[-1].lower()
+            if ext not in valid_extensions:
+                raise ValidationError(
+                    f"{field_name.capitalize()} must be a JPG, PNG, or GIF image."
+                )
+        return image
+
+    def clean_logo(self):
+        return self._clean_image('logo')
+
+    def clean_favicon(self):
+        return self._clean_image('favicon')

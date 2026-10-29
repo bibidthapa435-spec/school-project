@@ -12,7 +12,8 @@
 
     <!-- Table -->
     <div class="admin-card">
-        <table class="data-table">
+        <div class="table-responsive">
+            <table class="data-table">
             <thead>
                 <tr>
                     <th>Title</th>
@@ -61,15 +62,18 @@
                 {% endfor %}
             </tbody>
         </table>
+        </div>
     </div>
 </div>
 
 <!-- Add Result Modal -->
 <div class="modal fade" id="addResultModal" tabindex="-1" aria-labelledby="addResultModalLabel" aria-hidden="true">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="addResultModalLabel">Add New Result</h5>
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content erp-modal-content">
+            <div class="modal-header erp-modal-header">
+                <h5 class="modal-title erp-modal-title" id="addResultModalLabel">
+                    <i class="fa-solid fa-plus me-2"></i>Add New Result
+                </h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <!-- enctype is REQUIRED for file uploads to work -->
@@ -77,25 +81,32 @@
                 {% csrf_token %}
                 <div class="modal-body">
                     {% if form.non_field_errors %}
-                        <div class="alert alert-danger">
-                            {{ form.non_field_errors }}
+                        <div class="erp-alert erp-alert-danger">
+                            {% for error in form.non_field_errors %}
+                                {{ error }}
+                            {% endfor %}
                         </div>
                     {% endif %}
-                    {% for field in form %}
-                    <div class="mb-3">
-                        <label class="form-label font-weight-bold">{{ field.label }}</label>
-                        {{ field }}
-                        {% if field.errors %}
-                            <div class="text-danger small mt-1">
-                                {{ field.errors }}
-                            </div>
-                        {% endif %}
+                    <div class="erp-form-grid">
+                        {% for field in form %}
+                        <div class="erp-form-field{% if not forloop.last or forloop.counter %2 == 0 %} full-width{% endif %}">
+                            <label class="erp-form-label">{{ field.label }} {% if field.field.required %}<span class="required">*</span>{% endif %}</label>
+                            {{ field }}
+                            {% if field.errors %}
+                                <ul class="erp-field-errors">
+                                    {% for error in field.errors %}<li>{{ error }}</li>{% endfor %}
+                                </ul>
+                            {% endif %}
+                            {% if field.help_text %}
+                                <p class="erp-field-help">{{ field.help_text }}</p>
+                            {% endif %}
+                        </div>
+                        {% endfor %}
                     </div>
-                    {% endfor %}
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                    <button type="submit" class="btn btn-primary">Save Result</button>
+                    <button type="button" class="erp-btn erp-btn-outline" data-bs-dismiss="modal">Close</button>
+                    <button type="submit" class="erp-btn erp-btn-primary">Save Result</button>
                 </div>
             </form>
         </div>

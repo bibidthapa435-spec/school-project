@@ -38,6 +38,7 @@ from school_app.models import (
 from school_app.forms import (
     AdmissionApplicationForm,
     ContactMessageForm,
+    SiteSettingsForm,
 )
 
 
@@ -1074,6 +1075,10 @@ def admin_dashboard(request):
 
         return redirect('/')
 
+    now = timezone.now()
+    # 30 days ago for weekly activity trend
+    thirty_days_ago = now - timezone.timedelta(days=30)
+
     stats = {
         'total_notices': Notice.objects.count(),
         'total_gallery': GalleryPhoto.objects.count(),
@@ -1092,6 +1097,19 @@ def admin_dashboard(request):
         'total_results': Result.objects.count(),
     }
 
+    # Activity trend for the analytics chart (last 7 days)
+    activity_labels = []
+    activity_data = []
+    for i in range(6, -1, -1):
+        day = now - timezone.timedelta(days=i)
+        activity_labels.append(day.strftime('%a'))
+        day_count = (
+            Notice.objects.filter(created_at__date=day.date()).count()
+            + AdmissionApplication.objects.filter(created_at__date=day.date()).count()
+            + ContactMessage.objects.filter(created_at__date=day.date()).count()
+        )
+        activity_data.append(day_count)
+
     recent_notices = Notice.objects.all().order_by(
         '-created_at'
     )[:5]
@@ -1104,11 +1122,46 @@ def admin_dashboard(request):
         '-created_at'
     )[:5]
 
+    # Recent activities feed (combined, latest first)
+    recent_activities = []
+    for notice in recent_notices:
+        recent_activities.append({
+            'type': 'notice',
+            'title': f'New notice published: {notice.title}',
+            'time': notice.created_at,
+            'url': f"/admin/school_app/notice/{notice.id}/change/",
+            'icon': 'fa-solid fa-bullhorn',
+            'color': 'blue',
+        })
+    for admission in recent_admissions:
+        recent_activities.append({
+            'type': 'admission',
+            'title': f'New admission application from {admission.student_name}',
+            'time': admission.created_at,
+            'url': f"/admin/school_app/admissionapplication/{admission.id}/change/",
+            'icon': 'fa-solid fa-file-signature',
+            'color': 'green',
+        })
+    for message in recent_messages:
+        recent_activities.append({
+            'type': 'message',
+            'title': f'New message from {message.name}',
+            'time': message.created_at,
+            'url': f"/admin/school_app/contactmessage/{message.id}/change/",
+            'icon': 'fa-solid fa-envelope',
+            'color': 'purple',
+        })
+    recent_activities.sort(key=lambda x: x['time'], reverse=True)
+    recent_activities = recent_activities[:8]
+
     context = {
         'stats': stats,
         'recent_notices': recent_notices,
         'recent_admissions': recent_admissions,
         'recent_messages': recent_messages,
+        'recent_activities': recent_activities,
+        'activity_labels': activity_labels,
+        'activity_data': activity_data,
         'page_title': 'Dashboard',
     }
 
@@ -1875,49 +1928,24 @@ def admin_settings(request):
         settings_obj = SiteSettings.objects.create()
 
     if request.method == 'POST':
-
-        settings_obj.school_name = request.POST.get(
-            'school_name',
-            settings_obj.school_name
+        form = SiteSettingsForm(
+            request.POST,
+            request.FILES,
+            instance=settings_obj,
         )
-
-        settings_obj.tagline = request.POST.get(
-            'tagline',
-            settings_obj.tagline
-        )
-
-        settings_obj.phone = request.POST.get(
-            'phone',
-            settings_obj.phone
-        )
-
-        settings_obj.email = request.POST.get(
-            'email',
-            settings_obj.email
-        )
-
-        settings_obj.address = request.POST.get(
-            'address',
-            settings_obj.address
-        )
-
-        if 'logo' in request.FILES:
-            settings_obj.logo = request.FILES['logo']
-
-        if 'favicon' in request.FILES:
-            settings_obj.favicon = request.FILES['favicon']
-
-        settings_obj.save()
-
-        messages.success(
-            request,
-            'Settings updated successfully.'
-        )
-
-        return redirect('admin_settings')
+        if form.is_valid():
+            form.save()
+            messages.success(
+                request,
+                'Settings updated successfully.'
+            )
+            return redirect('admin_settings')
+    else:
+        form = SiteSettingsForm(instance=settings_obj)
 
     context = {
         'settings': settings_obj,
+        'form': form,
         'page_title': 'Settings',
     }
 

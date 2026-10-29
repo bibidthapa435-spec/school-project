@@ -1,366 +1,396 @@
 {% extends 'admin/base.html' %}
 
+{% block extra_css %}
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/chart.js@4.4.7/dist/chart.umd.min.css" defer>
+{% endblock %}
+
 {% block content %}
-<!-- Welcome Banner -->
-<div class="welcome-banner">
-    <div class="welcome-banner-content">
-        <h2>Welcome back, {{ request.user.first_name|default:"Admin" }}! 👋</h2>
-        <p>Here's what's happening with your school website today.</p>
-        <div class="welcome-banner-stats">
-            <div class="welcome-banner-stat">
-                <div class="welcome-banner-stat-icon">
-                    <i class="fa-solid fa-bullhorn"></i>
-                </div>
-                <div>
-                    <div class="welcome-banner-stat-value">{{ stats.total_notices }}</div>
-                    <div class="welcome-banner-stat-label">Active Notices</div>
-                </div>
-            </div>
-            <div class="welcome-banner-stat">
-                <div class="welcome-banner-stat-icon">
-                    <i class="fa-solid fa-user-graduate"></i>
-                </div>
-                <div>
-                    <div class="welcome-banner-stat-value">{{ stats.new_admissions }}</div>
-                    <div class="welcome-banner-stat-label">New Admissions</div>
-                </div>
-            </div>
-            <div class="welcome-banner-stat">
-                <div class="welcome-banner-stat-icon">
-                    <i class="fa-solid fa-envelope"></i>
-                </div>
-                <div>
-                    <div class="welcome-banner-stat-value">{{ stats.unread_messages }}</div>
-                    <div class="welcome-banner-stat-label">Unread Messages</div>
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
+<div class="dashboard-wrap">
 
-<!-- Enhanced Stats Cards -->
-<div class="row mb-4">
-    <div class="col-lg-2 col-md-4 col-sm-6 mb-3">
-        <div class="stat-card-enhanced stagger-1">
-            <div class="stat-card-header">
-                <div class="stat-card-icon-enhanced blue">
-                    <i class="fa-solid fa-bullhorn"></i>
-                </div>
-                <div class="stat-card-trend up">
-                    <i class="fa-solid fa-arrow-trend-up"></i>
-                    <span>12%</span>
-                </div>
-            </div>
-            <div class="stat-card-value">{{ stats.total_notices }}</div>
-            <div class="stat-card-label">Total Notices</div>
-            <div class="stat-card-progress">
-                <div class="stat-card-progress-bar blue" data-width="75"></div>
-            </div>
-        </div>
+  <!-- Welcome Hero -->
+  <section class="dash-hero">
+    <span class="dash-hero-tag"><i class="fa-solid fa-school"></i> Shree Jaljala Secondary School</span>
+    <h2>Welcome back, {{ request.user.first_name|default:request.user.username }}! <span class="text-warning">👋</span></h2>
+    <p>Here's what's happening with your school website today. Manage notices, admissions, messages, and more from one place.</p>
+    <div class="dash-hero-actions">
+      <a href="{% url 'admin_notices' %}" class="btn btn-outline"><i class="fa-solid fa-bullhorn me-1"></i> Manage Notices</a>
+      <a href="{% url 'admin_admissions' %}" class="btn btn-outline"><i class="fa-solid fa-file-signature me-1"></i> Admissions</a>
+      <a href="/" class="btn" target="_blank"><i class="fa-solid fa-globe me-1"></i> View Website</a>
     </div>
-    <div class="col-lg-2 col-md-4 col-sm-6 mb-3">
-        <div class="stat-card-enhanced stagger-2">
-            <div class="stat-card-header">
-                <div class="stat-card-icon-enhanced green">
-                    <i class="fa-solid fa-photo-film"></i>
-                </div>
-                <div class="stat-card-trend up">
-                    <i class="fa-solid fa-arrow-trend-up"></i>
-                    <span>8%</span>
-                </div>
-            </div>
-            <div class="stat-card-value">{{ stats.total_gallery }}</div>
-            <div class="stat-card-label">Gallery Images</div>
-            <div class="stat-card-progress">
-                <div class="stat-card-progress-bar green" data-width="60"></div>
-            </div>
-        </div>
-    </div>
-    <div class="col-lg-2 col-md-4 col-sm-6 mb-3">
-        <div class="stat-card-enhanced stagger-3">
-            <div class="stat-card-header">
-                <div class="stat-card-icon-enhanced yellow">
-                    <i class="fa-solid fa-chalkboard-user"></i>
-                </div>
-                <div class="stat-card-trend up">
-                    <i class="fa-solid fa-arrow-trend-up"></i>
-                    <span>5%</span>
-                </div>
-            </div>
-            <div class="stat-card-value">{{ stats.total_teachers }}</div>
-            <div class="stat-card-label">Total Teachers</div>
-            <div class="stat-card-progress">
-                <div class="stat-card-progress-bar yellow" data-width="85"></div>
-            </div>
-        </div>
-    </div>
-</div>
+  </section>
 
-<div class="row mb-4">
-    <div class="col-lg-2 col-md-4 col-sm-6 mb-3">
-        <div class="stat-card-enhanced stagger-4">
-            <div class="stat-card-header">
-                <div class="stat-card-icon-enhanced purple">
-                    <i class="fa-solid fa-user-graduate"></i>
-                </div>
-                <div class="stat-card-trend up">
-                    <i class="fa-solid fa-arrow-trend-up"></i>
-                    <span>15%</span>
-                </div>
-            </div>
-            <div class="stat-card-value">{{ stats.total_students }}</div>
-            <div class="stat-card-label">Total Students</div>
-            <div class="stat-card-progress">
-                <div class="stat-card-progress-bar purple" data-width="70"></div>
-            </div>
-        </div>
+  <!-- Stats Overview -->
+  <div class="dash-stats-title">
+    <h3><i class="fa-solid fa-chart-pie"></i> Overview</h3>
+    <a href="{% url 'admin_dashboard' %}" class="dash-card-viewall">Refresh <i class="fa-solid fa-arrow-right"></i></a>
+  </div>
+  <div class="dash-stats-grid">
+    <div class="stat-card">
+      <div class="stat-card-head">
+        <div class="stat-card-icon blue"><i class="fa-solid fa-bullhorn"></i></div>
+        <div class="stat-card-trend up"><i class="fa-solid fa-arrow-trend-up"></i> <span>+12%</span></div>
+      </div>
+      <div class="stat-card-value">{{ stats.total_notices }}</div>
+      <div class="stat-card-label">Total Notices</div>
+      <div class="stat-card-cap">Active notices on site</div>
     </div>
-    <div class="col-lg-2 col-md-4 col-sm-6 mb-3">
-        <div class="stat-card-enhanced stagger-5">
-            <div class="stat-card-header">
-                <div class="stat-card-icon-enhanced cyan">
-                    <i class="fa-solid fa-file-signature"></i>
-                </div>
-                <div class="stat-card-trend up">
-                    <i class="fa-solid fa-arrow-trend-up"></i>
-                    <span>20%</span>
-                </div>
-            </div>
-            <div class="stat-card-value">{{ stats.new_admissions }}</div>
-            <div class="stat-card-label">New Admissions</div>
-            <div class="stat-card-progress">
-                <div class="stat-card-progress-bar blue" data-width="55"></div>
-            </div>
-        </div>
+    <div class="stat-card">
+      <div class="stat-card-head">
+        <div class="stat-card-icon green"><i class="fa-solid fa-image"></i></div>
+        <div class="stat-card-trend up"><i class="fa-solid fa-arrow-trend-up"></i> <span>+8%</span></div>
+      </div>
+      <div class="stat-card-value">{{ stats.total_gallery }}</div>
+      <div class="stat-card-label">Gallery Images</div>
+      <div class="stat-card-cap">Uploaded photos</div>
     </div>
-    <div class="col-lg-2 col-md-4 col-sm-6 mb-3">
-        <div class="stat-card-enhanced stagger-6">
-            <div class="stat-card-header">
-                <div class="stat-card-icon-enhanced pink">
-                    <i class="fa-solid fa-envelope"></i>
-                </div>
-                <div class="stat-card-trend down">
-                    <i class="fa-solid fa-arrow-trend-down"></i>
-                    <span>3%</span>
-                </div>
-            </div>
-            <div class="stat-card-value">{{ stats.unread_messages }}</div>
-            <div class="stat-card-label">Unread Messages</div>
-            <div class="stat-card-progress">
-                <div class="stat-card-progress-bar green" data-width="40"></div>
-            </div>
-        </div>
+    <div class="stat-card">
+      <div class="stat-card-head">
+        <div class="stat-card-icon yellow"><i class="fa-solid fa-chalkboard-user"></i></div>
+        <div class="stat-card-trend up"><i class="fa-solid fa-arrow-trend-up"></i> <span>+5%</span></div>
+      </div>
+      <div class="stat-card-value">{{ stats.total_teachers }}</div>
+      <div class="stat-card-label">Total Teachers</div>
+      <div class="stat-card-cap">Registered staff</div>
     </div>
-</div>
+    <div class="stat-card">
+      <div class="stat-card-head">
+        <div class="stat-card-icon cyan"><i class="fa-solid fa-user-graduate"></i></div>
+        <div class="stat-card-trend up"><i class="fa-solid fa-arrow-trend-up"></i> <span>+15%</span></div>
+      </div>
+      <div class="stat-card-value">{{ stats.total_students }}</div>
+      <div class="stat-card-label">Total Students</div>
+      <div class="stat-card-cap">Approved admissions</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-card-head">
+        <div class="stat-card-icon purple"><i class="fa-solid fa-file-signature"></i></div>
+        <div class="stat-card-trend up"><i class="fa-solid fa-arrow-trend-up"></i> <span>+20%</span></div>
+      </div>
+      <div class="stat-card-value">{{ stats.new_admissions }}</div>
+      <div class="stat-card-label">New Admissions</div>
+      <div class="stat-card-cap">Pending applications</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-card-head">
+        <div class="stat-card-icon pink"><i class="fa-solid fa-envelope"></i></div>
+        <div class="stat-card-trend down"><i class="fa-solid fa-arrow-trend-down"></i> <span>3%</span></div>
+      </div>
+      <div class="stat-card-value">{{ stats.unread_messages }}</div>
+      <div class="stat-card-label">Unread Messages</div>
+      <div class="stat-card-cap">Contact form messages</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-card-head">
+        <div class="stat-card-icon indigo"><i class="fa-solid fa-trophy"></i></div>
+        <div class="stat-card-trend up"><i class="fa-solid fa-arrow-trend-up"></i> <span>+10%</span></div>
+      </div>
+      <div class="stat-card-value">{{ stats.total_results }}</div>
+      <div class="stat-card-label">Results Published</div>
+      <div class="stat-card-cap">Exam results</div>
+    </div>
+  </div>
 
-<!-- Quick Actions -->
-<div class="row mb-4">
-    <div class="col-12">
-        <div class="section-header">
-            <h3 class="section-title"><i class="fa-solid fa-bolt"></i>Quick Actions</h3>
-        </div>
-    </div>
-    <div class="col-lg-3 col-md-4 col-sm-6 mb-3">
-        <a href="/admin/school_app/notice/add/" class="quick-action-enhanced">
-            <div class="quick-action-icon blue">
-                <i class="fa-solid fa-bullhorn"></i>
-            </div>
-            <span class="quick-action-label">Add Notice</span>
-        </a>
-    </div>
-    <div class="col-lg-3 col-md-4 col-sm-6 mb-3">
-        <a href="/admin/school_app/slider/add/" class="quick-action-enhanced">
-            <div class="quick-action-icon green">
-                <i class="fa-solid fa-images"></i>
-            </div>
-            <span class="quick-action-label">Add Slider</span>
-        </a>
-    </div>
-    <div class="col-lg-3 col-md-4 col-sm-6 mb-3">
-        <a href="/admin/school_app/galleryphoto/add/" class="quick-action-enhanced">
-            <div class="quick-action-icon yellow">
-                <i class="fa-solid fa-camera"></i>
-            </div>
-            <span class="quick-action-label">Add Gallery</span>
-        </a>
-    </div>
-    <div class="col-lg-3 col-md-4 col-sm-6 mb-3">
-        <a href="/admin/school_app/teacher/add/" class="quick-action-enhanced">
-            <div class="quick-action-icon purple">
-                <i class="fa-solid fa-chalkboard-user"></i>
-            </div>
-            <span class="quick-action-label">Add Teacher</span>
-        </a>
-    </div>
-    <div class="col-lg-3 col-md-4 col-sm-6 mb-3">
-        <a href="/admission/" class="quick-action-enhanced">
-            <div class="quick-action-icon cyan">
-                <i class="fa-solid fa-user-graduate"></i>
-            </div>
-            <span class="quick-action-label">Add Student</span>
-        </a>
-    </div>
-    <div class="col-lg-3 col-md-4 col-sm-6 mb-3">
-        <a href="/admin/school_app/program/add/" class="quick-action-enhanced">
-            <div class="quick-action-icon pink">
-                <i class="fa-solid fa-book-open"></i>
-            </div>
-            <span class="quick-action-label">Add Program</span>
-        </a>
-    </div>
-    <div class="col-lg-3 col-md-4 col-sm-6 mb-3">
-        <a href="{% url 'admin_admissions' %}" class="quick-action-enhanced">
-            <div class="quick-action-icon blue">
-                <i class="fa-solid fa-clipboard-list"></i>
-            </div>
-            <span class="quick-action-label">View Admissions</span>
-        </a>
-    </div>
-    <div class="col-lg-3 col-md-4 col-sm-6 mb-3">
-        <a href="{% url 'admin_messages' %}" class="quick-action-enhanced">
-            <div class="quick-action-icon green">
-                <i class="fa-solid fa-envelope-open-text"></i>
-            </div>
-            <span class="quick-action-label">View Messages</span>
-        </a>
-    </div>
-</div>
+  <!-- Quick Actions -->
+  <div class="dash-stats-title">
+    <h3><i class="fa-solid fa-bolt"></i> Quick Actions</h3>
+  </div>
+  <div class="dash-quick-actions">
 
-<div class="row">
-    <!-- Recent Notices -->
-    <div class="col-lg-4 mb-4">
-        <div class="chart-container">
-            <div class="section-header">
-                <h3 class="section-title"><i class="fa-solid fa-bullhorn"></i>Recent Notices</h3>
-                <a href="{% url 'admin_notices' %}" class="section-link">View All <i class="fa-solid fa-arrow-right"></i></a>
+    <a href="/admin/school_app/notice/add/" class="quick-card">
+      <div class="quick-card-icon blue"><i class="fa-solid fa-bullhorn"></i></div>
+      <span class="quick-card-label">Add Notice</span>
+      <span class="quick-card-cap">Publish a new notice</span>
+    </a>
+    <a href="/admin/school_app/slider/add/" class="quick-card">
+      <div class="quick-card-icon green"><i class="fa-solid fa-images"></i></div>
+      <span class="quick-card-label">Add Slider</span>
+      <span class="quick-card-cap">Homepage slider image</span>
+    </a>
+    <a href="/admin/school_app/galleryphoto/add/" class="quick-card">
+      <div class="quick-card-icon yellow"><i class="fa-solid fa-camera"></i></div>
+      <span class="quick-card-label">Add Gallery</span>
+      <span class="quick-card-cap">Upload gallery photo</span>
+    </a>
+    <a href="/admin/school_app/teacher/add/" class="quick-card">
+      <div class="quick-card-icon purple"><i class="fa-solid fa-chalkboard-user"></i></div>
+      <span class="quick-card-label">Add Teacher</span>
+      <span class="quick-card-cap">Register new staff</span>
+    </a>
+    <a href="{% url 'admission' %}" class="quick-card">
+      <div class="quick-card-icon cyan"><i class="fa-solid fa-user-graduate"></i></div>
+      <span class="quick-card-label">Add Student</span>
+      <span class="quick-card-cap">Student admission form</span>
+    </a>
+    <a href="/admin/school_app/program/add/" class="quick-card">
+      <div class="quick-card-icon pink"><i class="fa-solid fa-book-open"></i></div>
+      <span class="quick-card-label">Add Program</span>
+      <span class="quick-card-cap">New academic program</span>
+    </a>
+    <a href="{% url 'admin_admissions' %}" class="quick-card">
+      <div class="quick-card-icon blue"><i class="fa-solid fa-clipboard-list"></i></div>
+      <span class="quick-card-label">View Admissions</span>
+      <span class="quick-card-cap">All applications</span>
+    </a>
+    <a href="{% url 'admin_messages' %}" class="quick-card">
+      <div class="quick-card-icon red"><i class="fa-solid fa-envelope-open-text"></i></div>
+      <span class="quick-card-label">View Messages</span>
+      <span class="quick-card-cap">Contact messages</span>
+    </a>
+  </div>
+
+  <!-- Main Grid: Chart + Notices | Admissions + Messages + Feed -->
+  <div class="dash-grid">
+
+    <!-- Left Column: Analytics + Recent Notices -->
+    <div style="display:flex; flex-direction:column; gap:1.5rem;">
+      <div class="dash-card" style="min-height:420px;">
+        <div class="dash-card-header">
+          <div>
+            <h3 class="dash-card-title"><i class="fa-solid fa-chart-line"></i> Website Activity</h3>
+            <p class="dash-card-sub">Visitor and content activity over the last 7 days</p>
+          </div>
+          <div class="dash-chart-period">
+            <button type="button" class="active" data-period="week">This Week</button>
+            <button type="button" data-period="month">This Month</button>
+          </div>
+        </div>
+        <div class="dash-card-body">
+          {{ activity_labels|json_script:"activity-labels" }}
+          {{ activity_data|json_script:"activity-data" }}
+          <div class="dash-chart-wrap">
+            <canvas id="activityChart"></canvas>
+          </div>
+          <div class="dash-chart-meta">
+            <div class="dash-chart-item">
+              <span class="cap">Notices</span>
+              <span class="val">{{ stats.total_notices }}</span>
             </div>
+            <div class="dash-chart-item">
+              <span class="cap">Students</span>
+              <span class="val">{{ stats.total_students }}</span>
+            </div>
+            <div class="dash-chart-item">
+              <span class="cap">Messages</span>
+              <span class="val">{{ stats.unread_messages }}</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="dash-card" style="min-height:300px;">
+        <div class="dash-card-header">
+          <div>
+            <h3 class="dash-card-title"><i class="fa-solid fa-bullhorn"></i> Recent Notices</h3>
+            <p class="dash-card-sub">Latest school notices published</p>
+          </div>
+          <a href="{% url 'admin_notices' %}" class="dash-card-viewall">View all <i class="fa-solid fa-arrow-right"></i></a>
+        </div>
+        <div class="dash-card-body">
+          <div class="dash-table-wrap">
             {% if recent_notices %}
-                <div class="table-responsive">
-                    <table class="data-table-enhanced">
-                        <thead>
-                            <tr>
-                                <th>Title</th>
-                                <th>Date</th>
-                                <th>Status</th>
-                                <th>Action</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {% for notice in recent_notices %}
-                                <tr>
-                                    <td>{{ notice.title|truncatechars:30 }}</td>
-                                    <td>{{ notice.created_at|date:"M d, Y" }}</td>
-                                    <td>
-                                        <span class="status-badge-enhanced {% if notice.status %}active{% else %}inactive{% endif %}">
-                                            {% if notice.status %}Active{% else %}Inactive{% endif %}
-                                        </span>
-                                    </td>
-                                    <td>
-                                        <a href="/admin/school_app/notice/{{ notice.id }}/change/" class="btn btn-sm btn-outline-primary">
-                                            <i class="fa-solid fa-edit"></i>
-                                        </a>
-                                    </td>
-                                </tr>
-                            {% endfor %}
-                        </tbody>
-                    </table>
-                </div>
+              <table class="dash-table">
+                <thead>
+                  <tr>
+                    <th style="width:48%;">Title</th>
+                    <th style="width:22%;">Date</th>
+                    <th style="width:15%;">Status</th>
+                    <th style="width:15%;">Action</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {% for notice in recent_notices %}
+                    <tr>
+                      <td>{{ notice.title|truncatechars:35 }}</td>
+                      <td>{{ notice.created_at|date:"M d, Y" }}</td>
+                      <td>
+                        <span class="status-pill {% if notice.status %}active{% else %}inactive{% endif %}">
+                          {% if notice.status %}Active{% else %}Inactive{% endif %}
+                        </span>
+                      </td>
+                      <td>
+                        <a href="/admin/school_app/notice/{{ notice.id }}/change/" class="table-action"><i class="fa-solid fa-pen-to-square"></i></a>
+                      </td>
+                    </tr>
+                  {% endfor %}
+                </tbody>
+              </table>
             {% else %}
-                <p class="text-muted mb-0">No notices found.</p>
+              <div class="empty-state"><i class="fa-solid fa-bullhorn"></i>No notices yet.</div>
             {% endif %}
+          </div>
         </div>
+      </div>
     </div>
     
-    <!-- Recent Admissions -->
-    <div class="col-lg-4 mb-4">
-        <div class="chart-container">
-            <div class="section-header">
-                <h3 class="section-title"><i class="fa-solid fa-file-signature"></i>Recent Admissions</h3>
-                <a href="{% url 'admin_admissions' %}" class="section-link">View All <i class="fa-solid fa-arrow-right"></i></a>
-            </div>
+    <!-- Right Column: Admissions + Messages + Activity Feed -->
+    <div style="display:flex; flex-direction:column; gap:1.5rem;">
+      <div class="dash-card" style="min-height:260px;">
+        <div class="dash-card-header">
+          <div>
+            <h3 class="dash-card-title"><i class="fa-solid fa-file-signature"></i> Recent Admissions</h3>
+            <p class="dash-card-sub">Latest admission applications</p>
+          </div>
+          <a href="{% url 'admin_admissions' %}" class="dash-card-viewall">View all <i class="fa-solid fa-arrow-right"></i></a>
+        </div>
+        <div class="dash-card-body">
+          <div class="dash-table-wrap">
             {% if recent_admissions %}
-                <div class="table-responsive">
-                    <table class="data-table-enhanced">
-                        <thead>
-                            <tr>
-                                <th>Student</th>
-                                <th>Class</th>
-                                <th>Date</th>
-                                <th>Status</th>
-                                <th>Action</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {% for admission in recent_admissions %}
-                                <tr>
-                                    <td>{{ admission.student_name|truncatechars:20 }}</td>
-                                    <td>{{ admission.class_applying }}</td>
-                                    <td>{{ admission.created_at|date:"M d, Y" }}</td>
-                                    <td>
-                                        <span class="status-badge-enhanced {% if admission.status == 'active' %}active{% elif admission.status == 'pending' %}pending{% else %}inactive{% endif %}">
-                                            {{ admission.status|title }}
-                                        </span>
-                                    </td>
-                                    <td>
-                                        <a href="/admin/school_app/admissionapplication/{{ admission.id }}/change/" class="btn btn-sm btn-outline-primary">
-                                            <i class="fa-solid fa-eye"></i>
-                                        </a>
-                                    </td>
-                                </tr>
-                            {% endfor %}
-                        </tbody>
-                    </table>
-                </div>
+              <table class="dash-table">
+                <thead>
+                  <tr>
+                    <th style="width:42%;">Student</th>
+                    <th style="width:18%;">Class</th>
+                    <th style="width:20%;">Date</th>
+                    <th style="width:20%;">Status</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {% for admission in recent_admissions %}
+                    <tr>
+                      <td>{{ admission.student_name|truncatechars:25 }}</td>
+                      <td>{{ admission.class_applying }}</td>
+                      <td>{{ admission.created_at|date:"M d, Y" }}</td>
+                      <td>
+                        <span class="status-pill {% if admission.status == 'active' %}active{% elif admission.status == 'pending' %}pending{% else %}inactive{% endif %}">
+                          {{ admission.status|title }}
+                        </span>
+                      </td>
+                    </tr>
+                  {% endfor %}
+                </tbody>
+              </table>
             {% else %}
-                <p class="text-muted mb-0">No admission applications found.</p>
+              <div class="empty-state"><i class="fa-solid fa-file-signature"></i>No admissions yet.</div>
             {% endif %}
+          </div>
         </div>
-    </div>
+      </div>
     
-    <!-- Recent Messages -->
-    <div class="col-lg-4 mb-4">
-        <div class="chart-container">
-            <div class="section-header">
-                <h3 class="section-title"><i class="fa-solid fa-envelope"></i>Recent Messages</h3>
-                <a href="{% url 'admin_messages' %}" class="section-link">View All <i class="fa-solid fa-arrow-right"></i></a>
-            </div>
-            {% if recent_messages %}
-                <div class="table-responsive">
-                    <table class="data-table-enhanced">
-                        <thead>
-                            <tr>
-                                <th>Sender</th>
-                                <th>Subject</th>
-                                <th>Date</th>
-                                <th>Status</th>
-                                <th>Action</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {% for message in recent_messages %}
-                                <tr>
-                                    <td>{{ message.name|truncatechars:15 }}</td>
-                                    <td>{{ message.subject|truncatechars:20 }}</td>
-                                    <td>{{ message.created_at|date:"M d, Y" }}</td>
-                                    <td>
-                                        <span class="status-badge-enhanced {% if message.status == 'read' %}active{% elif message.status == 'unread' %}pending{% else %}inactive{% endif %}">
-                                            {{ message.status|title }}
-                                        </span>
-                                    </td>
-                                    <td>
-                                        <a href="/admin/school_app/contactmessage/{{ message.id }}/change/" class="btn btn-sm btn-outline-primary">
-                                            <i class="fa-solid fa-eye"></i>
-                                        </a>
-                                    </td>
-                                </tr>
-                            {% endfor %}
-                        </tbody>
-                    </table>
-                </div>
-            {% else %}
-                <p class="text-muted mb-0">No messages found.</p>
-            {% endif %}
+      <div class="dash-card" style="min-height:260px;">
+        <div class="dash-card-header">
+          <div>
+            <h3 class="dash-card-title"><i class="fa-solid fa-envelope"></i> Recent Messages</h3>
+            <p class="dash-card-sub">Latest contact form messages</p>
+          </div>
+          <a href="{% url 'admin_messages' %}" class="dash-card-viewall">View all <i class="fa-solid fa-arrow-right"></i></a>
         </div>
+        <div class="dash-card-body">
+          <div class="dash-table-wrap">
+            {% if recent_messages %}
+              <table class="dash-table">
+                <thead>
+                  <tr>
+                    <th style="width:42%;">Sender</th>
+                    <th style="width:30%;">Subject</th>
+                    <th style="width:18%;">Date</th>
+                    <th style="width:10%;">Status</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {% for message in recent_messages %}
+                    <tr>
+                      <td>{{ message.name|truncatechars:20 }}</td>
+                      <td>{{ message.subject|truncatechars:28 }}</td>
+                      <td>{{ message.created_at|date:"M d, Y" }}</td>
+                      <td>
+                        <span class="status-pill {% if message.status == 'read' %}read{% else %}unread{% endif %}">
+                          {{ message.status|title }}
+                        </span>
+                      </td>
+                    </tr>
+                  {% endfor %}
+                </tbody>
+              </table>
+            {% else %}
+              <div class="empty-state"><i class="fa-solid fa-envelope"></i>No messages yet.</div>
+            {% endif %}
+          </div>
+        </div>
+      </div>
+
+      <div class="dash-card" style="min-height:260px;">
+        <div class="dash-card-header">
+          <div>
+            <h3 class="dash-card-title"><i class="fa-solid fa-clock-rotate-left"></i> Activity Feed</h3>
+            <p class="dash-card-sub">Latest actions across the school portal</p>
+          </div>
+        </div>
+        <div class="dash-card-body">
+          <div class="dash-feed">
+            {% if recent_activities %}
+              {% for activity in recent_activities %}
+                <div class="feed-item">
+                  <div class="feed-icon {{ activity.color }}"><i class="{{ activity.icon }}"></i></div>
+                  <div class="feed-body">
+                    <div class="feed-title">{{ activity.title }}</div>
+                    <div class="feed-time">{{ activity.time|date:"M d, Y · h:i A" }}</div>
+                  </div>
+                  <a href="{{ activity.url }}" class="feed-link">Open <i class="fa-solid fa-arrow-right"></i></a>
+                </div>
+              {% endfor %}
+            {% else %}
+              <div class="empty-state"><i class="fa-solid fa-clock-rotate-left"></i>No recent activity.</div>
+            {% endif %}
+          </div>
+        </div>
+      </div>
     </div>
+
+  </div>
+
 </div>
+{% endblock %}
+
+{% block extra_js %}
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.7/dist/chart.umd.min.js" defer></script>
+<script defer>
+  (function () {
+    var ctx = document.getElementById('activityChart');
+    if (!ctx || typeof Chart === 'undefined') return;
+    var labelsEl = document.getElementById('activity-labels');
+    var dataEl = document.getElementById('activity-data');
+    if (!labelsEl || !dataEl) return;
+    var labels = JSON.parse(labelsEl.textContent);
+    var data = JSON.parse(dataEl.textContent);
+    new Chart(ctx, {
+      type: 'line',
+      data: {
+        labels: labels,
+        datasets: [{
+          label: 'Activity',
+          data: data,
+          borderColor: '#2563eb',
+          backgroundColor: 'rgba(37, 99, 235, 0.1)',
+          borderWidth: 3,
+          pointRadius: 4,
+          pointHoverRadius: 6,
+          pointBackgroundColor: '#2563eb',
+          pointBorderColor: '#ffffff',
+          pointBorderWidth: 2,
+          fill: true,
+          tension: 0.4
+        }]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        interaction: { mode: 'index', intersect: false },
+        plugins: {
+          legend: { display: false },
+          tooltip: {
+            backgroundColor: '#0f2847',
+            titleFont: { family: 'Inter, sans-serif' },
+            bodyFont: { family: 'Inter, sans-serif' },
+            padding: 10,
+            cornerRadius: 8
+          }
+        },
+        scales: {
+          x: { grid: { display: false }, ticks: { color: '#64748b', font: { family: 'Inter, sans-serif', size: 11 } } },
+          y: { beginAtZero: true, grid: { color: 'rgba(15, 40, 71, 0.06)' }, ticks: { color: '#64748b', font: { family: 'Inter, sans-serif', size: 11 } } }
+        }
+      }
+    });
+  })();
+</script>
 {% endblock %}

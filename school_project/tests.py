@@ -9,6 +9,7 @@ from django.urls import resolve, reverse
 from django.utils import timezone
 
 from school_app.admin import PopupNoticeForm
+from school_app.forms import SiteSettingsForm
 from school_app.models import PopupNotice
 
 from school_project.data import confirmed_statistics
@@ -1335,4 +1336,74 @@ class StaffPhotoRingTests(SimpleTestCase):
             self.assertGreater(
                 photo.stat().st_size, 0, f'{photo.name} is empty on disk',
             )
+
+
+class SiteSettingsFormTests(SimpleTestCase):
+    """Validation behaviour of the Site settings form used by admin_settings."""
+
+    def _form(self, files=None, **data):
+        base = {
+            'school_name': 'Shree Jaljala Secondary School',
+            'tagline': 'Quality Education for All',
+            'phone': '9812345678',
+            'email': 'info@school.edu.np',
+            'address': 'Panchkhapan, Sankhuwasabha, Nepal',
+        }
+        base.update(data)
+        return SiteSettingsForm(data=base, files=files)
+
+    def test_valid_settings_are_accepted(self):
+        form = self._form()
+        self.assertTrue(form.is_valid(), form.errors)
+
+    def test_school_name_is_required(self):
+        form = self._form(school_name='')
+        self.assertFalse(form.is_valid())
+        self.assertIn('school_name', form.errors)
+
+    def test_school_name_must_be_at_least_2_chars(self):
+        form = self._form(school_name='X')
+        self.assertFalse(form.is_valid())
+        self.assertIn('school_name', form.errors)
+
+    def test_invalid_email_is_rejected(self):
+        form = self._form(email='not-an-email')
+        self.assertFalse(form.is_valid())
+        self.assertIn('email', form.errors)
+
+    def test_blank_email_is_allowed(self):
+        form = self._form(email='')
+        self.assertTrue(form.is_valid(), form.errors)
+
+    def test_valid_nepal_phone_is_accepted(self):
+        form = self._form(phone='+9779812345678')
+        self.assertTrue(form.is_valid(), form.errors)
+
+    def test_invalid_phone_is_rejected(self):
+        form = self._form(phone='123')
+        self.assertFalse(form.is_valid())
+        self.assertIn('phone', form.errors)
+
+    def test_oversized_logo_is_rejected(self):
+        from django.core.files.uploadedfile import SimpleUploadedFile
+
+        big = SimpleUploadedFile(
+            'logo.png', b'\x89PNG\r\n\x1a\n' + b'0' * (3 * 1024 * 1024)
+        )
+        form = self._form(files={'logo': big})
+        self.assertFalse(form.is_valid())
+        self.assertIn('logo', form.errors)
+
+    def test_non_image_logo_is_rejected(self):
+        from django.core.files.uploadedfile import SimpleUploadedFile
+
+        bad = SimpleUploadedFile('logo.txt', b'not an image')
+        form = self._form(files={'logo': bad})
+        self.assertFalse(form.is_valid())
+        self.assertIn('logo', form.errors)
+
+    def test_phone_is_normalized_stripping_spaces_and_dashes(self):
+        form = self._form(phone='98-1234 5678')
+        self.assertTrue(form.is_valid(), form.errors)
+        self.assertEqual(form.cleaned_data['phone'], '9812345678')
 

@@ -9,40 +9,83 @@
             </div>
             <form method="POST" enctype="multipart/form-data" class="settings-form">
                 {% csrf_token %}
+                {% if form.non_field_errors %}
+                    <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                        {% for error in form.non_field_errors %}
+                            {{ error }}
+                        {% endfor %}
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                    </div>
+                {% endif %}
                 <div class="row">
                     <div class="col-md-6 mb-4">
-                        <label for="school_name" class="settings-label">School Name</label>
-                        <input type="text" class="settings-input" id="school_name" name="school_name" value="{{ settings.school_name }}" required>
+                        <label for="id_school_name" class="settings-label">
+                            {{ form.school_name.label }}
+                            {% if form.school_name.field.required %}<span class="text-danger ms-1">*</span>{% endif %}
+                        </label>
+                        {{ form.school_name }}
+                        {% if form.school_name.errors %}
+                            <div class="text-danger small mt-1">{{ form.school_name.errors }}</div>
+                        {% endif %}
+                        {% if form.school_name.help_text %}
+                            <div class="form-text">{{ form.school_name.help_text }}</div>
+                        {% endif %}
                     </div>
                     <div class="col-md-6 mb-4">
-                        <label for="tagline" class="settings-label">Tagline</label>
-                        <input type="text" class="settings-input" id="tagline" name="tagline" value="{{ settings.tagline }}">
+                        <label for="id_tagline" class="settings-label">{{ form.tagline.label }}</label>
+                        {{ form.tagline }}
+                        {% if form.tagline.errors %}
+                            <div class="text-danger small mt-1">{{ form.tagline.errors }}</div>
+                        {% endif %}
+                        {% if form.tagline.help_text %}
+                            <div class="form-text">{{ form.tagline.help_text }}</div>
+                        {% endif %}
                     </div>
                 </div>
-        <div class="row">
+                <div class="row">
                     <div class="col-md-6 mb-4">
-                        <label for="phone" class="settings-label">Phone</label>
-                        <input type="text" class="settings-input" id="phone" name="phone" value="{{ settings.phone }}">
+                        <label for="id_phone" class="settings-label">{{ form.phone.label }}</label>
+                        {{ form.phone }}
+                        {% if form.phone.errors %}
+                            <div class="text-danger small mt-1">{{ form.phone.errors }}</div>
+                        {% endif %}
+                        {% if form.phone.help_text %}
+                            <div class="form-text">{{ form.phone.help_text }}</div>
+                        {% endif %}
                     </div>
                     <div class="col-md-6 mb-4">
-                        <label for="email" class="settings-label">Email</label>
-                        <input type="email" class="settings-input" id="email" name="email" value="{{ settings.email }}">
+                        <label for="id_email" class="settings-label">{{ form.email.label }}</label>
+                        {{ form.email }}
+                        {% if form.email.errors %}
+                            <div class="text-danger small mt-1">{{ form.email.errors }}</div>
+                        {% endif %}
+                        {% if form.email.help_text %}
+                            <div class="form-text">{{ form.email.help_text }}</div>
+                        {% endif %}
                     </div>
                 </div>
                 <div class="mb-4">
-                    <label for="address" class="settings-label">Address</label>
-                    <textarea class="settings-input" id="address" name="address" rows="3">{{ settings.address }}</textarea>
+                    <label for="id_address" class="settings-label">{{ form.address.label }}</label>
+                    {{ form.address }}
+                    {% if form.address.errors %}
+                        <div class="text-danger small mt-1">{{ form.address.errors }}</div>
+                    {% endif %}
+                    {% if form.address.help_text %}
+                        <div class="form-text">{{ form.address.help_text }}</div>
+                    {% endif %}
                 </div>
-        <div class="row">
+                <div class="row">
                     <div class="col-md-6 mb-4">
-                        <label for="logo" class="settings-label">Logo</label>
+                        <label for="id_logo" class="settings-label">{{ form.logo.label }}</label>
                         <div class="settings-file-input">
-                            <input type="file" id="logo" name="logo" accept="image/*" onchange="previewImage(this, 'logo-preview')">
-                            <label for="logo" class="settings-file-label">
-                                <i class="fa-solid fa-cloud-upload-alt"></i>
-                                <span>Choose Logo</span>
-                            </label>
+                            {{ form.logo }}
                         </div>
+                        {% if form.logo.errors %}
+                            <div class="text-danger small mt-1">{{ form.logo.errors }}</div>
+                        {% endif %}
+                        {% if form.logo.help_text %}
+                            <div class="form-text">{{ form.logo.help_text }}</div>
+                        {% endif %}
                         {% if settings.logo %}
                             <div class="settings-image-preview" id="logo-preview">
                                 <img src="{{ settings.logo.url }}" alt="Current Logo">
@@ -56,14 +99,16 @@
                         {% endif %}
                     </div>
                     <div class="col-md-6 mb-4">
-                        <label for="favicon" class="settings-label">Favicon</label>
+                        <label for="id_favicon" class="settings-label">{{ form.favicon.label }}</label>
                         <div class="settings-file-input">
-                            <input type="file" id="favicon" name="favicon" accept="image/*" onchange="previewImage(this, 'favicon-preview')">
-                            <label for="favicon" class="settings-file-label">
-                                <i class="fa-solid fa-cloud-upload-alt"></i>
-                                <span>Choose Favicon</span>
-                            </label>
+                            {{ form.favicon }}
                         </div>
+                        {% if form.favicon.errors %}
+                            <div class="text-danger small mt-1">{{ form.favicon.errors }}</div>
+                        {% endif %}
+                        {% if form.favicon.help_text %}
+                            <div class="form-text">{{ form.favicon.help_text }}</div>
+                        {% endif %}
                         {% if settings.favicon %}
                             <div class="settings-image-preview" id="favicon-preview">
                                 <img src="{{ settings.favicon.url }}" alt="Current Favicon">
@@ -77,9 +122,12 @@
                         {% endif %}
                     </div>
                 </div>
-                <button type="submit" class="settings-submit-btn">
-                    <i class="fa-solid fa-save me-2"></i>Save Settings
-                </button>
+                <div class="submit-row mt-4">
+                    <button type="submit" class="settings-submit-btn">
+                        <i class="fa-solid fa-save me-2"></i> Save Settings
+                    </button>
+                    <a href="{% url 'admin_dashboard' %}" class="btn btn-outline-secondary">Cancel</a>
+                </div>
             </form>
         </div>
     </div>

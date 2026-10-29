@@ -1,0 +1,132 @@
+{% extends 'admin/base.html' %}
+
+{% block content %}
+<div class="erp-form-page">
+    <div class="erp-form-header">
+        <div class="erp-form-title">
+            <i class="fa-solid fa-pen me-2"></i>
+            Edit Result
+        </div>
+        <div class="erp-actions-top">
+            <a href="{% url 'admin_results' %}" class="erp-btn erp-btn-outline">
+                <i class="fa-solid fa-arrow-left me-1"></i> Back to Results
+            </a>
+        </div>
+    </div>
+
+    <div class="erp-form-card">
+        <div class="erp-form-section-header">
+            <h3 class="erp-form-section-title">
+                <i class="fa-solid fa-file-signature me-2"></i>Result Details
+            </h3>
+        </div>
+        <div class="erp-form-body">
+            <form method="POST" enctype="multipart/form-data">
+                {% csrf_token %}
+                {% if form.non_field_errors %}
+                    <div class="erp-alert erp-alert-danger">
+                        {% for error in form.non_field_errors %}
+                            {{ error }}
+                        {% endfor %}
+                    </div>
+                {% endif %}
+                <div class="erp-form-grid">
+                    <div class="erp-form-field">
+                        <label class="erp-form-label">{{ form.title.label }} <span class="required">*</span></label>
+                        {{ form.title }}
+                        {% if form.title.errors %}
+                            <ul class="erp-field-errors">
+                                {% for error in form.title.errors %}<li>{{ error }}</li>{% endfor %}
+                            </ul>
+                        {% endif %}
+                    </div>
+                    <div class="erp-form-field">
+                        <label class="erp-form-label">{{ form.examination.label }} <span class="required">*</span></label>
+                        {{ form.examination }}
+                        {% if form.examination.errors %}
+                            <ul class="erp-field-errors">
+                                {% for error in form.examination.errors %}<li>{{ error }}</li>{% endfor %}
+                            </ul>
+                        {% endif %}
+                    </div>
+                    <div class="erp-form-field">
+                        <label class="erp-form-label">{{ form.class_name.label }} <span class="required">*</span></label>
+                        {{ form.class_name }}
+                        {% if form.class_name.errors %}
+                            <ul class="erp-field-errors">
+                                {% for error in form.class_name.errors %}<li>{{ error }}</li>{% endfor %}
+                            </ul>
+                        {% endif %}
+                    </div>
+                    <div class="erp-form-field">
+                        <label class="erp-form-label">{{ form.academic_year.label }} <span class="required">*</span></label>
+                        {{ form.academic_year }}
+                        {% if form.academic_year.errors %}
+                            <ul class="erp-field-errors">
+                                {% for error in form.academic_year.errors %}<li>{{ error }}</li>{% endfor %}
+                            </ul>
+                        {% endif %}
+                    </div>
+                    <div class="erp-form-field">
+                        <label class="erp-form-label">{{ form.published_date.label }} <span class="required">*</span></label>
+                        {{ form.published_date }}
+                        {% if form.published_date.errors %}
+                            <ul class="erp-field-errors">
+                                {% for error in form.published_date.errors %}<li>{{ error }}</li>{% endfor %}
+                            </ul>
+                        {% endif %}
+                    </div>
+                    <div class="erp-form-field full-width">
+                        <label class="erp-form-label">{{ form.result_file.label }}</label>
+                        {{ form.result_file }}
+                        {% if form.result_file.errors %}
+                            <ul class="erp-field-errors">
+                                {% for error in form.result_file.errors %}<li>{{ error }}</li>{% endfor %}
+                            </ul>
+                        {% endif %}
+                        {% if result.result_file %}
+                            <div class="erp-field-help mt-2">
+                                <a href="{{ result.result_file.url }}" target="_blank" class="erp-btn erp-btn-outline erp-btn-sm">
+                                    <i class="fa-solid fa-file me-1"></i> View Current File
+                                </a>
+                            </div>
+                        {% endif %}
+                    </div>
+                    <div class="erp-form-field full-width">
+                        <label class="erp-form-label">{{ form.description.label }}</label>
+                        {{ form.description }}
+                        {% if form.description.errors %}
+                            <ul class="erp-field-errors">
+                                {% for error in form.description.errors %}<li>{{ error }}</li>{% endfor %}
+                            </ul>
+                        {% endif %}
+                        <p class="erp-field-help">Enter a description for this result.</p>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div class="erp-submit-bar">
+        <button type="submit" class="erp-btn erp-btn-primary">
+            <i class="fa-solid fa-save me-2"></i> Save Changes
+        </button>
+        <button type="submit" name="_addanother" class="erp-btn erp-btn-secondary">
+            <i class="fa-solid fa-plus me-1"></i> Save and Add Another
+        </button>
+        <button type="submit" name="_continue" class="erp-btn erp-btn-secondary">
+            <i class="fa-solid fa-pen me-1"></i> Save and Continue Editing
+        </button>
+        <a href="{% url 'admin_results' %}" class="erp-btn erp-btn-outline" style="margin-left: auto;">
+            <i class="fa-solid fa-xmark me-1"></i> Cancel
+        </a>
+    </div>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        var form = document.querySelector('form[method="POST"]');
+        if (form) form.id = 'result-form';
+    });
+</script>
+{% endblock %}
